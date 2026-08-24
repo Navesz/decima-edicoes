@@ -11,6 +11,7 @@ O contrato reúne:
 - versões e data dos documentos vivos;
 - quatro corpos de prova;
 - seis aprovações do Portão 00.
+- registro versionado das decisões atuais, com fundamento e estado.
 
 `app/lib/project.ts` transforma os valores brutos em rótulos de apresentação, como `01/10`, `30–40 mm` e números por extenso. Páginas não devem reconstruir esses rótulos nem manter cópias locais dos corpos de prova ou das aprovações.
 
@@ -22,6 +23,8 @@ O contrato reúne:
 4. confira no resultado quais páginas foram afetadas antes de publicar.
 
 O verificador lê o mesmo JSON usado pelo site. Ele compara tiragem, quantidade produzida, dimensões, versão do Caderno, corpos de prova e aprovações com o HTML exportado. Também exige que os quatro consumidores centrais continuem importando o contrato.
+
+Os textos de `decisionLog` podem usar os marcadores `{runSize}`, `{lastPieceFraction}`, `{prototypeNumber}`, `{firstPiece}` e `{gateItemsWord}`. Eles são resolvidos por `app/lib/project.ts`; isso evita repetir números dentro do próprio contrato. Marcadores desconhecidos fazem a verificação falhar.
 
 ## Regra comercial
 

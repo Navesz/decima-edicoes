@@ -18,6 +18,15 @@ const proofBodiesWord = numberWords[projectData.proofBodies.length] ?? String(pr
 const gateItemsWord = numberWords[projectData.prototypeGate.length] ?? String(projectData.prototypeGate.length);
 const proofBodiesHeading = `${proofBodiesWord.charAt(0).toUpperCase()}${proofBodiesWord.slice(1)}`;
 const gateItemsHeading = `${gateItemsWord.charAt(0).toUpperCase()}${gateItemsWord.slice(1)}`;
+const decisionTokens = {
+  runSize: projectData.edition.runSize,
+  lastPieceFraction,
+  prototypeNumber,
+  firstPiece,
+  gateItemsWord,
+};
+const resolveDecisionText = (value) => value.replace(/\{(\w+)\}/g, (token, key) => key in decisionTokens ? String(decisionTokens[key]) : token);
+const decisionLog = projectData.decisionLog.map((item) => ({ ...item, decision: resolveDecisionText(item.decision), record: resolveDecisionText(item.record) }));
 
 function check(condition, message) {
   if (!condition) failures.push(message);
@@ -172,9 +181,15 @@ check(product.includes(`${projectData.product.diameterCm} cm`) && product.includ
 check(notebook.includes(`Versão ${projectData.documents.notebookVersion}`), 'Caderno: versão do documento vivo não foi atualizada');
 check(notebook.includes(`Só existe peça ${firstPiece} depois de ${gateItemsWord} aprovações documentadas`), `Caderno: regra do Portão ${prototypeNumber} ausente`);
 check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado'), 'Caderno: especificação de partida da madeira ausente');
-check((notebook.match(/data-state=/g) ?? []).length === projectData.prototypeGate.length, `Caderno: esperado estado para as ${gateItemsWord} aprovações do Portão ${prototypeNumber}`);
+check((notebook.match(/data-gate=/g) ?? []).length === projectData.prototypeGate.length, `Caderno: esperado estado para as ${gateItemsWord} aprovações do Portão ${prototypeNumber}`);
 check(notebook.includes('<table class="gate-table">') && notebook.includes(`<caption>${gateItemsHeading} aprovações obrigatórias`), `Caderno: matriz do Portão ${prototypeNumber} não está semanticamente estruturada`);
 check(/href="(?:\/decima-edicoes)?\/caderno\/ficha-00\/?"/.test(notebook), 'Caderno: acesso à ficha do Protótipo 00 ausente');
+check(notebook.includes('href="#registro"') && notebook.includes('id="registro"'), 'Caderno: navegação para o registro de decisões ausente');
+check(notebook.includes(`<caption>Base da revisão ${projectData.documents.notebookVersion}`) && notebook.includes(`<time dateTime="${projectData.documents.updatedAtIso}"`), 'Caderno: revisão do registro de decisões ausente ou divergente');
+check((notebook.match(/data-decision=/g) ?? []).length === decisionLog.length, 'Caderno: quantidade de decisões diverge do contrato do projeto');
+for (const item of decisionLog) {
+  check(notebook.includes(`data-decision="${item.code}"`) && notebook.includes(item.decision) && notebook.includes(item.record), `Caderno: decisão ${item.code} ausente ou divergente`);
+}
 check(worksheet.includes('<meta name="robots" content="noindex, nofollow"'), 'Ficha 00: bloqueio de indexação ausente');
 check(!sitemap.includes(`${origin}/caderno/ficha-00/`), 'Ficha 00: rota interna não deve entrar no sitemap público');
 check(worksheet.includes('Imprimir ou salvar em PDF') && worksheet.includes('Ficha do'), 'Ficha 00: ação de impressão ou título ausente');
@@ -188,6 +203,10 @@ check(projectData.edition.producedPieces >= 0 && projectData.edition.producedPie
 check(projectData.edition.commercialStatus === 'prototyping', 'Contrato do projeto: estado comercial mudou sem uma regra de publicação correspondente');
 check(new Set(projectData.proofBodies.map((item) => item.code)).size === projectData.proofBodies.length, 'Contrato do projeto: códigos de corpos de prova repetidos');
 check(new Set(projectData.prototypeGate.map((item) => item.code)).size === projectData.prototypeGate.length, 'Contrato do projeto: códigos do Portão repetidos');
+check(/^\d+\.\d+$/.test(projectData.documents.notebookVersion), 'Contrato do projeto: versão do Caderno não segue o formato numérico');
+check(new Set(decisionLog.map((item) => item.code)).size === decisionLog.length, 'Contrato do projeto: códigos do registro de decisões repetidos');
+check(decisionLog.every((item) => ['Confirmada', 'Em teste', 'Aguardando 00', 'Em vigor'].includes(item.state)), 'Contrato do projeto: estado desconhecido no registro de decisões');
+check(decisionLog.every((item) => !/[{}]/.test(item.decision) && !/[{}]/.test(item.record)), 'Contrato do projeto: marcador não resolvido no registro de decisões');
 for (const relativePath of ['app/components/home-page.tsx', 'app/colecoes/nordica-yggdrasil/page.tsx', 'app/caderno/page.tsx', 'app/caderno/ficha-00/page.tsx']) {
   const source = readFileSync(join(root, relativePath), 'utf8');
   check(source.includes("lib/project'"), `${relativePath}: consumidor deixou de usar a fonte única do projeto`);

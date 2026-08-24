@@ -7,7 +7,7 @@ import { ResponsiveImage } from '../components/responsive-image';
 import { SiteHeader } from '../components/site-header';
 import { buildRules } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
-import { collection, documents, edition, productLabels, projectLabels, proofBodies, prototypeGate } from '../lib/project';
+import { collection, decisionLog, documents, edition, productLabels, projectLabels, proofBodies, prototypeGate } from '../lib/project';
 import { absoluteUrl } from '../lib/site';
 
 export const metadata: Metadata = {
@@ -40,7 +40,7 @@ export default function StudioNotebookPage() {
         <div><p>Esta é a parte do projeto que normalmente fica escondida: o raciocínio por trás do produto, as restrições reais da oficina e o que ainda precisa ser provado antes de vender.</p><span>Versão {documents.notebookVersion} · {documents.updatedAt}</span></div>
       </header>
 
-      <nav className="notebook-nav" aria-label="Índice do caderno"><a href="#regras">01 Regras</a><a href="#acabamento">02 Acabamento</a><a href="#testes">03 Protótipos</a><a href="#processo">04 Processo</a><a href="#edicao">05 Edição</a><a href="#portao">06 Portão {edition.prototypeNumber}</a></nav>
+      <nav className="notebook-nav" aria-label="Índice do caderno"><a href="#regras">01 Regras</a><a href="#acabamento">02 Acabamento</a><a href="#testes">03 Protótipos</a><a href="#processo">04 Processo</a><a href="#edicao">05 Edição</a><a href="#portao">06 Portão {edition.prototypeNumber}</a><a href="#registro">07 Registro</a></nav>
 
       <section className="notebook-section" id="regras">
         <div className="notebook-section-title"><span>01</span><div><p className="micro-label">Restrições que viram linguagem</p><h2>Regras de<br />construção.</h2></div></div>
@@ -86,11 +86,23 @@ export default function StudioNotebookPage() {
           <table className="gate-table">
             <caption>{projectLabels.gateItemsHeading} aprovações obrigatórias antes da abertura comercial de {collection.name}</caption>
             <thead><tr><th scope="col">Código</th><th scope="col">Frente</th><th scope="col">Aprovação necessária</th><th scope="col">Evidência mínima</th><th scope="col">Estado</th></tr></thead>
-            <tbody>{prototypeGate.map((item) => <tr key={item.code}><td>{item.code}</td><th scope="row">{item.area}</th><td>{item.approval}</td><td>{item.evidence}</td><td><span data-state={item.state}>{item.state}</span></td></tr>)}</tbody>
+            <tbody>{prototypeGate.map((item) => <tr key={item.code} data-gate={item.code}><td>{item.code}</td><th scope="row">{item.area}</th><td>{item.approval}</td><td>{item.evidence}</td><td><span data-state={item.state}>{item.state}</span></td></tr>)}</tbody>
           </table>
         </div>
         <aside className="gate-rule"><ShieldCheck /><p><strong>Regra de lançamento</strong>Se uma aprovação voltar para teste, a abertura comercial volta com ela. Escassez não substitui segurança, repetibilidade ou clareza.</p></aside>
         <Link className="gate-sheet-link" href="/caderno/ficha-00">Abrir ficha imprimível do Protótipo {edition.prototypeNumber} <ArrowUpRight size={17} /></Link>
+      </section>
+
+      <section className="notebook-section decision-register" id="registro">
+        <div className="notebook-section-title"><span>07</span><div><p className="micro-label">Registro versionado</p><h2>Decisões que<br />não se perdem.</h2></div></div>
+        <div className="gate-intro"><p>Este registro distingue regra confirmada, direção em teste e evidência ainda pendente. Uma imagem de conceito ou uma preferência estética não muda o estado de uma decisão sozinha.</p><p>Quando uma premissa mudar, ela recebe nova revisão no contrato do projeto e passa a aparecer de forma coerente na vitrine, no produto e nos documentos de oficina.</p></div>
+        <div className="gate-table-wrap" tabIndex={0} aria-label="Registro de decisões; role horizontalmente para ver todas as colunas">
+          <table className="gate-table decision-table">
+            <caption>Base da revisão {documents.notebookVersion} · <time dateTime={documents.updatedAtIso}>{documents.updatedAt}</time></caption>
+            <thead><tr><th scope="col">Código</th><th scope="col">Frente</th><th scope="col">Decisão atual</th><th scope="col">Registro necessário</th><th scope="col">Estado</th></tr></thead>
+            <tbody>{decisionLog.map((item) => <tr key={item.code} data-decision={item.code}><td>{item.code}</td><th scope="row">{item.area}</th><td>{item.decision}</td><td>{item.record}</td><td><span data-state={item.state}>{item.state}</span></td></tr>)}</tbody>
+          </table>
+        </div>
       </section>
 
       <section className="notebook-warning"><CircleAlert /><div><p className="micro-label">Segurança de oficina</p><h2>Acabamento premium exige processo profissional.</h2><p>Epóxi, solventes e sistemas PU 2K podem exigir ventilação, proteção respiratória e equipamentos específicos. A execução deve seguir as fichas de segurança e técnicas dos fabricantes; este caderno orienta o conceito, não substitui treinamento nem especificação profissional.</p></div></section>

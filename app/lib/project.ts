@@ -44,3 +44,21 @@ export const projectLabels = {
   gateItemsWord: wordFor(prototypeGate.length),
   gateItemsHeading: capitalize(wordFor(prototypeGate.length)),
 } as const;
+
+const decisionTokens: Record<string, string | number> = {
+  runSize: edition.runSize,
+  lastPieceFraction: edition.lastPieceFraction,
+  prototypeNumber: edition.prototypeNumber,
+  firstPiece: edition.firstPiece,
+  gateItemsWord: projectLabels.gateItemsWord,
+};
+
+function resolveDecisionText(value: string) {
+  return value.replace(/\{(\w+)\}/g, (token, key: string) => key in decisionTokens ? String(decisionTokens[key]) : token);
+}
+
+export const decisionLog = project.decisionLog.map((item) => ({
+  ...item,
+  decision: resolveDecisionText(item.decision),
+  record: resolveDecisionText(item.record),
+}));

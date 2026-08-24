@@ -32,7 +32,7 @@
   "documents": {
     "updatedAt": "24 ago 2026",
     "updatedAtIso": "2026-08-24T00:00:00-03:00",
-    "notebookVersion": "0.2",
+    "notebookVersion": "0.3",
     "worksheetVersion": "0.1"
   },
   "proofBodies": [
@@ -99,6 +99,57 @@
       "approval": "Definir ficha técnica, garantia, embalagem, entrega e canal de interesse com privacidade.",
       "evidence": "Documentos publicados e fluxo real testado do contato ao pós-entrega.",
       "state": "Não iniciado"
+    }
+  ],
+  "decisionLog": [
+    {
+      "code": "D01",
+      "area": "Edição",
+      "decision": "A arte inaugural terá tiragem máxima de {runSize} peças numeradas e será encerrada depois da peça {lastPieceFraction}.",
+      "record": "Protocolo de edição e comunicação pública da coleção.",
+      "state": "Confirmada"
+    },
+    {
+      "code": "D02",
+      "area": "Matéria",
+      "decision": "A especificação de partida exige tampo inteiro, de uma única espécie, comprado já cortado e nivelado.",
+      "record": "Restrição real de ferramental transformada em regra de construção.",
+      "state": "Confirmada"
+    },
+    {
+      "code": "D03",
+      "area": "Superfície",
+      "decision": "A arte ocupa somente o plano superior; a lateral permanece madeira real, limpa e sem estampa.",
+      "record": "Brief material e regra visual da marca.",
+      "state": "Confirmada"
+    },
+    {
+      "code": "D04",
+      "area": "Acabamento",
+      "decision": "A direção visual é acetinada e de baixa reflexão; o sistema químico definitivo ainda depende dos corpos de prova.",
+      "record": "Comparação dos corpos de prova, três luzes e ensaios de uso depois da cura.",
+      "state": "Em teste"
+    },
+    {
+      "code": "D05",
+      "area": "Estrutura",
+      "decision": "A base parte de metalon reto, baixo e viável no Brasil; estabilidade e fixação ainda precisam do protótipo completo.",
+      "record": "Ensaio estrutural e inspeção da peça {prototypeNumber} montada.",
+      "state": "Aguardando 00"
+    },
+    {
+      "code": "D06",
+      "area": "Lançamento",
+      "decision": "Não existe peça {firstPiece} nem abertura comercial antes das {gateItemsWord} aprovações documentadas do Portão {prototypeNumber}.",
+      "record": "Matriz do Portão {prototypeNumber} e ficha operacional imprimível.",
+      "state": "Em vigor"
+    },
+    {
+      "code": "D07",
+      "area": "Venda",
+      "decision": "A manifestação de interesse atual é apenas uma demonstração e não cria reserva, cobrança ou direito à numeração.",
+      "record": "Aviso público e formulário local sem envio de dados.",
+      "state": "Confirmada"
     }
   ]
 }

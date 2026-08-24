@@ -307,3 +307,25 @@ Tiragem, quantidade produzida, dimensões, versões, quatro corpos de prova e se
 ### Proteção contra regressão
 
 O verificador lê o mesmo JSON que alimenta o site e compara o HTML exportado com tiragem, produção, dimensões, versão, testes e aprovações. Ele rejeita contagens inválidas, códigos repetidos, consumidores desconectados da fonte única e mudança isolada do estado `prototyping`.
+
+## Ciclo 14 — registro versionado de decisões
+
+Data: 24 de agosto de 2026.
+
+### Lacuna encontrada
+
+As decisões principais estavam explicadas em seções diferentes, mas faltava uma visão curta que separasse regra confirmada, direção em teste e evidência ainda pendente. Sem isso, uma preferência visual poderia ser lida como especificação fechada.
+
+### Intervenção
+
+- o Caderno avançou para a versão 0.3;
+- a navegação recebeu a seção `07 Registro`;
+- sete decisões passaram a registrar código, frente, texto atual, registro necessário e estado;
+- acabamento continua explicitamente `Em teste`;
+- estrutura continua `Aguardando 00`;
+- a proibição de abrir a peça 01 antes do Portão 00 aparece como regra `Em vigor`;
+- números dentro das decisões usam marcadores resolvidos pelo contrato, evitando duplicação de `10/10`, peça 01 e Protótipo 00.
+
+### Proteção contra regressão
+
+O verificador exige navegação e destino da seção, revisão e data, sete linhas alinhadas ao contrato, códigos únicos, estados conhecidos e ausência de marcadores não resolvidos. O CSS público permaneceu em 37,7 KiB, abaixo do teto de 40 KiB.
