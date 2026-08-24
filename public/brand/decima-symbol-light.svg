@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Símbolo claro da DÉCIMA Edições</title>
+  <g fill="none" stroke="#EEE7DA" stroke-width="8">
+    <circle cx="256" cy="256" r="192" />
+    <path d="M150 150 362 362M362 150 150 362" />
+  </g>
+  <circle cx="256" cy="256" r="15" fill="#B28A53" />
+</svg>

@@ -520,3 +520,26 @@ A documentação oficial da WCAG 2.2 mantém 4,5:1 para texto comum e 3:1 para t
 ### Proteção contra regressão
 
 O verificador recalcula os índices de forma independente, sem arredondar antes do limiar. O deploy falha se um par aponta para cor ausente, se um par aprovado cai abaixo de 4,5:1 ou 3:1, se um valor publicado diverge do cálculo ou se a referência oficial some do Guia.
+
+## Ciclo 23 — masters vetoriais do símbolo
+
+Data: 24 de agosto de 2026.
+
+### Lacuna encontrada
+
+A assinatura completa e o ícone existiam em PNG, suficientes para o site, mas o símbolo ainda não possuía um master vetorial portátil. Ampliar o bitmap para aplicações físicas ou editoriais poderia introduzir perda de definição, enquanto transformar a palavra DÉCIMA em texto SVG criaria dependência de fonte e falsa sensação de arquivo final.
+
+### Intervenção
+
+- criadas versões SVG escura e clara do símbolo, transparentes e com `viewBox` 512 × 512;
+- a geometria preserva círculo, diagonais e ponto central do ícone aprovado;
+- as cores vêm do contrato: carvão ou marfim com centro bronze;
+- nenhum SVG contém texto, fonte, imagem, script, link, `use` ou recurso externo;
+- os dois masters entraram no contrato de ativos da marca;
+- o Guia oferece download direto das versões clara e escura;
+- a orientação deixa explícito que o master visual precisa ser convertido e provado pelo fabricante antes de laser, CNC, gravação ou plaqueta;
+- o inventário e os limites foram registrados em `docs/ATIVOS-DA-MARCA.md`.
+
+### Proteção contra regressão
+
+O verificador exige os arquivos exportados, limita cada SVG a 2 KiB, confere nome acessível, `viewBox`, círculo, diagonais, centro, cores canônicas e ausência de dependências perigosas. O Guia precisa ligar todos os ativos, oferecer pelo menos quatro downloads e manter o alerta de produção física.

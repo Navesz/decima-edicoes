@@ -134,8 +134,7 @@ const requiredFiles = [
   'sitemap.xml',
   'manifest.webmanifest',
   'og.jpg',
-  brandData.assets.logoDark.replace(/^\//, ''),
-  brandData.assets.logoLight.replace(/^\//, ''),
+  ...Object.values(brandData.assets).map((asset) => asset.replace(/^\//, '')),
 ];
 requiredFiles.forEach((file) => check(existsSync(join(output, file)), `Arquivo ausente: out/${file}`));
 
@@ -264,7 +263,8 @@ check(brandGuide.includes('<meta name="robots" content="noindex, nofollow"'), 'G
 check(!sitemap.includes(`${origin}/caderno/marca/`), 'Guia de Marca: rota interna não deve entrar no sitemap público');
 check(brandGuide.includes('Sim. DÉCIMA Edições é uma direção forte.') && brandGuide.includes('não declara disponibilidade legal'), 'Guia de Marca: veredito ou limite jurídico ausente');
 check(brandGuide.includes('Círculo') && brandGuide.includes('numeral romano de dez') && brandGuide.includes('Ponto'), 'Guia de Marca: significado do símbolo incompleto');
-check(brandGuide.includes('/brand/decima-logo-dark.png') && brandGuide.includes('/brand/decima-logo-light.png') && brandGuide.includes('/icon.png'), 'Guia de Marca: assinaturas oficiais incompletas');
+check(Object.values(brandData.assets).every((asset) => brandGuide.includes(asset)), 'Guia de Marca: ativos oficiais incompletos');
+check(brandGuide.includes('Masters vetoriais do símbolo') && brandGuide.includes('laser, CNC, gravação ou plaqueta') && (brandGuide.match(/\sdownload=""/g) ?? []).length >= 4, 'Guia de Marca: downloads ou limite de produção dos vetores incompletos');
 check(Object.values(brandData.palette).every((color) => brandGuide.includes(color.hex)), 'Guia de Marca: paleta oficial incompleta ou divergente');
 check(brandGuide.includes('Cormorant Garamond') && brandGuide.includes('MANROPE'), 'Guia de Marca: sistema tipográfico incompleto');
 check(brandGuide.includes('Nórdica — Yggdrasil') && brandGuide.includes('Peça 01/10') && brandGuide.includes('Protótipo 00'), 'Guia de Marca: sistema de nomenclatura incompleto');
@@ -395,6 +395,14 @@ check(brandData.name.includes(brandData.shortName) && brandData.editionLabel && 
 check(new Set(Object.values(brandData.palette).map((color) => color.hex.toLowerCase())).size === Object.keys(brandData.palette).length, 'Contrato da marca: cores repetidas');
 check(Object.values(brandData.palette).every((color) => /^#[0-9A-F]{6}$/.test(color.hex) && color.name && color.use), 'Contrato da marca: cor, nome ou uso inválido');
 check(Object.values(brandData.assets).every((asset) => asset.startsWith('/') && existsSync(join(root, asset === '/icon.png' ? 'app/icon.png' : `public${asset}`))), 'Contrato da marca: ativo oficial ausente');
+for (const [variant, asset] of [['escuro', brandData.assets.symbolDark], ['claro', brandData.assets.symbolLight]]) {
+  const svg = readFileSync(join(root, `public${asset}`), 'utf8');
+  check(svg.includes('viewBox="0 0 512 512"') && svg.includes('<circle cx="256" cy="256" r="192"') && svg.includes('M150 150 362 362M362 150 150 362') && svg.includes('<circle cx="256" cy="256" r="15"'), `Símbolo ${variant}: geometria canônica incompleta`);
+  check(svg.includes('<title id="title">') && svg.includes('aria-labelledby="title"'), `Símbolo ${variant}: nome acessível ausente`);
+  check(!/<(?:script|text|image|use|foreignObject)\b/i.test(svg) && !/\b(?:href|src)=/i.test(svg), `Símbolo ${variant}: dependência de fonte, script ou recurso externo`);
+  check(Buffer.byteLength(svg) <= 2 * 1024, `Símbolo ${variant}: SVG excede 2 KiB`);
+}
+check(readFileSync(join(root, `public${brandData.assets.symbolDark}`), 'utf8').includes(`stroke="${brandData.palette.ink.hex}"`) && readFileSync(join(root, `public${brandData.assets.symbolLight}`), 'utf8').includes(`stroke="${brandData.palette.ivory.hex}"`) && [brandData.assets.symbolDark, brandData.assets.symbolLight].every((asset) => readFileSync(join(root, `public${asset}`), 'utf8').includes(`fill="${brandData.palette.bronze.hex}"`)), 'Símbolos vetoriais: cores divergem do contrato');
 const paletteKeys = new Set(Object.keys(brandData.palette));
 const allContrastPairs = [...brandData.contrast.approvedTextPairs, ...brandData.contrast.approvedNonTextPairs, ...brandData.contrast.restrictedPairs];
 check(allContrastPairs.every((pair) => paletteKeys.has(pair.foreground) && paletteKeys.has(pair.background) && pair.label), 'Contrato da marca: par de contraste referencia cor ausente');

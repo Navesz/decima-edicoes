@@ -59,6 +59,8 @@
   "assets": {
     "icon": "/icon.png",
     "logoDark": "/brand/decima-logo-dark.png",
-    "logoLight": "/brand/decima-logo-light.png"
+    "logoLight": "/brand/decima-logo-light.png",
+    "symbolDark": "/brand/decima-symbol-dark.svg",
+    "symbolLight": "/brand/decima-symbol-light.svg"
   }
 }

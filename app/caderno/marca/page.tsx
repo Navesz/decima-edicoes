@@ -121,6 +121,10 @@ export default function BrandGuidePage() {
           <article><span>Tamanho mínimo</span><strong className={styles.minimum}>160 px <small>assinatura</small><br />32 px <small>símbolo</small></strong><p>Abaixo disso, use apenas o símbolo e preserve o ponto central.</p></article>
           <article className={styles.never}><span>Nunca</span><ul><li>esticar, inclinar ou contornar;</li><li>trocar apenas uma cor;</li><li>aplicar sombra ou brilho;</li><li>sobrepor a uma arte ruidosa.</li></ul></article>
         </div>
+        <aside className={styles.caution}>
+          <CircleAlert aria-hidden="true" />
+          <div><strong>Masters vetoriais do símbolo</strong><p>Os SVGs são transparentes, escaláveis e usam apenas geometria e as cores do contrato — nenhuma fonte ou recurso externo. Servem como master de identidade. Para laser, CNC, gravação ou plaqueta, o fabricante ainda precisa converter traços conforme o próprio processo e aprovar uma prova física.</p><a className="gate-sheet-link" href={assetPath(brand.assets.symbolDark)} download>Baixar símbolo escuro · SVG <ArrowDownToLine aria-hidden="true" /></a><a className="gate-sheet-link" href={assetPath(brand.assets.symbolLight)} download>Baixar símbolo claro · SVG <ArrowDownToLine aria-hidden="true" /></a></div>
+        </aside>
       </section>
 
       <section className={`${styles.section} ${styles.colorSection}`} id="cores">
