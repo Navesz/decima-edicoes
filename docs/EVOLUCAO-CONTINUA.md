@@ -214,3 +214,25 @@ A página inicial tinha um card social próprio em 1200 × 630, mas Coleções, 
 - Caderno: 94 KiB;
 - os três cartões foram inspecionados em resolução original;
 - lint, build, metadados e orçamentos aprovados.
+
+## Ciclo 10 — luxo que continua legível
+
+Data: 24 de agosto de 2026.
+
+### Problema encontrado
+
+A linguagem editorial recorria a muitos textos de 7–8 px, opacidades de 35–55% e bronze claro sobre fundos claros. A composição parecia delicada, mas avisos como “visualização conceitual”, o estado do protótipo, notas do laboratório e ações secundárias podiam perder legibilidade — sobretudo no celular ou sob luz forte.
+
+### Intervenção
+
+- microtexto informativo padronizado em 10 px e texto auxiliar em 9 px;
+- textos suaves passaram a usar tokens de 68%: contraste calculado de 5,05:1 ou mais nos fundos principais;
+- um bronze escuro `#684318` passou a representar números e estados sobre papel claro, mantendo pelo menos 4,95:1 nos fundos em que é usado;
+- legendas sobre fotografia receberam fundo escuro localizado, sem escurecer mais a imagem inteira;
+- links editoriais e navegação passaram a ter alvo mínimo de 24 px; chamadas principais mantêm 44 px ou mais;
+- placeholder, notas do formulário, rodapé, especificações e estados do produto receberam contraste explícito;
+- o verificador impede o retorno de texto informativo em 7–8 px e protege os tokens e alvos adotados.
+
+### Limites preservados
+
+O subtítulo de 6 px dentro do logotipo permanece como detalhe gráfico, não como conteúdo necessário. Texturas e ícones decorativos continuam podendo usar transparência sem afetar compreensão.

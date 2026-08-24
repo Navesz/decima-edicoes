@@ -95,6 +95,14 @@ check(cssBytes <= 40 * 1024, `CSS inicial excede 40 KiB: ${(cssBytes / 1024).toF
 check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
+const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
+check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');
+check(sourceCss.includes('--ink-muted: rgba(23, 20, 17, .68);') && sourceCss.includes('--ivory-muted: rgba(238, 231, 218, .68);'), 'tokens de contraste informativo ausentes');
+check(sourceCss.includes('--bronze-ink: #684318;'), 'variante acessível do bronze ausente');
+check(!/font-size:\s*[78]px/.test(sourceCss), 'texto de 7 ou 8 px voltou à interface');
+check((sourceCss.match(/min-height:\s*(24|44)px/g) ?? []).length >= 10, 'alvos mínimos de interação não estão protegidos');
+check(sourceCss.includes('.image-caption {') && sourceCss.includes('background: rgba(23,20,17,.72);'), 'legenda conceitual perdeu seu fundo de contraste');
+
 const socialCards = ['collections.jpg', 'yggdrasil.jpg', 'caderno.jpg'];
 for (const file of socialCards) {
   const path = join(output, 'social', file);
