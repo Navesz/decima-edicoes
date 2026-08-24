@@ -123,6 +123,7 @@ check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap au
 
 const home = read('index.html');
 const product = read('colecoes/nordica-yggdrasil/index.html');
+const notebook = read('caderno/index.html');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
 check(home.includes('protótipo 00 em desenvolvimento'), 'início: estágio conceitual não está explícito');
 check(home.includes('não cria reserva, cobrança ou direito'), 'início: limite do fluxo de interesse não está explícito');
@@ -133,6 +134,11 @@ check(home.includes('A simulação local requer JavaScript. Nenhum campo foi hab
 check(home.includes('minLength="2"') && home.includes('type="email"'), 'início: restrições de validação do formulário ausentes');
 check(product.includes('Yggdrasil ainda não está à venda'), 'Yggdrasil: indisponibilidade comercial não está explícita');
 check(product.includes('ProductModel'), 'Yggdrasil: dados estruturados devem representar um modelo, não produto disponível');
+check(notebook.includes('Versão 0.2'), 'Caderno: versão do documento vivo não foi atualizada');
+check(notebook.includes('Só existe peça 01 depois de seis aprovações documentadas'), 'Caderno: regra do Portão 00 ausente');
+check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado'), 'Caderno: especificação de partida da madeira ausente');
+check((notebook.match(/data-state=/g) ?? []).length === 6, 'Caderno: esperado estado para as seis aprovações do Portão 00');
+check(notebook.includes('<table class="gate-table">') && notebook.includes('<caption>Seis aprovações obrigatórias'), 'Caderno: matriz do Portão 00 não está semanticamente estruturada');
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);

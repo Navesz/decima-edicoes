@@ -236,3 +236,25 @@ A linguagem editorial recorria a muitos textos de 7–8 px, opacidades de 35–5
 ### Limites preservados
 
 O subtítulo de 6 px dentro do logotipo permanece como detalhe gráfico, não como conteúdo necessário. Texturas e ícones decorativos continuam podendo usar transparência sem afetar compreensão.
+
+## Ciclo 11 — o Portão do Protótipo 00
+
+Data: 24 de agosto de 2026.
+
+### Lacuna encontrada no briefing
+
+O Caderno descrevia regras, quatro corpos de prova, processo e protocolo de escassez, mas não possuía um critério objetivo que impedisse a passagem prematura do conceito para a venda. O briefing original é claro sobre a restrição de oficina — comprar o tampo inteiro já nivelado — e sobre a necessidade de testar o sistema completo antes da mesa.
+
+### Intervenção
+
+- o Caderno avançou para a versão 0.2;
+- uma sexta seção criou o Portão 00, com tabela semântica e navegação própria;
+- seis frentes passaram a exigir aprovação documentada: matéria, arte, acabamento, estrutura, custo e venda;
+- a matéria parte explicitamente de tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado;
+- cada frente registra aprovação necessária, evidência mínima e estado atual;
+- “em teste” deixou de poder ser confundido com “aprovado”;
+- a próxima decisão passou a ser cotar o tampo real e iniciar as quatro placas, em vez de avançar a comunicação comercial.
+
+### Proteção contra regressão
+
+O verificador exige a versão 0.2, a regra das seis aprovações, a especificação do tampo, seis estados e a estrutura semântica da tabela.

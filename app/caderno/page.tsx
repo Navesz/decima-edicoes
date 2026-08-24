@@ -37,16 +37,25 @@ const tests = [
   { code: 'D', title: 'Vinil + epóxi + PU acetinado', detail: 'Ponto de partida da edição inaugural: profundidade sob controle e reflexo difuso.' },
 ];
 
+const prototypeGate = [
+  { code: 'M01', area: 'Matéria', approval: 'Escolher espécie e fornecedor de um tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado.', evidence: 'Nota fiscal, espécie declarada, espessura, umidade registrada e inspeção de empeno.', state: 'Em aberto' },
+  { code: 'A02', area: 'Arte', approval: 'Escolher um dos quatro sistemas sem permitir que a superfície pareça apenas envelopada.', evidence: 'Quatro placas comparadas depois da cura, com registro de cor, bolha, borda e aderência.', state: 'Em teste' },
+  { code: 'F03', area: 'Acabamento', approval: 'Congelar um sistema completo e compatível de selagem, encapsulamento e proteção acetinada.', evidence: 'Amostra aprovada sob três luzes e após água, caneca morna, limpeza e toque.', state: 'Em teste' },
+  { code: 'E04', area: 'Estrutura', approval: 'Validar a base baixa em metalon reto, sem balanço, quina crítica ou deformação perceptível.', evidence: 'Protótipo 00 montado, carregado, medido e inspecionado sobre piso real.', state: 'Aguardando 00' },
+  { code: 'C05', area: 'Custo', approval: 'Conhecer custo, perda e horas reais antes de definir preço ou prazo.', evidence: 'Ficha de custos do protótipo, três cotações críticas e sequência repetível de produção.', state: 'Aguardando 00' },
+  { code: 'V06', area: 'Venda', approval: 'Definir ficha técnica, garantia, embalagem, entrega e canal de interesse com privacidade.', evidence: 'Documentos publicados e fluxo real testado do contato ao pós-entrega.', state: 'Não iniciado' },
+];
+
 export default function StudioNotebookPage() {
   return (
     <main className="notebook-page" id="conteudo">
       <SiteHeader tone="dark" />
       <header className="notebook-hero">
         <div><p className="micro-label">Documento vivo · fundador</p><h1>Caderno<br />do Atelier.</h1></div>
-        <div><p>Esta é a parte do projeto que normalmente fica escondida: o raciocínio por trás do produto, as restrições reais da oficina e o que ainda precisa ser provado antes de vender.</p><span>Versão 0.1 · 24 ago 2026</span></div>
+        <div><p>Esta é a parte do projeto que normalmente fica escondida: o raciocínio por trás do produto, as restrições reais da oficina e o que ainda precisa ser provado antes de vender.</p><span>Versão 0.2 · 24 ago 2026</span></div>
       </header>
 
-      <nav className="notebook-nav" aria-label="Índice do caderno"><a href="#regras">01 Regras</a><a href="#acabamento">02 Acabamento</a><a href="#testes">03 Protótipos</a><a href="#processo">04 Processo</a><a href="#edicao">05 Edição</a></nav>
+      <nav className="notebook-nav" aria-label="Índice do caderno"><a href="#regras">01 Regras</a><a href="#acabamento">02 Acabamento</a><a href="#testes">03 Protótipos</a><a href="#processo">04 Processo</a><a href="#edicao">05 Edição</a><a href="#portao">06 Portão 00</a></nav>
 
       <section className="notebook-section" id="regras">
         <div className="notebook-section-title"><span>01</span><div><p className="micro-label">Restrições que viram linguagem</p><h2>Regras de<br />construção.</h2></div></div>
@@ -85,9 +94,22 @@ export default function StudioNotebookPage() {
         <div className="notebook-cards"><article><ShieldCheck /><h3>Certificado</h3><p>Nome da coleção, número da peça, ano, espécie da madeira, acabamento e assinatura do atelier.</p></article><article><Layers3 /><h3>Arquivo de matéria</h3><p>Fotos do veio antes da arte, registro do processo e especificação dos insumos usados.</p></article><article><Hammer /><h3>Plaqueta discreta</h3><p>Aplicada sob o tampo, jamais na lateral protagonista: Collection · Piece · Year.</p></article></div>
       </section>
 
+      <section className="notebook-section gate-section" id="portao">
+        <div className="notebook-section-title"><span>06</span><div><p className="micro-label">Critério de passagem</p><h2>O portão do<br />Protótipo 00.</h2></div></div>
+        <div className="gate-intro"><p>Uma imagem bonita não autoriza uma venda. Só existe peça 01 depois de seis aprovações documentadas, cada uma apoiada por evidência do mundo real.</p><p>“Em teste” registra trabalho em curso; não significa aprovação. Uma frente só muda para aprovada quando a evidência indicada entra no arquivo da edição.</p></div>
+        <div className="gate-table-wrap" tabIndex={0} aria-label="Tabela do Portão 00; role horizontalmente para ver todas as colunas">
+          <table className="gate-table">
+            <caption>Seis aprovações obrigatórias antes da abertura comercial de Yggdrasil</caption>
+            <thead><tr><th scope="col">Código</th><th scope="col">Frente</th><th scope="col">Aprovação necessária</th><th scope="col">Evidência mínima</th><th scope="col">Estado</th></tr></thead>
+            <tbody>{prototypeGate.map((item) => <tr key={item.code}><td>{item.code}</td><th scope="row">{item.area}</th><td>{item.approval}</td><td>{item.evidence}</td><td><span data-state={item.state}>{item.state}</span></td></tr>)}</tbody>
+          </table>
+        </div>
+        <aside className="gate-rule"><ShieldCheck /><p><strong>Regra de lançamento</strong>Se uma aprovação voltar para teste, a abertura comercial volta com ela. Escassez não substitui segurança, repetibilidade ou clareza.</p></aside>
+      </section>
+
       <section className="notebook-warning"><CircleAlert /><div><p className="micro-label">Segurança de oficina</p><h2>Acabamento premium exige processo profissional.</h2><p>Epóxi, solventes e sistemas PU 2K podem exigir ventilação, proteção respiratória e equipamentos específicos. A execução deve seguir as fichas de segurança e técnicas dos fabricantes; este caderno orienta o conceito, não substitui treinamento nem especificação profissional.</p></div></section>
 
-      <section className="notebook-next"><p>Próxima decisão do projeto</p><h2>Escolher a madeira real do primeiro corpo de prova e congelar o sistema completo de acabamento.</h2><Link href="/colecoes/nordica-yggdrasil">Rever Yggdrasil <ArrowUpRight /></Link></section>
+      <section className="notebook-next"><p>Próxima decisão do projeto</p><h2>Cotar o tampo inteiro pré-nivelado, registrar a espécie real e iniciar as quatro placas do portão 00.</h2><Link href="/colecoes/nordica-yggdrasil">Rever Yggdrasil <ArrowUpRight /></Link></section>
       <Footer />
     </main>
   );
