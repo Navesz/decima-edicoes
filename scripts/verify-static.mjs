@@ -86,8 +86,14 @@ check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap au
 
 const home = read('index.html');
 const product = read('colecoes/nordica-yggdrasil/index.html');
+const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
 check(home.includes('protótipo 00 em desenvolvimento'), 'início: estágio conceitual não está explícito');
 check(home.includes('não cria reserva, cobrança ou direito'), 'início: limite do fluxo de interesse não está explícito');
+check(interestFormTag.length > 0, 'início: formulário demonstrativo não está identificado');
+check(!/\saction=/i.test(interestFormTag), 'início: demonstração não deve apontar para um destino de envio');
+check(home.includes('<fieldset disabled="">'), 'início: campos devem permanecer inativos sem JavaScript');
+check(home.includes('A simulação local requer JavaScript. Nenhum campo foi habilitado e nenhum dado será enviado.'), 'início: aviso sem JavaScript ausente');
+check(home.includes('minLength="2"') && home.includes('type="email"'), 'início: restrições de validação do formulário ausentes');
 check(product.includes('Yggdrasil ainda não está à venda'), 'Yggdrasil: indisponibilidade comercial não está explícita');
 check(product.includes('ProductModel'), 'Yggdrasil: dados estruturados devem representar um modelo, não produto disponível');
 

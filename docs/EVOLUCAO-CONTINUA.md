@@ -116,3 +116,26 @@ Os WebPs reduziram muito o pacote público, mas cada uso ainda entregava o arqui
 - imagem principal em 800 px: 177 KiB, 54% menor;
 - conjunto reproduzível de derivados: 3,49 MiB, ainda 87,1% abaixo dos PNGs-fonte;
 - `lint`, compilação estática e verificação de todas as rotas aprovados.
+
+## Ciclo 06 — interesse sem falsa transmissão
+
+Data: 24 de agosto de 2026.
+
+### Risco encontrado
+
+O formulário informava corretamente que nada seria enviado, porém seu comportamento padrão sem JavaScript ainda poderia recarregar a página e expor nome e e-mail na URL. Os erros dependiam apenas da validação nativa, e o retorno da confirmação não restaurava o foco ao formulário.
+
+### Correções
+
+- os controles chegam inativos no HTML e só são habilitados quando a simulação local está pronta;
+- sem JavaScript, uma mensagem explícita substitui qualquer tentativa de transmissão;
+- o formulário não possui `action` nem integração externa;
+- nome e e-mail têm limites, validação local, `aria-invalid`, mensagens associadas e alertas para tecnologias assistivas;
+- o primeiro campo inválido recebe foco; a confirmação também recebe foco; ao voltar, o foco retorna ao nome;
+- o verificador trava a ausência de destino de envio, o estado seguro sem JavaScript e as restrições mínimas dos campos.
+
+### Validação
+
+- lint e checagem de tipos aprovados;
+- exportação estática aprovada;
+- HTML inicial confirmado com `fieldset` inativo, aviso em `noscript` e sem `action` de envio.

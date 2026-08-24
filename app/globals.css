@@ -151,12 +151,18 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .interest-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10vw; padding: clamp(100px,13vw,190px) 9vw; background: #b9a88e; }
 .interest-copy > p { max-width: 560px; color: rgba(23,20,17,.72); }
 .interest-form { align-self: end; display: grid; gap: 20px; }
+.interest-form fieldset { display: grid; gap: 20px; min-width: 0; margin: 0; border: 0; padding: 0; }
 .interest-form label { display: grid; grid-template-columns: 112px 1fr; align-items: center; border-bottom: 1px solid rgba(23,20,17,.4); }
 .interest-form label > span { font-size: 8px; letter-spacing: .16em; text-transform: uppercase; }
 .interest-form input, .interest-form select { width: 100%; border: 0; outline: 0; padding: 16px 0; background: transparent; color: var(--ink); font-family: var(--serif); font-size: 19px; }
+.interest-form input:focus-visible, .interest-form select:focus-visible { box-shadow: inset 0 -2px var(--ink); }
 .interest-form input::placeholder { color: rgba(23,20,17,.45); }
 .interest-form button { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; border: 1px solid var(--ink); padding: 19px 22px; background: var(--ink); color: var(--ivory); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
+.interest-form fieldset:disabled { opacity: .62; }
 .interest-form small { opacity: .55; font-size: 8px; }
+.interest-form label.field-invalid { grid-template-columns: 112px 1fr; border-color: #7b2f28; }
+.interest-form .field-error { grid-column: 2; margin: -8px 0 10px; color: #7b2f28; font-size: 10px; line-height: 1.4; opacity: 1; }
+.interest-form .form-noscript { display: block; border-left: 2px solid #7b2f28; padding-left: 12px; color: #5f241f; line-height: 1.5; opacity: 1; }
 .form-success { align-self: center; display: flex; gap: 18px; border: 1px solid rgba(23,20,17,.35); padding: 28px; }
 .form-success strong { font-family: var(--serif); font-size: 22px; font-weight: 500; }
 .form-success p { opacity: .65; margin-bottom: 0; }
@@ -380,7 +386,7 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
   .studio-panel-image { aspect-ratio: 1; }
   .studio-panel > div:last-child { align-items: flex-start; flex-direction: column; }
   .interest-section { grid-template-columns: 1fr; padding: 90px 24px; }
-  .interest-form label { grid-template-columns: 82px 1fr; }
+  .interest-form label, .interest-form label.field-invalid { grid-template-columns: 82px 1fr; }
   .footer { grid-template-columns: 1fr; padding: 60px 24px 25px; }
   .footer nav { justify-content: flex-start; flex-wrap: wrap; }
   .footer > small { margin-top: 20px; }
