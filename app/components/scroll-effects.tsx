@@ -1,22 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-
-type NavigatorWithConnection = Navigator & {
-  connection?: {
-    saveData?: boolean;
-    effectiveType?: string;
-  };
-};
+import { prefersReducedMotion, shouldAvoidOptionalTransfer } from '../lib/client-capabilities';
 
 export function ScrollEffects() {
   useEffect(() => {
-    const connection = (navigator as NavigatorWithConnection).connection;
-    const shouldKeepStatic = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-      || window.matchMedia?.('(prefers-reduced-data: reduce)').matches
-      || connection?.saveData
-      || connection?.effectiveType === 'slow-2g'
-      || connection?.effectiveType === '2g';
+    const shouldKeepStatic = prefersReducedMotion() || shouldAvoidOptionalTransfer();
 
     if (shouldKeepStatic || !('IntersectionObserver' in window)) return;
 

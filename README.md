@@ -55,6 +55,8 @@ Nome, slogan, idioma, paleta e ativos oficiais vivem separadamente em `app/lib/b
 
 Os pares de cor aprovados e restritos também vivem nesse contrato. O Guia publica os índices calculados e o build aplica os limiares WCAG documentados em `docs/CONTRASTE-E-ACESSIBILIDADE.md`.
 
+As decisões locais sobre movimento, economia de dados, rede 2G e ponteiro vivem em `app/lib/client-capabilities.ts`. Laboratório 3D, Lenis e GSAP consomem a mesma política; o contrato está descrito em `docs/CAPACIDADES-DO-CLIENTE.md`.
+
 A modelagem de SEO liga marca, website, páginas, breadcrumbs e o conceito Yggdrasil sem publicar oferta fictícia. As regras estão em `docs/SEO-E-DADOS-ESTRUTURADOS.md`.
 
 O documento `404.html` possui título, descrição, canonical e URLs sociais próprios, com uma única diretiva `noindex`; a home não força `index` globalmente. A regra específica está em `docs/METADADOS-DA-PAGINA-404.md`.

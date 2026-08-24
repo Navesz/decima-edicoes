@@ -1,13 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-
-type NavigatorWithConnection = Navigator & {
-  connection?: {
-    saveData?: boolean;
-    effectiveType?: string;
-  };
-};
+import { prefersReducedMotion, shouldAvoidOptionalTransfer, usesCoarsePointer } from '../lib/client-capabilities';
 
 type WindowWithIdleCallback = Window & typeof globalThis & {
   requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
@@ -16,16 +10,9 @@ type WindowWithIdleCallback = Window & typeof globalThis & {
 
 export function SmoothScroll() {
   useEffect(() => {
-    const connection = (navigator as NavigatorWithConnection).connection;
-    const shouldKeepNativeScroll = [
-      '(prefers-reduced-motion: reduce)',
-      '(prefers-reduced-data: reduce)',
-      '(pointer: coarse)',
-      '(hover: none)',
-    ].some((query) => window.matchMedia?.(query).matches)
-      || connection?.saveData
-      || connection?.effectiveType === 'slow-2g'
-      || connection?.effectiveType === '2g';
+    const shouldKeepNativeScroll = prefersReducedMotion()
+      || shouldAvoidOptionalTransfer()
+      || usesCoarsePointer();
 
     if (shouldKeepNativeScroll) return;
 

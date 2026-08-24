@@ -757,3 +757,28 @@ GSAP e ScrollTrigger já estavam em chunks separados do HTML inicial, mas `Scrol
 ### Proteção contra regressão
 
 O verificador identifica GSAP por `globalTimeline`/`registerPlugin` e ScrollTrigger por `normalizeScroll`/`refreshInit`, exige um chunk de cada, rejeita ambos entre os scripts iniciais e limita a soma a 120 KiB. No fonte, confere importações dinâmicas, sentinela, margem, preferências, rede, estado observável e limpeza.
+
+## Ciclo 33 — contrato único de capacidades do cliente
+
+Data: 24 de agosto de 2026.
+
+### Política duplicada
+
+Laboratório 3D, Lenis e GSAP já respeitavam economia de dados e rede limitada, porém cada componente declarava seu próprio tipo de conexão e repetia as mesmas consultas. Uma futura alteração poderia corrigir um aprimoramento e deixar os outros com comportamento divergente.
+
+### Intervenção
+
+- criado `app/lib/client-capabilities.ts` sem estado e sem armazenamento;
+- `prefersReducedMotion()` centraliza a preferência de movimento;
+- `shouldAvoidOptionalTransfer()` combina `prefers-reduced-data`, `saveData`, `slow-2g` e `2g`;
+- `usesCoarsePointer()` combina ponteiro grosseiro e ausência de hover;
+- acesso a `window` e `navigator` possui guarda, permitindo importar o módulo sem tocar o navegador durante renderização de servidor;
+- o laboratório usa a decisão comum para exigir carregamento manual;
+- GSAP usa a mesma decisão para manter o conteúdo estático;
+- Lenis combina movimento, transferência opcional e ponteiro para preservar rolagem nativa;
+- tipos e consultas duplicadas foram removidos dos três componentes;
+- a política foi registrada em `docs/CAPACIDADES-DO-CLIENTE.md`.
+
+### Proteção contra regressão
+
+O verificador exige os quatro media queries, os três sinais de rede e as duas guardas de ambiente no contrato. Cada consumidor precisa chamar as funções compartilhadas adequadas; voltar a duplicar sinais dentro de um componente deixa de satisfazer a auditoria.

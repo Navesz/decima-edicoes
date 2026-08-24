@@ -1,6 +1,7 @@
 'use client';
 
 import { Component, lazy, type ReactNode, Suspense, useEffect, useRef, useState } from 'react';
+import { shouldAvoidOptionalTransfer } from '../lib/client-capabilities';
 import styles from './finish-lab-loader.module.css';
 
 const FinishLab = lazy(async () => {
@@ -63,13 +64,6 @@ class FinishLabErrorBoundary extends Component<{ children: ReactNode }, { failed
   }
 }
 
-type NavigatorWithConnection = Navigator & {
-  connection?: {
-    saveData?: boolean;
-    effectiveType?: string;
-  };
-};
-
 function supportsWebGL() {
   try {
     const canvas = document.createElement('canvas');
@@ -96,10 +90,7 @@ export function FinishLabLoader() {
       return () => { active = false; };
     }
 
-    const connection = (navigator as NavigatorWithConnection).connection;
-    const reducedData = window.matchMedia?.('(prefers-reduced-data: reduce)').matches ?? false;
-    const constrainedConnection = connection?.effectiveType === 'slow-2g' || connection?.effectiveType === '2g';
-    if (connection?.saveData || reducedData || constrainedConnection) {
+    if (shouldAvoidOptionalTransfer()) {
       schedule(() => setManualOnly(true));
       return () => { active = false; };
     }
