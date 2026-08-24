@@ -139,3 +139,23 @@ O formulário informava corretamente que nada seria enviado, porém seu comporta
 - lint e checagem de tipos aprovados;
 - exportação estática aprovada;
 - HTML inicial confirmado com `fieldset` inativo, aviso em `noscript` e sem `action` de envio.
+
+## Ciclo 07 — publicação reproduzível e segura
+
+Data: 24 de agosto de 2026.
+
+### Fragilidades encontradas
+
+O workflow instalava versões compatíveis por faixa com `npm install`, em vez de reproduzir exatamente o lockfile com `npm ci`. As ações oficiais de configuração, empacotamento e deploy do GitHub Pages também estavam uma geração atrás e emitiram aviso de runtime Node 20.
+
+### Correções
+
+- instalação do CI alterada para `npm ci`, tornando o pacote de dependências determinístico;
+- auditoria passou a interromper a publicação diante de vulnerabilidade alta ou crítica;
+- `configure-pages` atualizado para v6, com runtime Node 24;
+- `upload-pages-artifact` atualizado para v5, que usa a geração atual do serviço de artefatos;
+- `deploy-pages` atualizado para v5, também com runtime Node 24.
+
+### Critério de saída
+
+Uma instalação limpa precisa aprovar auditoria, lint, compilação estática, verificador próprio, upload e deploy sem o aviso de Node 20 observado anteriormente.
