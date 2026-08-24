@@ -62,6 +62,8 @@ Tiragem, produção, dimensões, protótipo, versões, corpos de prova e aprova�
 
 Nome, slogan, idioma, paleta e ativos oficiais vivem separadamente em `app/lib/brand-data.json`. Metadados, manifesto, dados estruturados, cabeçalho, rodapé e Guia de Marca consomem o mesmo contrato; o procedimento está em `docs/CONTRATO-DA-MARCA.md`.
 
+As paletas específicas das três coleções possuem nome editorial e hexadecimal no mesmo dado que alimenta swatches e descrições acessíveis. O contrato está em `docs/PALETAS-DAS-COLECOES.md`.
+
 Os pares de cor aprovados e restritos também vivem nesse contrato. O Guia publica os índices calculados e o build aplica os limiares WCAG documentados em `docs/CONTRASTE-E-ACESSIBILIDADE.md`.
 
 As decisões locais sobre movimento, economia de dados, rede 2G e ponteiro vivem em `app/lib/client-capabilities.ts`. Laboratório 3D, Lenis e GSAP consomem a mesma política; o contrato está descrito em `docs/CAPACIDADES-DO-CLIENTE.md`.

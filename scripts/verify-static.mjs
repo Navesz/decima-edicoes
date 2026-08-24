@@ -31,6 +31,11 @@ const decisionTokens = {
 };
 const resolveDecisionText = (value) => value.replace(/\{(\w+)\}/g, (token, key) => key in decisionTokens ? String(decisionTokens[key]) : token);
 const decisionLog = projectData.decisionLog.map((item) => ({ ...item, decision: resolveDecisionText(item.decision), record: resolveDecisionText(item.record) }));
+const collectionPaletteContract = [
+  { family: projectData.collection.family, name: projectData.collection.name, palette: [{ name: 'Carvão', hex: '#171411' }, { name: 'Madeira âmbar', hex: '#9a6e3f' }, { name: 'Bronze claro', hex: '#c8a875' }] },
+  { family: 'Renaissance', name: 'Medallion', palette: [{ name: 'Nogueira profunda', hex: '#241b16' }, { name: 'Marfim antigo', hex: '#d7c5a0' }, { name: 'Ouro velho', hex: '#89643a' }] },
+  { family: 'Atelier', name: 'Meridian', palette: [{ name: 'Madeira escura', hex: '#191512' }, { name: 'Marfim mineral', hex: '#e4d3af' }, { name: 'Bronze linear', hex: '#a77b40' }] },
+];
 
 function check(condition, message) {
   if (!condition) failures.push(message);
@@ -383,6 +388,7 @@ const robots = read('robots.txt');
 check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap ausente ou incorreto');
 
 const home = withoutRscMarkers(read('index.html'));
+const archive = withoutRscMarkers(read('colecoes/index.html'));
 const product = withoutRscMarkers(read(`colecoes/${projectData.collection.slug}/index.html`));
 const notebook = withoutRscMarkers(read('caderno/index.html'));
 const certificateModel = withoutRscMarkers(read('caderno/certificado-modelo/index.html'));
@@ -391,6 +397,7 @@ const brandGuide = withoutRscMarkers(read('caderno/marca/index.html'));
 const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
 const notFound = withoutRscMarkers(read('404.html'));
 const visibleProduct = product.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+const visibleArchive = archive.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleNotebook = notebook.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleCertificateModel = certificateModel.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleTopQuote = topQuote.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
@@ -405,6 +412,15 @@ check(notFound.includes(`<link rel="canonical" href="${origin}/404.html"`) && no
 check(notFound.includes(`<meta property="og:title" content="Arquivo não encontrado · ${brandData.name}"`) && notFound.includes('<meta name="twitter:card" content="summary"'), '404: metadados de compartilhamento próprios ausentes');
 check(notFound.includes('Esta edição') && notFound.includes('Voltar ao início'), '404: experiência de recuperação incompleta');
 check((home.match(/data-motion-mode="static"/g) ?? []).length === 3 && !home.includes('data-motion-mode="active"'), 'home: cartões não nascem como três artigos estáticos antes do Framer');
+for (const item of collectionPaletteContract) {
+  const paletteLabel = `Paleta ${item.family} — ${item.name}: ${item.palette.map((color) => `${color.name} ${color.hex}`).join(', ')}.`;
+  check(visibleArchive.includes(`role="img" aria-label="${paletteLabel}"`), `Coleções: paleta acessível ausente em ${item.family} — ${item.name}`);
+  for (const color of item.palette) {
+    check(/^#[0-9a-f]{6}$/i.test(color.hex) && color.name.length >= 5, `Coleções: cor sem nome ou hexadecimal válido em ${item.name}`);
+    check(visibleArchive.includes(`<i aria-hidden="true" style="background:${color.hex}"></i>`), `Coleções: swatch visual divergente em ${item.name} / ${color.name}`);
+  }
+}
+check((visibleArchive.match(/<div class="palette" role="img"/g) ?? []).length === collectionPaletteContract.length && (visibleArchive.match(/<i aria-hidden="true" style="background:/g) ?? []).length === collectionPaletteContract.reduce((total, item) => total + item.palette.length, 0), 'Coleções: quantidade de paletas ou swatches diverge do contrato');
 check(home.includes(`protótipo ${prototypeNumber} em desenvolvimento`), 'início: estágio conceitual não está explícito');
 check(home.includes(`Estágio atual: ${numberWords[projectData.edition.producedPieces]} de ${numberWords[projectData.edition.runSize]} peças produzidas`), 'início: estágio editorial diverge do contrato do projeto');
 check(home.includes(`Protocolo ${lastPieceFraction}`), 'início: protocolo editorial diverge da tiragem declarada');

@@ -998,3 +998,27 @@ Caderno e Guia já tornavam três tabelas focáveis, mas os contêineres não de
 ### Proteção contra regressão
 
 O verificador conta regiões no HTML visível de cada documento e exige `role`, `tabindex` e nome acessível. Também protege o isolamento de overflow, a liberação na impressão e a natureza server-only do componente compartilhado.
+
+## Ciclo 43 — paletas com equivalente textual
+
+Data: 24 de agosto de 2026.
+
+### Nove cores sem identidade programática
+
+O arquivo mostrava três swatches por coleção, mas cada paleta era um `div` com rótulo genérico e nove elementos vazios. O texto visual das descrições sugeria materiais, porém tecnologia assistiva não recebia os nomes e valores que definiam cada trio.
+
+### Intervenção
+
+- cada cor passou de string para objeto `{ name, hex }`;
+- Yggdrasil recebeu Carvão, Madeira âmbar e Bronze claro;
+- Medallion recebeu Nogueira profunda, Marfim antigo e Ouro velho;
+- Meridian recebeu Madeira escura, Marfim mineral e Bronze linear;
+- cada paleta é uma imagem semântica com coleção, nomes e hexadecimais;
+- os nove swatches visuais são decorativos e ficam ocultos da árvore acessível;
+- estilo e descrição derivam do mesmo objeto, sem texto paralelo no componente;
+- os nomes foram documentados como direção visual, não fórmula física;
+- a regra foi registrada em `docs/PALETAS-DAS-COLECOES.md`.
+
+### Proteção contra regressão
+
+O verificador exige três paletas, nove swatches, nomes, hexadecimais válidos, papel de imagem e ocultação dos elementos gráficos. A descrição renderizada precisa reproduzir integralmente o contrato.

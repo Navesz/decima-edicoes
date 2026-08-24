@@ -61,7 +61,7 @@ export default function CollectionsPage() {
               <div className="archive-image"><ResponsiveImage src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} sizes="(max-width: 800px) 100vw, 50vw" /></div>
               <div className="archive-title"><span>{collection.number}</span><div><small>{collection.family} · {collection.year}</small><h2>{collection.name}</h2></div><ArrowUpRight strokeWidth={1.2} /></div>
               <p>{collection.description}</p>
-              <div className="palette" aria-label="Paleta da coleção">{collection.palette.map((color) => <i key={color} style={{ background: color }} />)}</div>
+              <div className="palette" role="img" aria-label={`Paleta ${collection.family} — ${collection.name}: ${collection.palette.map((color) => `${color.name} ${color.hex}`).join(', ')}.`}>{collection.palette.map((color) => <i key={color.hex} aria-hidden="true" style={{ background: color.hex }} />)}</div>
             </Link>
           </article>
         ))}

@@ -10,7 +10,7 @@ export type Collection = {
   image: string;
   status: string;
   description: string;
-  palette: string[];
+  palette: { name: string; hex: string }[];
 };
 
 export const collections: Collection[] = [
@@ -23,7 +23,11 @@ export const collections: Collection[] = [
     image: assetPath('/images/hero-yggdrasil.webp'),
     status: `${edition.commercialStatusLabel} · tiragem prevista de ${edition.runSize}`,
     description: `Uma árvore, ${edition.runSizeWord} objetos irrepetíveis. Carvão, madeira natural e o calor contido do bronze.`,
-    palette: ['#171411', '#9a6e3f', '#c8a875'],
+    palette: [
+      { name: 'Carvão', hex: '#171411' },
+      { name: 'Madeira âmbar', hex: '#9a6e3f' },
+      { name: 'Bronze claro', hex: '#c8a875' },
+    ],
   },
   {
     slug: 'renaissance-medallion',
@@ -34,7 +38,11 @@ export const collections: Collection[] = [
     image: assetPath('/images/renaissance-medallion.webp'),
     status: 'Em desenvolvimento',
     description: 'Ornamento e simetria conduzidos por uma paleta contida de nogueira, marfim e ouro velho.',
-    palette: ['#241b16', '#d7c5a0', '#89643a'],
+    palette: [
+      { name: 'Nogueira profunda', hex: '#241b16' },
+      { name: 'Marfim antigo', hex: '#d7c5a0' },
+      { name: 'Ouro velho', hex: '#89643a' },
+    ],
   },
   {
     slug: 'atelier-meridian',
@@ -45,7 +53,11 @@ export const collections: Collection[] = [
     image: assetPath('/images/sunburst.webp'),
     status: 'Arquivo de conceito',
     description: 'Ritmo radial e geometrias precisas em madeira escura, marfim mineral e linhas de bronze.',
-    palette: ['#191512', '#e4d3af', '#a77b40'],
+    palette: [
+      { name: 'Madeira escura', hex: '#191512' },
+      { name: 'Marfim mineral', hex: '#e4d3af' },
+      { name: 'Bronze linear', hex: '#a77b40' },
+    ],
   },
 ];
 
