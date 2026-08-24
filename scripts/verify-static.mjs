@@ -68,14 +68,14 @@ function listFiles(directory) {
 }
 
 const routes = [
-  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 580, cssBudgetKiB: 40, currentPath: '/', currentCount: 1 },
-  { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/colecoes/', currentCount: 2 },
-  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/colecoes/', currentCount: 2 },
-  { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/caderno/', currentCount: 2 },
-  { file: 'caderno/certificado-modelo/index.html', title: `Modelo de Certificado de Edição · ${brandData.shortName}`, canonical: `${origin}/caderno/certificado-modelo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
-  { file: 'caderno/cotacao-tampo/index.html', title: `Briefing de Cotação do Tampo · ${brandData.shortName}`, canonical: `${origin}/caderno/cotacao-tampo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
-  { file: 'caderno/marca/index.html', title: `Guia de Marca · ${brandData.shortName}`, canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
-  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
+  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 580, cssBudgetKiB: 40, currentPath: '/', currentCount: 1, imageCount: 7, priorityImages: 1 },
+  { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/colecoes/', currentCount: 2, imageCount: 4, priorityImages: 0 },
+  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/colecoes/', currentCount: 2, imageCount: 5, priorityImages: 1 },
+  { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/caderno/', currentCount: 2, imageCount: 1, priorityImages: 0 },
+  { file: 'caderno/certificado-modelo/index.html', title: `Modelo de Certificado de Edição · ${brandData.shortName}`, canonical: `${origin}/caderno/certificado-modelo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2, imageCount: 0, priorityImages: 0 },
+  { file: 'caderno/cotacao-tampo/index.html', title: `Briefing de Cotação do Tampo · ${brandData.shortName}`, canonical: `${origin}/caderno/cotacao-tampo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2, imageCount: 0, priorityImages: 0 },
+  { file: 'caderno/marca/index.html', title: `Guia de Marca · ${brandData.shortName}`, canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2, imageCount: 3, priorityImages: 0 },
+  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2, imageCount: 0, priorityImages: 0 },
 ];
 
 function initialScriptSources(html) {
@@ -126,6 +126,15 @@ for (const route of routes) {
   const expectedCurrentHref = `${exportedBasePath}${route.currentPath}`;
   check(currentLinks.length === route.currentCount, `${route.file}: esperados ${route.currentCount} indicadores de página atual, encontrados ${currentLinks.length}`);
   check(currentLinks.every((tag) => tag.includes(`href="${expectedCurrentHref}"`)), `${route.file}: indicador de página atual aponta para área incorreta`);
+  const imageTags = [...visibleHtml.matchAll(/<img\b[^>]*>/gi)].map((match) => match[0]);
+  const eagerImages = imageTags.filter((tag) => tag.includes('loading="eager"'));
+  const highPriorityImages = imageTags.filter((tag) => /fetchPriority="high"|fetchpriority="high"/.test(tag));
+  const lazyImages = imageTags.filter((tag) => tag.includes('loading="lazy"'));
+  check(imageTags.length === route.imageCount, `${route.file}: esperadas ${route.imageCount} imagens, encontradas ${imageTags.length}`);
+  check(eagerImages.length === route.priorityImages && highPriorityImages.length === route.priorityImages, `${route.file}: prioridade de imagem diverge do contrato (${eagerImages.length} eager / ${highPriorityImages.length} high)`);
+  check(eagerImages.every((tag) => /fetchPriority="high"|fetchpriority="high"/.test(tag)) && highPriorityImages.every((tag) => tag.includes('loading="eager"')), `${route.file}: eager e fetch priority high não apontam para a mesma imagem`);
+  check(lazyImages.length === imageTags.length - route.priorityImages, `${route.file}: imagens secundárias deixaram de usar lazy loading`);
+  check(imageTags.every((tag) => tag.includes('decoding="async"')), `${route.file}: imagem sem decodificação assíncrona`);
   if (route.responsiveImages !== false) {
     check(/\ssrcset="[^"]+-480\.webp 480w,[^"]+-800\.webp 800w/i.test(visibleHtml), `${route.file}: variantes responsivas de imagem ausentes`);
     check(/\ssizes="[^"]+"/i.test(visibleHtml), `${route.file}: instrução de tamanho responsivo ausente`);

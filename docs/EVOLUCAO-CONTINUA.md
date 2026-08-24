@@ -926,3 +926,25 @@ Ficha 00, briefing do tampo e modelo de certificado já compartilhavam uma folha
 ### Proteção contra regressão
 
 O verificador confere as regras de fluxo, títulos, cabeçalhos repetidos, unidades indivisíveis, tipografia e cor. Também exige botão local do tipo `button` nas três páginas imprimíveis.
+
+## Ciclo 40 — contrato de prioridade das imagens
+
+Data: 24 de agosto de 2026.
+
+### Política correta sem proteção por rota
+
+Os dois heros visuais já recebiam prioridade, enquanto imagens abaixo da dobra eram adiadas. O verificador protegia variantes, dimensões e tamanho, mas não impediria uma futura alteração de promover a grade inteira ou tornar o hero preguiçoso.
+
+### Intervenção
+
+- inventariadas as imagens dos oito documentos exportados;
+- home e dossiê Yggdrasil mantêm exatamente um `eager/high` cada;
+- Coleções, Caderno e Guia de Marca mantêm todas as imagens em `lazy`;
+- documentos textuais continuam sem imagem de conteúdo;
+- as 17 imagens publicadas usam decodificação assíncrona;
+- `eager` e prioridade alta precisam apontar ao mesmo elemento;
+- a política foi registrada em `docs/PRIORIDADE-DE-IMAGENS.md`.
+
+### Proteção contra regressão
+
+Cada rota ganhou contagem esperada de imagens e de prioridades. O verificador compara `eager`, `high`, `lazy` e `async` diretamente no HTML exportado e falha se uma imagem secundária competir com o conteúdo principal ou se um hero for adiado.
