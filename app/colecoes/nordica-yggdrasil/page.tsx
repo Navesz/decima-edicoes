@@ -6,9 +6,10 @@ import { ResponsiveImage } from '../../components/responsive-image';
 import { SiteHeader } from '../../components/site-header';
 import { gallery } from '../../lib/collections';
 import { assetPath } from '../../lib/base-path';
-import { collection, edition, product, productLabels, projectLabels } from '../../lib/project';
+import { collection, edition, editionPositions, product, productLabels, projectLabels } from '../../lib/project';
 import { absoluteUrl, siteName } from '../../lib/site';
 import { brandId, breadcrumbSchema, webPageSchema } from '../../lib/structured-data';
+import styles from './edition-register.module.css';
 
 const productUrl = absoluteUrl(`/colecoes/${collection.slug}/`);
 const productModelId = `${productUrl}#model`;
@@ -39,6 +40,7 @@ const productSchema = {
   additionalProperty: [
     { '@type': 'PropertyValue', name: 'Espessura do tampo', value: productLabels.topThickness },
     { '@type': 'PropertyValue', name: 'Tiragem prevista', value: edition.runSize },
+    { '@type': 'PropertyValue', name: 'Peças concluídas', value: edition.producedPieces },
     { '@type': 'PropertyValue', name: 'Estado comercial', value: `${edition.commercialStatusLabel} · ainda não está à venda` },
   ],
 };
@@ -77,6 +79,13 @@ export default function YggdrasilPage() {
           <li><span>Só então</span><strong>Edição {edition.firstPieceFraction}</strong><p>Abertura comercial com ficha técnica congelada, prazo, garantia e entrega definidos.</p></li>
         </ol>
         <p className="product-status-note">Manifestar interesse nesta apresentação não constitui reserva, encomenda ou pagamento.</p>
+      </section>
+      <section className={styles.register} id="registro-edicao" aria-labelledby="edition-register-title">
+        <div className={styles.heading}><div><p className="micro-label">Registro público da edição</p><h2 id="edition-register-title">Dez posições.<br />Nenhuma ficção.</h2></div><div><strong>{edition.currentStage}</strong><span>objetos concluídos</span><p>O estado vem do contrato do projeto. “Não produzida” significa que não existe objeto numerado, certificado, reserva ou propriedade associada àquela posição.</p></div></div>
+        <ol className={styles.grid}>
+          {editionPositions.map((position) => <li key={position.number} data-piece={position.number} data-state={position.state}><span>{position.number}</span><strong>Peça {position.fraction}</strong><small>{position.stateLabel}</small></li>)}
+        </ol>
+        <p className={styles.note}>O futuro registro público poderá exibir número, código verificável, ano e estado documental. Nome, contato, endereço e histórico privado de custódia não serão publicados por padrão.</p>
       </section>
       <section className="product-gallery">
         {gallery.map((src, index) => <figure key={src} className={index === 0 ? 'wide' : ''}><ResponsiveImage src={src} alt={`Visualização conceitual ${collection.name} ${index + 1}`} sizes={index === 0 ? '100vw' : '(max-width: 800px) 100vw, 50vw'} /><figcaption>Visualização conceitual {String(index + 1).padStart(2, '0')} · variação de matéria e luz</figcaption></figure>)}

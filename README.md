@@ -23,7 +23,7 @@ O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idi
 
 - `/` — apresentação da marca, coleção inaugural, manifesto e lista privada;
 - `/colecoes` — arquivo de edições e estudos;
-- `/colecoes/nordica-yggdrasil` — dossiê da primeira coleção;
+- `/colecoes/nordica-yggdrasil` — dossiê da primeira coleção e registro público das posições 01–10;
 - `/caderno` — área aberta do fundador com regras, protótipos, acabamento e simulador 3D.
 - `/caderno/marca` — guia interno, não indexado, com avaliação do nome, símbolo, aplicações, paleta, tipografia, voz e nomenclatura;
 - `/caderno/cotacao-tampo` — briefing interno e imprimível para cotar e receber o tampo inteiro pré-nivelado;
@@ -48,6 +48,8 @@ Nome, slogan, idioma, paleta e ativos oficiais vivem separadamente em `app/lib/b
 Os pares de cor aprovados e restritos também vivem nesse contrato. O Guia publica os índices calculados e o build aplica os limiares WCAG documentados em `docs/CONTRASTE-E-ACESSIBILIDADE.md`.
 
 A modelagem de SEO liga marca, website, páginas, breadcrumbs e o conceito Yggdrasil sem publicar oferta fictícia. As regras estão em `docs/SEO-E-DADOS-ESTRUTURADOS.md`.
+
+O registro público da tiragem deriva do mesmo contrato, separa produção de disponibilidade e não publica dados pessoais. Estados e procedimento estão em `docs/REGISTRO-PUBLICO-DA-EDICAO.md`.
 
 ## Rodar localmente
 

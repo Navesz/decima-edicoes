@@ -175,7 +175,7 @@ const mediaDirectory = join(staticDirectory, 'media');
 const cssFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.css'));
 const fontFiles = readdirSync(mediaDirectory).filter((file) => /\.woff2?$/i.test(file));
 const fontBytes = fontFiles.reduce((total, file) => total + statSync(join(mediaDirectory, file)).size, 0);
-check(cssFiles.length <= 3, `esperados no máximo três pacotes CSS, encontrados ${cssFiles.length}`);
+check(cssFiles.length <= 4, `esperados no máximo quatro pacotes CSS, encontrados ${cssFiles.length}`);
 check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
@@ -191,6 +191,8 @@ check((sourceCss.match(/min-height:\s*(24|44)px/g) ?? []).length >= 10, 'alvos m
 check(sourceCss.includes('.image-caption {') && sourceCss.includes('background: rgba(23,20,17,.72);'), 'legenda conceitual perdeu seu fundo de contraste');
 check(sourceCss.includes(':focus-visible { outline: 2px solid var(--bronze);'), 'indicador global de foco visível ausente');
 check(sourceCss.includes('@media (prefers-reduced-motion: reduce)'), 'preferência por movimento reduzido deixou de ser respeitada');
+const editionRegisterCss = readFileSync(join(root, 'app', 'colecoes', projectData.collection.slug, 'edition-register.module.css'), 'utf8');
+check(editionRegisterCss.includes('.grid { display: grid; grid-template-columns: repeat(5,1fr);') && editionRegisterCss.includes('.grid { grid-template-columns: repeat(2,1fr);') && editionRegisterCss.includes('@media (max-width: 800px)'), 'registro público da edição perdeu grade desktop ou adaptação móvel');
 
 const workflowSource = readFileSync(join(root, '.github', 'workflows', 'deploy-pages.yml'), 'utf8');
 const pinnedActions = {
@@ -243,6 +245,7 @@ const certificateModel = withoutRscMarkers(read('caderno/certificado-modelo/inde
 const topQuote = withoutRscMarkers(read('caderno/cotacao-tampo/index.html'));
 const brandGuide = withoutRscMarkers(read('caderno/marca/index.html'));
 const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
+const visibleProduct = product.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleCertificateModel = certificateModel.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
@@ -259,6 +262,16 @@ check(product.includes(`${projectData.collection.name} ainda não está à venda
 check(product.includes('ProductModel'), `${projectData.collection.name}: dados estruturados devem representar um modelo, não produto disponível`);
 check(product.includes(`${projectData.edition.producedPieces} produzidas`) && product.includes(`${projectData.edition.runSize} previstas`), `${projectData.collection.name}: contagem editorial diverge do contrato do projeto`);
 check(product.includes(`${projectData.product.diameterCm} cm`) && product.includes(`${projectData.product.heightCm} cm`) && product.includes(`${projectData.product.topThicknessMm.minimum}–${projectData.product.topThicknessMm.maximum} mm`), `${projectData.collection.name}: dimensões de partida divergem do contrato do projeto`);
+const editionRegister = visibleProduct.match(/<section[^>]+id="registro-edicao"[\s\S]*?<\/section>/)?.[0] ?? '';
+check(editionRegister.includes('id="registro-edicao"') && editionRegister.includes(`${pad2(projectData.edition.producedPieces)}/${projectData.edition.runSize}`), `${projectData.collection.name}: registro público ou resumo da edição ausente`);
+check((editionRegister.match(/data-piece=/g) ?? []).length === projectData.edition.runSize, `${projectData.collection.name}: registro não possui ${projectData.edition.runSize} posições`);
+check((editionRegister.match(/data-state="produced"/g) ?? []).length === projectData.edition.producedPieces && (editionRegister.match(/data-state="not-produced"/g) ?? []).length === projectData.edition.runSize - projectData.edition.producedPieces, `${projectData.collection.name}: estados do registro divergem da produção real`);
+for (let piece = 1; piece <= projectData.edition.runSize; piece += 1) {
+  const number = pad2(piece);
+  check(editionRegister.includes(`data-piece="${number}"`) && editionRegister.includes(`Peça ${number}/${projectData.edition.runSize}`), `${projectData.collection.name}: posição ${number} ausente do registro`);
+}
+check(editionRegister.includes('não existe objeto numerado, certificado, reserva ou propriedade') && editionRegister.includes('Nome, contato, endereço e histórico privado de custódia não serão publicados'), `${projectData.collection.name}: limites de estado ou privacidade ausentes do registro`);
+check(!/Reservada|Disponível|Proprietári[oa]:/i.test(editionRegister), `${projectData.collection.name}: registro público inventa disponibilidade, reserva ou proprietário`);
 check(notebook.includes(`Versão ${projectData.documents.notebookVersion}`), 'Caderno: versão do documento vivo não foi atualizada');
 check(notebook.includes(`Só existe peça ${firstPiece} depois de ${gateItemsWord} aprovações documentadas`), `Caderno: regra do Portão ${prototypeNumber} ausente`);
 check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado'), 'Caderno: especificação de partida da madeira ausente');
@@ -402,6 +415,7 @@ if (productModels.length === 1) {
   check([model.width, model.depth, model.height].every((measure) => measure?.['@type'] === 'QuantitativeValue' && measure.unitCode === 'CMT' && measure.unitText === 'cm'), `${projectData.collection.name}: unidades estruturadas inválidas`);
   check(Array.isArray(model.image) && model.image.length === 4 && model.image.every((url) => url.startsWith(`${origin}/images/`)), `${projectData.collection.name}: imagens estruturadas ausentes ou externas`);
   check(model.additionalProperty?.some((property) => property.name === 'Estado comercial' && property.value.includes('ainda não está à venda')), `${projectData.collection.name}: estado comercial transparente ausente do ProductModel`);
+  check(model.additionalProperty?.some((property) => property.name === 'Peças concluídas' && property.value === projectData.edition.producedPieces), `${projectData.collection.name}: produção real ausente do ProductModel`);
 }
 const productPages = nodesOfType(productStructuredNodes, 'WebPage');
 check(productPages.length === 1 && productPages[0].mainEntity?.['@id'] === `${productStructuredUrl}#model`, `${projectData.collection.name}: WebPage não aponta para o ProductModel`);
@@ -414,7 +428,9 @@ checkBreadcrumb(notebookStructuredNodes, 2, `${origin}/caderno/`, 'caderno/index
 
 check(projectData.edition.runSize >= 2, 'Contrato do projeto: a tiragem precisa comportar início e encerramento');
 check(projectData.edition.producedPieces >= 0 && projectData.edition.producedPieces <= projectData.edition.runSize, 'Contrato do projeto: quantidade produzida inválida');
+check(Number.isInteger(projectData.edition.producedPieces), 'Contrato do projeto: quantidade produzida precisa ser inteira');
 check(projectData.edition.commercialStatus === 'prototyping', 'Contrato do projeto: estado comercial mudou sem uma regra de publicação correspondente');
+if (projectData.edition.commercialStatus === 'prototyping') check(projectData.edition.producedPieces === 0, 'Contrato do projeto: prototipagem não pode conter peça numerada concluída');
 check(new Set(projectData.proofBodies.map((item) => item.code)).size === projectData.proofBodies.length, 'Contrato do projeto: códigos de corpos de prova repetidos');
 check(new Set(projectData.prototypeGate.map((item) => item.code)).size === projectData.prototypeGate.length, 'Contrato do projeto: códigos do Portão repetidos');
 check(/^\d+\.\d+$/.test(projectData.documents.notebookVersion), 'Contrato do projeto: versão do Caderno não segue o formato numérico');
@@ -627,8 +643,8 @@ for (const file of exportedHtmlFiles) {
 }
 
 check(exportedHtmlFiles.length >= routes.length + 3, `rastreador: quantidade inesperada de documentos HTML (${exportedHtmlFiles.length})`);
-check(checkedInternalReferences >= 320, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
-check(checkedSemanticElements >= 370, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
+check(checkedInternalReferences >= 324, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
+check(checkedSemanticElements >= 374, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
 check(checkedStructuredNodes >= 29, `SEO: poucos nós estruturados verificados (${checkedStructuredNodes})`);
 
 if (failures.length) {

@@ -31,6 +31,17 @@ export const edition = {
   commercialStatusLabel: commercialStatusLabels[project.edition.commercialStatus] ?? project.edition.commercialStatus,
 } as const;
 
+export const editionPositions = Array.from({ length: edition.runSize }, (_, index) => {
+  const pieceNumber = index + 1;
+  const produced = pieceNumber <= edition.producedPieces;
+  return {
+    number: pad2(pieceNumber),
+    fraction: `${pad2(pieceNumber)}/${edition.runSize}`,
+    state: produced ? 'produced' : 'not-produced',
+    stateLabel: produced ? 'Produzida' : 'Não produzida',
+  } as const;
+});
+
 export const productLabels = {
   diameter: `${product.diameterCm} cm`,
   height: `${product.heightCm} cm`,

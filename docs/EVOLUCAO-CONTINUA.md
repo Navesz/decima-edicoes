@@ -592,3 +592,27 @@ As Actions do workflow estavam nas gerações atuais, mas eram chamadas por tags
 ### Proteção contra regressão
 
 O verificador exige exatamente cinco Actions oficiais, SHAs de 40 caracteres e comentários de versão correspondentes. Também rejeita Action externa, referência móvel, permissão global, escrita no build, escrita de conteúdo no deploy ou perda da dependência e do ambiente `github-pages`.
+
+## Ciclo 26 — registro público da tiragem
+
+Data: 24 de agosto de 2026.
+
+### Escassez ainda agregada
+
+O dossiê dizia “0 produzidas / 10 previstas”, mas não mostrava as dez posições que sustentam a promessa editorial. Para o cliente, a limitação ainda dependia de uma frase; para o projeto, não havia proteção contra confundir produção, disponibilidade, reserva e propriedade.
+
+### Intervenção
+
+- o contrato passou a derivar posições ordenadas de 01/10 a 10/10;
+- o dossiê Yggdrasil ganhou um registro público escuro com resumo 00/10 e dez células semânticas;
+- todas as posições atuais aparecem como `Não produzida` porque o estado canônico continua zero;
+- a explicação deixa claro que não existe objeto, certificado, reserva ou propriedade naquela posição;
+- a futura publicação poderá mostrar número, código, ano e estado documental, mas não nomes, contatos, endereços ou custódia privada por padrão;
+- `ProductModel` ganhou a propriedade `Peças concluídas`, também derivada do contrato;
+- produção não foi transformada em preço, oferta, disponibilidade ou estoque;
+- os estilos do registro ficaram em um módulo exclusivo do dossiê, evitando cerca de 2 KiB inúteis nas outras páginas;
+- regras de evolução para registros explícitos foram documentadas em `docs/REGISTRO-PUBLICO-DA-EDICAO.md`.
+
+### Proteção contra regressão
+
+O verificador recorta apenas o registro visível, exige dez posições e frações, compara quantidades `produced`/`not-produced` com `producedPieces`, rejeita linguagem de reserva, disponibilidade ou proprietário e confirma limites de estado e privacidade. A contagem estruturada precisa coincidir e, durante a prototipagem, nenhuma peça numerada pode surgir. O módulo preserva cinco colunas no desktop e duas no celular sem aumentar o pacote global.
