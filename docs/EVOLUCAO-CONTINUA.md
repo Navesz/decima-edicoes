@@ -569,3 +569,26 @@ O Caderno descrevia certificado, arquivo de matéria e plaqueta, mas ainda não 
 ### Proteção contra regressão
 
 A rota declara `noindex, nofollow`, fica fora do sitemap e reutiliza a folha A4 validada. O verificador proíbe pré-atribuição da peça 01/10, exige o alerta sem validade, tiragem e dimensões canônicas, encerramento 10/10, quatro linhas de histórico, impressão e limites de autenticidade, autoria e privacidade.
+
+## Ciclo 25 — cadeia de publicação imutável
+
+Data: 24 de agosto de 2026.
+
+### Risco encontrado
+
+As Actions do workflow estavam nas gerações atuais, mas eram chamadas por tags maiores como `@v6`. Uma tag pode mudar de destino; o próprio GitHub afirma que apenas o SHA completo torna a referência imutável. Além disso, permissões `pages: write` e `id-token: write` estavam no nível global e chegavam ao build sem necessidade.
+
+### Intervenção
+
+- as cinco tags oficiais foram resolvidas com `git ls-remote` e confirmadas pela API do GitHub como commits dos repositórios `actions/*`;
+- checkout, setup-node, configure-pages, upload-pages-artifact e deploy-pages foram fixados em SHAs completos;
+- a versão humana permanece ao lado de cada pin como comentário;
+- permissões globais foram removidas;
+- o build ficou limitado a `contents: read` e `pages: read`;
+- apenas o deploy recebe `pages: write` e `id-token: write`;
+- dependência do build e ambiente protegido `github-pages` permaneceram explícitos;
+- fontes oficiais, pins e atualização segura foram registrados em `docs/SEGURANCA-DO-DEPLOY.md`.
+
+### Proteção contra regressão
+
+O verificador exige exatamente cinco Actions oficiais, SHAs de 40 caracteres e comentários de versão correspondentes. Também rejeita Action externa, referência móvel, permissão global, escrita no build, escrita de conteúdo no deploy ou perda da dependência e do ambiente `github-pages`.

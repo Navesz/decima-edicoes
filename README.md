@@ -78,6 +78,8 @@ npm run images:optimize
 
 O push na branch `main` publica automaticamente no GitHub Pages.
 
+As cinco Actions oficiais estão fixadas em commits completos e os jobs usam permissões mínimas separadas. Pins e procedimento de atualização estão em `docs/SEGURANCA-DO-DEPLOY.md`.
+
 ## Antes do lançamento comercial
 
 1. validar disponibilidade jurídica do nome e registrar marca/domínio;

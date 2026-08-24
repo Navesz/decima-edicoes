@@ -192,6 +192,32 @@ check(sourceCss.includes('.image-caption {') && sourceCss.includes('background: 
 check(sourceCss.includes(':focus-visible { outline: 2px solid var(--bronze);'), 'indicador global de foco visível ausente');
 check(sourceCss.includes('@media (prefers-reduced-motion: reduce)'), 'preferência por movimento reduzido deixou de ser respeitada');
 
+const workflowSource = readFileSync(join(root, '.github', 'workflows', 'deploy-pages.yml'), 'utf8');
+const pinnedActions = {
+  'actions/checkout': ['d23441a48e516b6c34aea4fa41551a30e30af803', 'v6'],
+  'actions/setup-node': ['249970729cb0ef3589644e2896645e5dc5ba9c38', 'v6'],
+  'actions/configure-pages': ['45bfe0192ca1faeb007ade9deae92b16b8254a0d', 'v6'],
+  'actions/upload-pages-artifact': ['fc324d3547104276b827a68afc52ff2a11cc49c9', 'v5'],
+  'actions/deploy-pages': ['cd2ce8fcbc39b97be8ca5fce6e763baed58fa128', 'v5'],
+};
+const workflowUses = [...workflowSource.matchAll(/^\s*uses:\s+([^@\s]+)@([^\s#]+)(?:\s+#\s*(\S+))?/gm)];
+check(workflowUses.length === Object.keys(pinnedActions).length, `workflow: esperadas ${Object.keys(pinnedActions).length} Actions, encontradas ${workflowUses.length}`);
+for (const [action, [sha, version]] of Object.entries(pinnedActions)) {
+  const use = workflowUses.find((match) => match[1] === action);
+  check(use?.[2] === sha && /^[0-9a-f]{40}$/.test(use[2]) && use?.[3] === version, `workflow: ${action} não está fixada em ${sha} com comentário ${version}`);
+}
+check(workflowUses.every((use) => use[1].startsWith('actions/') && /^[0-9a-f]{40}$/.test(use[2])), 'workflow: Action externa ou referência móvel encontrada');
+const jobsIndex = workflowSource.indexOf('\njobs:');
+const buildIndex = workflowSource.indexOf('\n  build:', jobsIndex);
+const deployIndex = workflowSource.indexOf('\n  deploy:', buildIndex);
+const workflowHeader = workflowSource.slice(0, jobsIndex);
+const buildJob = workflowSource.slice(buildIndex, deployIndex);
+const deployJob = workflowSource.slice(deployIndex);
+check(!/^permissions:/m.test(workflowHeader), 'workflow: permissões globais ampliam privilégios de todos os jobs');
+check(/permissions:\s*\n\s+contents: read\s*\n\s+pages: read/.test(buildJob) && !/id-token:\s*write/.test(buildJob) && !/pages:\s*write/.test(buildJob), 'workflow: build precisa apenas de contents:read e pages:read');
+check(/permissions:\s*\n\s+pages: write\s*\n\s+id-token: write/.test(deployJob) && !/contents:\s*write/.test(deployJob), 'workflow: deploy precisa limitar escrita a Pages e OIDC');
+check(/needs:\s*build/.test(deployJob) && /environment:\s*\n\s+name:\s*github-pages/.test(deployJob), 'workflow: deploy precisa depender do build e usar o ambiente github-pages');
+
 const socialCards = ['collections.jpg', 'yggdrasil.jpg', 'caderno.jpg'];
 for (const file of socialCards) {
   const path = join(output, 'social', file);
