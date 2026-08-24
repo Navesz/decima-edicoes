@@ -20,7 +20,7 @@ export const collections: Collection[] = [
     name: 'Yggdrasil',
     year: '2026',
     image: assetPath('/images/hero-yggdrasil.png'),
-    status: 'Edição inaugural · 10 peças',
+    status: 'Em prototipagem · tiragem prevista de 10',
     description: 'Uma árvore, dez objetos irrepetíveis. Carvão, madeira natural e o calor contido do bronze.',
     palette: ['#171411', '#9a6e3f', '#c8a875'],
   },

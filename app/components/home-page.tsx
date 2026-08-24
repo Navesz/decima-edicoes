@@ -17,7 +17,7 @@ export function HomePage() {
   return (
     <main id="conteudo">
       <section className="hero-shell">
-        <Image className="hero-image" src={assetPath('/images/hero-yggdrasil.png')} alt="Mesa baixa redonda Yggdrasil em madeira e aço" fill priority sizes="100vw" />
+        <Image className="hero-image" src={assetPath('/images/hero-yggdrasil.png')} alt="Visualização conceitual da mesa baixa redonda Yggdrasil em madeira e aço" fill priority sizes="100vw" />
         <div className="hero-wash" />
         <SiteHeader />
 
@@ -32,7 +32,7 @@ export function HomePage() {
             Objetos que<br />não se repetem.
           </motion.h1>
           <motion.div className="hero-bottom" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: .9 } } }}>
-            <p className="hero-copy">Mesas autorais em madeira e aço.<br />Dez peças. Uma edição. Nenhuma reimpressão.</p>
+            <p className="hero-copy">Mesas autorais em madeira e aço.<br />Dez peças previstas. Uma edição. Nenhuma reimpressão.</p>
             <Link className="discover" href="/colecoes/nordica-yggdrasil">
               <span>Descobrir<br />Nórdica — Yggdrasil</span>
               <b aria-hidden="true"><ArrowDown size={16} /></b>
@@ -40,8 +40,8 @@ export function HomePage() {
           </motion.div>
         </motion.div>
 
-        <aside className="edition-rail" aria-label="Edição limitada"><span>EDIÇÃO</span><strong>01</strong><i>/10</i></aside>
-        <p className="image-caption">Peça 01/10 · madeira maciça · aço carbono</p>
+        <aside className="edition-rail" aria-label="Estágio atual: zero de dez peças produzidas"><span>ESTÁGIO</span><strong>00</strong><i>/10</i></aside>
+        <p className="image-caption">Visualização conceitual · protótipo 00 em desenvolvimento</p>
       </section>
 
       <section className="manifesto-section" id="manifesto">
@@ -59,7 +59,7 @@ export function HomePage() {
 
       <section className="object-study">
         <div className="object-image-frame">
-          <Image className="parallax-media" src={assetPath('/images/yggdrasil-dark.png')} alt="Detalhe da mesa Yggdrasil em madeira escura" fill sizes="(max-width: 800px) 100vw, 55vw" />
+          <Image className="parallax-media" src={assetPath('/images/yggdrasil-dark.png')} alt="Visualização conceitual do tampo Yggdrasil em madeira escura" fill sizes="(max-width: 800px) 100vw, 55vw" />
           <span>O tampo é a obra.</span>
         </div>
         <div className="object-copy gsap-reveal">
@@ -83,7 +83,7 @@ export function HomePage() {
           {collections.map((collection, index) => (
             <motion.article className="collection-card gsap-reveal" key={collection.slug} whileHover={reduceMotion ? undefined : { y: -8 }} transition={{ duration: .35 }}>
               <Link href={index === 0 ? `/colecoes/${collection.slug}` : '/colecoes'} aria-label={`${collection.family} — ${collection.name}`}>
-                <div className="collection-media"><Image src={collection.image} alt={`Mesa ${collection.family} — ${collection.name}`} fill sizes="(max-width: 800px) 100vw, 33vw" /></div>
+                <div className="collection-media"><Image src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} fill sizes="(max-width: 800px) 100vw, 33vw" /></div>
                 <div className="collection-meta"><span>{collection.number}</span><div><small>{collection.family}</small><h3>{collection.name}</h3></div><ArrowUpRight size={18} strokeWidth={1.25} /></div>
                 <p>{collection.status}</p>
               </Link>
@@ -94,7 +94,7 @@ export function HomePage() {
       </section>
 
       <section className="edition-protocol">
-        <Image className="protocol-image" src={assetPath('/images/yggdrasil-ivory.png')} alt="Yggdrasil em acabamento marfim" fill sizes="100vw" />
+        <Image className="protocol-image" src={assetPath('/images/yggdrasil-ivory.png')} alt="Visualização conceitual Yggdrasil em acabamento marfim" fill sizes="100vw" />
         <div className="protocol-wash" />
         <div className="protocol-copy gsap-reveal">
           <p className="micro-label">Protocolo 10/10</p>
@@ -106,13 +106,13 @@ export function HomePage() {
       <section className="studio-teaser">
         <div className="studio-intro gsap-reveal"><p className="micro-label">Área aberta do fundador</p><h2>O Caderno<br />do Atelier.</h2></div>
         <div className="studio-panel gsap-reveal">
-          <div className="studio-panel-image"><Image src={assetPath('/images/collection-board.png')} alt="Prancha de estudos das coleções DÉCIMA" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
+          <div className="studio-panel-image"><Image src={assetPath('/images/collection-board.png')} alt="Prancha conceitual das coleções DÉCIMA" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
           <div><p>Um espaço para enxergar o negócio por dentro: acabamento brilhante, fosco e acetinado; construção possível com metalon brasileiro; testes de adesivo, epóxi e PU; regras da marca e decisões ainda em aberto.</p><Link href="/caderno">Entrar no Caderno <ArrowUpRight size={16} /></Link></div>
         </div>
       </section>
 
       <section className="interest-section" id="interesse">
-        <div className="interest-copy gsap-reveal"><p className="micro-label">Acesso privado</p><h2>Dez lugares.<br />Nenhum estoque.</h2><p>A produção começa por manifestação de interesse. Entre na lista para receber o dossiê da edição inaugural e conversar sobre numeração, madeira e entrega.</p></div>
+        <div className="interest-copy gsap-reveal"><p className="micro-label">Prévia do acesso privado</p><h2>Dez lugares.<br />Nenhum estoque.</h2><p>A edição ainda está em prototipagem. Este fluxo demonstra como será a manifestação de interesse; ele não cria reserva, cobrança ou direito sobre uma numeração.</p></div>
         <InterestForm />
       </section>
 

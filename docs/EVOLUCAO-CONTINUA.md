@@ -53,3 +53,21 @@ Data: 24 de agosto de 2026.
 - início: 719,9 KiB, redução de 137,3 KiB (16%);
 - Coleções e Yggdrasil: 580,7 KiB, redução de 153 KiB (21%);
 - Caderno: 582 KiB, redução de 152,9 KiB (21%).
+
+## Ciclo 03 — transparência de estágio
+
+Data: 24 de agosto de 2026.
+
+### Risco encontrado
+
+O site apresentava imagens conceituais com linguagem de peça já produzida e usava chamadas como “edição aberta”, “peça 01/10” e “escolha um número”. O Caderno registrava corretamente que o projeto ainda precisa de corpos de prova e do protótipo 00, mas essa informação não estava clara para o visitante das páginas comerciais.
+
+### Correções
+
+- o primeiro quadro agora identifica a imagem como visualização conceitual e mostra `00/10` peças produzidas;
+- o arquivo informa que a edição está em prototipagem e ainda não recebe reservas;
+- o dossiê de Yggdrasil ganhou uma linha do tempo: corpos de prova, protótipo 00 e só então edição 01/10;
+- galerias e textos alternativos passaram a identificar as imagens como estudos conceituais;
+- o formulário se apresenta como demonstração e declara que não transmite dados nem cria reserva ou cobrança;
+- os dados estruturados descrevem Yggdrasil como `ProductModel`, coerente com o estágio atual;
+- o verificador impede que essas declarações essenciais desapareçam em mudanças futuras.

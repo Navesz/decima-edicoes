@@ -67,6 +67,13 @@ routes.forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`
 const robots = read('robots.txt');
 check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap ausente ou incorreto');
 
+const home = read('index.html');
+const product = read('colecoes/nordica-yggdrasil/index.html');
+check(home.includes('protótipo 00 em desenvolvimento'), 'início: estágio conceitual não está explícito');
+check(home.includes('não cria reserva, cobrança ou direito'), 'início: limite do fluxo de interesse não está explícito');
+check(product.includes('Yggdrasil ainda não está à venda'), 'Yggdrasil: indisponibilidade comercial não está explícita');
+check(product.includes('ProductModel'), 'Yggdrasil: dados estruturados devem representar um modelo, não produto disponível');
+
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);
   failures.forEach((failure) => console.error(`- ${failure}`));

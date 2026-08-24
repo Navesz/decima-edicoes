@@ -65,7 +65,7 @@ export function SiteHeader({ tone = 'light' }: Props) {
           {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}
         </nav>
         <Link className="header-cta" href="/#interesse">
-          Solicitar peça <ArrowUpRight size={13} strokeWidth={1.5} />
+          Acompanhar edição <ArrowUpRight size={13} strokeWidth={1.5} />
         </Link>
         <button ref={menuButton} className="menu-button" type="button" aria-label="Abrir menu" aria-expanded={open} aria-controls="menu-movel" onClick={() => setOpen(true)}>
           <Menu size={20} strokeWidth={1.25} />
