@@ -343,7 +343,7 @@
 
 .palette {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   margin: 90px 0 0 76px;
   border: 1px solid rgba(23, 20, 17, .25);
@@ -363,7 +363,8 @@
 .palette article > p { grid-column: 1 / -1; min-height: 92px; margin: 0; padding: 12px 16px 20px; color: var(--ink-muted); font-size: 12px; line-height: 1.5; }
 .ink { --swatch: #171411; }
 .ivory { --swatch: #eee7da; }
-.paper { --swatch: #f1ece3; }
+.paper { --swatch: #e7dece; }
+.paperLight { --swatch: #f1ece3; }
 .bronze { --swatch: #b28a53; }
 .bronzeInk { --swatch: #684318; }
 
@@ -558,7 +559,6 @@
   .usageRules { grid-template-columns: 1fr; }
   .verdictGrid article { min-height: 0; }
   .palette { grid-template-columns: repeat(2, 1fr); }
-  .palette article:last-child { grid-column: span 2; }
   .namingExamples { grid-template-columns: repeat(2, 1fr); }
   .voiceTraits { grid-template-columns: repeat(2, 1fr); }
 }
@@ -590,7 +590,6 @@
   .caution { grid-template-columns: 1fr; }
   .logoGrid figcaption { align-items: flex-start; flex-direction: column; }
   .palette { grid-template-columns: 1fr; }
-  .palette article:last-child { grid-column: auto; }
   .typeGrid article { min-height: 0; }
   .namingFormula { grid-template-columns: 1fr; gap: 24px; }
   .namingFormula > b { font-size: 40px; }

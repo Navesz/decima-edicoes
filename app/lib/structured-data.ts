@@ -1,4 +1,5 @@
 import { absoluteUrl, siteDescription, siteName } from './site';
+import { brand } from './brand';
 
 export const brandId = absoluteUrl('/#brand');
 export const websiteId = absoluteUrl('/#website');
@@ -12,8 +13,8 @@ export const siteStructuredData = {
       name: siteName,
       description: siteDescription,
       url: absoluteUrl('/'),
-      logo: absoluteUrl('/brand/decima-logo-dark.png'),
-      slogan: 'Objetos que não se repetem.',
+      logo: absoluteUrl(brand.assets.logoDark),
+      slogan: brand.slogan,
     },
     {
       '@type': 'WebSite',
@@ -21,7 +22,7 @@ export const siteStructuredData = {
       name: siteName,
       description: siteDescription,
       url: absoluteUrl('/'),
-      inLanguage: 'pt-BR',
+      inLanguage: brand.locale,
       about: { '@id': brandId },
     },
   ],
@@ -59,7 +60,7 @@ export function webPageSchema({ type = 'WebPage', url, name, description, mainEn
     url,
     name,
     description,
-    inLanguage: 'pt-BR',
+    inLanguage: brand.locale,
     isPartOf: { '@id': websiteId },
     breadcrumb: { '@id': `${url}#breadcrumb` },
     ...(mainEntityId ? { mainEntity: { '@id': mainEntityId } } : {}),

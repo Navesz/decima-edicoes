@@ -3,6 +3,7 @@
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { brand, brandSignature } from '../lib/brand';
 import { BrandLogo } from './brand-logo';
 
 type Props = { tone?: 'light' | 'dark' };
@@ -58,7 +59,7 @@ export function SiteHeader({ tone = 'light' }: Props) {
   return (
     <>
       <header className={`site-header ${tone === 'dark' ? 'header-dark' : ''}`}>
-        <Link className="brand" href="/" aria-label="DÉCIMA Edições — início">
+        <Link className="brand" href="/" aria-label={`${brand.name} — início`}>
           <BrandLogo />
         </Link>
         <nav aria-label="Navegação principal">
@@ -84,7 +85,7 @@ export function SiteHeader({ tone = 'light' }: Props) {
         inert={!open}
       >
         <button ref={closeButton} type="button" aria-label="Fechar menu" onClick={() => setOpen(false)}><X /></button>
-        <p>DÉCIMA EDIÇÕES</p>
+        <p>{brandSignature}</p>
         <nav aria-label="Menu móvel">
           {links.map(([href, label], index) => (
             <Link key={href} href={href} onClick={() => setOpen(false)}>
@@ -92,7 +93,7 @@ export function SiteHeader({ tone = 'light' }: Props) {
             </Link>
           ))}
         </nav>
-        <small>Objetos que não se repetem.</small>
+        <small>{brand.slogan}.</small>
       </div>
     </>
   );

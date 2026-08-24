@@ -448,3 +448,25 @@ O projeto já possuía assinatura visual, símbolo e uma justificativa curta no 
 ### Escopo e proteção
 
 `/caderno/marca/` permanece visível a quem tem o endereço e acessível pelo Caderno, mas declara `noindex, nofollow` e não entra no sitemap público. O verificador protege metadados, conteúdo mínimo, ativos oficiais, paleta, tipografia, nomenclatura, alerta jurídico e responsividade. O guia avalia posicionamento; não afirma que o nome esteja juridicamente disponível.
+
+## Ciclo 20 — contrato único de identidade
+
+Data: 24 de agosto de 2026.
+
+### Divergência potencial
+
+O Guia de Marca tornou nome, slogan, paleta e assinaturas explícitos, mas essas informações ainda estavam repetidas em metadados, manifesto, JSON-LD e componentes. Uma alteração futura poderia atualizar a página visível e deixar navegador, instalação ou mecanismos de busca com uma identidade antiga.
+
+### Intervenção
+
+- `app/lib/brand-data.json` passou a guardar nome, nome curto, descritor, slogan, idioma, seis cores com função e três ativos oficiais;
+- título global, Open Graph, Twitter, Apple Web App e cor do navegador passaram a consumir o contrato;
+- manifesto usa a mesma identidade, idioma, carvão e ícone;
+- `Brand` e `WebSite` estruturados usam nome, slogan, idioma e logo canônicos;
+- cabeçalho, menu móvel, rodapé e assinatura renderizada deixaram de repetir strings institucionais;
+- o Guia gera paleta, nomes e downloads pelo contrato e agora distingue papel principal de papel claro;
+- o procedimento de alteração foi registrado em `docs/CONTRATO-DA-MARCA.md`.
+
+### Proteção contra regressão
+
+O verificador lê o JSON diretamente, rejeita cores inválidas ou repetidas, ativos ausentes e consumidores desconectados. Também compara os seis tokens com o CSS, identidade e cor do manifesto, ícone real, conteúdo do Guia e nós estruturados exportados. O contrato evita deriva técnica; busca de marca e validação pública continuam como portões separados.

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Footer } from '../../components/footer';
 import { SiteHeader } from '../../components/site-header';
 import { assetPath } from '../../lib/base-path';
+import { brand } from '../../lib/brand';
 import { absoluteUrl } from '../../lib/site';
 import styles from './brand-guide.module.css';
 
@@ -12,17 +13,18 @@ const guideUrl = absoluteUrl('/caderno/marca/');
 
 export const metadata: Metadata = {
   title: 'Guia de Marca',
-  description: 'Fundamentos do nome, símbolo, identidade visual, voz e sistema editorial da DÉCIMA Edições.',
+  description: `Fundamentos do nome, símbolo, identidade visual, voz e sistema editorial da ${brand.name}.`,
   alternates: { canonical: guideUrl },
   robots: { index: false, follow: false },
 };
 
 const palette = [
-  { name: 'Carvão', hex: '#171411', use: 'Base escura, texto e contraste principal.', className: styles.ink },
-  { name: 'Marfim', hex: '#EEE7DA', use: 'Assinatura clara e texto sobre carvão.', className: styles.ivory },
-  { name: 'Papel', hex: '#F1ECE3', use: 'Fundos editoriais e documentos.', className: styles.paper },
-  { name: 'Bronze', hex: '#B28A53', use: 'Ponto, detalhe e acabamento de destaque.', className: styles.bronze },
-  { name: 'Bronze-tinta', hex: '#684318', use: 'Texto pequeno sobre fundos claros.', className: styles.bronzeInk },
+  { ...brand.palette.ink, className: styles.ink },
+  { ...brand.palette.ivory, className: styles.ivory },
+  { ...brand.palette.paper, className: styles.paper },
+  { ...brand.palette.paperLight, className: styles.paperLight },
+  { ...brand.palette.bronze, className: styles.bronze },
+  { ...brand.palette.bronzeInk, className: styles.bronzeInk },
 ];
 
 export default function BrandGuidePage() {
@@ -55,7 +57,7 @@ export default function BrandGuidePage() {
       <section className={`${styles.section} ${styles.nameSection}`} id="nome">
         <div className={styles.sectionHeading}>
           <span>01</span>
-          <div><p className="micro-label">Veredito de posicionamento</p><h2>Sim. DÉCIMA Edições é uma direção forte.</h2></div>
+          <div><p className="micro-label">Veredito de posicionamento</p><h2>Sim. {brand.name} é uma direção forte.</h2></div>
         </div>
         <div className={styles.verdictGrid}>
           <article><strong>Dez está no nome</strong><p>“Décima” torna a tiragem de dez peças parte da identidade, sem precisar explicá-la em toda frase.</p></article>
@@ -67,8 +69,8 @@ export default function BrandGuidePage() {
           <div><strong>O conceito é bom; a disponibilidade ainda precisa ser provada.</strong><p>O nome pode lembrar uma editora e sua exclusividade jurídica não foi verificada. Antes de venda, investimento em embalagem ou domínio definitivo, é necessário pesquisar sinais semelhantes, classes aplicáveis e possibilidade de registro no INPI. Este guia avalia posicionamento; não declara disponibilidade legal.</p></div>
         </aside>
         <div className={styles.nameRules}>
-          <div><span>Institucional</span><strong>DÉCIMA Edições</strong><p>Forma preferida em texto corrido e documentos.</p></div>
-          <div><span>Assinatura</span><strong>DÉCIMA<br /><small>EDIÇÕES</small></strong><p>Forma visual fixa, sempre com acento e respiro.</p></div>
+          <div><span>Institucional</span><strong>{brand.name}</strong><p>Forma preferida em texto corrido e documentos.</p></div>
+          <div><span>Assinatura</span><strong>{brand.shortName}<br /><small>{brand.editionLabel}</small></strong><p>Forma visual fixa, sempre com acento e respiro.</p></div>
           <div className={styles.wrong}><span>Evitar</span><strong>DECIMA / Decima</strong><p>Sem acento, perde pronúncia, identidade e consistência.</p></div>
         </div>
       </section>
@@ -79,7 +81,7 @@ export default function BrandGuidePage() {
           <div><p className="micro-label">Três ideias, um gesto</p><h2>Um tampo. Um dez. Um centro.</h2></div>
         </div>
         <div className={styles.symbolStage}>
-          <Image src={assetPath('/icon.png')} width="512" height="512" unoptimized alt="Símbolo da DÉCIMA: círculo marfim, linhas cruzadas e ponto central em bronze" />
+          <Image src={assetPath(brand.assets.icon)} width="512" height="512" unoptimized alt={`Símbolo da ${brand.shortName}: círculo marfim, linhas cruzadas e ponto central em bronze`} />
         </div>
         <dl className={styles.symbolMeaning}>
           <div><dt>Círculo</dt><dd>O tampo visto de cima e o ciclo fechado de uma edição.</dd></div>
@@ -95,12 +97,12 @@ export default function BrandGuidePage() {
         </div>
         <div className={styles.logoGrid}>
           <figure className={styles.lightLogo}>
-            <Image src={assetPath('/brand/decima-logo-dark.png')} width="1600" height="500" unoptimized alt="Assinatura escura da DÉCIMA Edições para fundos claros" />
-            <figcaption><div><strong>Positiva</strong><span>Fundos claros e neutros</span></div><a href={assetPath('/brand/decima-logo-dark.png')} download>Baixar PNG <ArrowDownToLine aria-hidden="true" /></a></figcaption>
+            <Image src={assetPath(brand.assets.logoDark)} width="1600" height="500" unoptimized alt={`Assinatura escura da ${brand.name} para fundos claros`} />
+            <figcaption><div><strong>Positiva</strong><span>Fundos claros e neutros</span></div><a href={assetPath(brand.assets.logoDark)} download>Baixar PNG <ArrowDownToLine aria-hidden="true" /></a></figcaption>
           </figure>
           <figure className={styles.darkLogo}>
-            <Image src={assetPath('/brand/decima-logo-light.png')} width="1600" height="500" unoptimized alt="Assinatura clara da DÉCIMA Edições para fundos escuros" />
-            <figcaption><div><strong>Negativa</strong><span>Carvão e imagens muito escuras</span></div><a href={assetPath('/brand/decima-logo-light.png')} download>Baixar PNG <ArrowDownToLine aria-hidden="true" /></a></figcaption>
+            <Image src={assetPath(brand.assets.logoLight)} width="1600" height="500" unoptimized alt={`Assinatura clara da ${brand.name} para fundos escuros`} />
+            <figcaption><div><strong>Negativa</strong><span>Carvão e imagens muito escuras</span></div><a href={assetPath(brand.assets.logoLight)} download>Baixar PNG <ArrowDownToLine aria-hidden="true" /></a></figcaption>
           </figure>
         </div>
         <div className={styles.usageRules}>
@@ -123,7 +125,7 @@ export default function BrandGuidePage() {
             </article>
           ))}
         </div>
-        <p className={styles.colorRule}>O bronze é acento, não preenchimento dominante. Sobre fundo claro, texto pequeno usa <strong>#684318</strong>; o bronze mais luminoso fica reservado a detalhes maiores, ícones e matéria.</p>
+        <p className={styles.colorRule}>O bronze é acento, não preenchimento dominante. Sobre fundo claro, texto pequeno usa <strong>{brand.palette.bronzeInk.hex}</strong>; o bronze mais luminoso fica reservado a detalhes maiores, ícones e matéria.</p>
       </section>
 
       <section className={`${styles.section} ${styles.typeSection}`} id="tipografia">
@@ -132,7 +134,7 @@ export default function BrandGuidePage() {
           <div><p className="micro-label">Sistema tipográfico</p><h2>Editorial no gesto. Preciso na informação.</h2></div>
         </div>
         <div className={styles.typeGrid}>
-          <article className={styles.serifSample}><span>Cormorant Garamond · 400/500</span><strong>Objetos que<br />não se repetem.</strong><p>Títulos, nomes de coleção, números protagonistas e frases de manifesto.</p></article>
+          <article className={styles.serifSample}><span>Cormorant Garamond · 400/500</span><strong>{brand.slogan.split(' ').slice(0, 2).join(' ')}<br />{brand.slogan.split(' ').slice(2).join(' ')}.</strong><p>Títulos, nomes de coleção, números protagonistas e frases de manifesto.</p></article>
           <article className={styles.sansSample}><span>MANROPE · 400/500/600</span><strong>PEÇA 01/10 · PROTÓTIPO 00<br />80 × 80 × 38 CM</strong><p>Navegação, ficha técnica, legenda, estado de produção e instruções.</p></article>
         </div>
       </section>
@@ -177,7 +179,7 @@ export default function BrandGuidePage() {
           <li><span>03</span><div><strong>Ecossistema digital</strong><p>Verificar domínio próprio e nomes coerentes nas redes; GitHub Pages continua sendo a hospedagem técnica, não o endereço final da marca.</p></div></li>
           <li><span>04</span><div><strong>Teste de leitura</strong><p>Confirmar com pessoas reais se “Edições” comunica série colecionável, sem fazer a marca parecer exclusivamente uma editora.</p></div></li>
         </ol>
-        <aside className={styles.finalVerdict}><strong>Decisão recomendada agora</strong><p>Manter <em>DÉCIMA Edições</em> como direção oficial do conceito e usar este sistema de forma consistente. Tratar registro, domínio e validação de leitura como portão obrigatório antes do lançamento comercial.</p></aside>
+        <aside className={styles.finalVerdict}><strong>Decisão recomendada agora</strong><p>Manter <em>{brand.name}</em> como direção oficial do conceito e usar este sistema de forma consistente. Tratar registro, domínio e validação de leitura como portão obrigatório antes do lançamento comercial.</p></aside>
       </section>
 
       <section className={styles.backToNotebook}>

@@ -1,0 +1,44 @@
+{
+  "name": "DÉCIMA Edições",
+  "shortName": "DÉCIMA",
+  "editionLabel": "EDIÇÕES",
+  "slogan": "Objetos que não se repetem",
+  "locale": "pt-BR",
+  "palette": {
+    "ink": {
+      "name": "Carvão",
+      "hex": "#171411",
+      "use": "Base escura, texto e contraste principal."
+    },
+    "ivory": {
+      "name": "Marfim",
+      "hex": "#EEE7DA",
+      "use": "Assinatura clara e texto sobre carvão."
+    },
+    "paper": {
+      "name": "Papel",
+      "hex": "#E7DECE",
+      "use": "Fundo principal e páginas de narrativa."
+    },
+    "paperLight": {
+      "name": "Papel claro",
+      "hex": "#F1ECE3",
+      "use": "Documentos, cartões e áreas técnicas."
+    },
+    "bronze": {
+      "name": "Bronze",
+      "hex": "#B28A53",
+      "use": "Ponto, detalhe e acabamento de destaque."
+    },
+    "bronzeInk": {
+      "name": "Bronze-tinta",
+      "hex": "#684318",
+      "use": "Texto pequeno sobre fundos claros."
+    }
+  },
+  "assets": {
+    "icon": "/icon.png",
+    "logoDark": "/brand/decima-logo-dark.png",
+    "logoLight": "/brand/decima-logo-light.png"
+  }
+}

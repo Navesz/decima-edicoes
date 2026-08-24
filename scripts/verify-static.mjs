@@ -9,6 +9,7 @@ const exportedBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const origin = `https://navesz.github.io${basePath}`;
 const failures = [];
 const projectData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'project-data.json'), 'utf8'));
+const brandData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'brand-data.json'), 'utf8'));
 const numberWords = ['zero', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez'];
 const pad2 = (value) => String(value).padStart(2, '0');
 const collectionPath = `/colecoes/${projectData.collection.slug}/`;
@@ -51,12 +52,12 @@ function listFiles(directory) {
 }
 
 const routes = [
-  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750, cssBudgetKiB: 40 },
-  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · DÉCIMA`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: 'caderno/marca/index.html', title: 'Guia de Marca · DÉCIMA', canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false },
-  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · DÉCIMA`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
+  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750, cssBudgetKiB: 40 },
+  { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'caderno/marca/index.html', title: `Guia de Marca · ${brandData.shortName}`, canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false },
+  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
 ];
 
 function initialScriptBytes(html) {
@@ -91,7 +92,7 @@ for (const route of routes) {
   }
   check(html.includes(`<title>${route.title}`), `${route.file}: título incorreto`);
   check(html.includes(`<link rel="manifest" href="${exportedBasePath}/manifest.webmanifest"`), `${route.file}: manifesto da marca ausente ou fora do basePath`);
-  check(html.includes('<meta name="theme-color" content="#171411"'), `${route.file}: cor de navegador da marca ausente`);
+  check(html.includes(`<meta name="theme-color" content="${brandData.palette.ink.hex}"`), `${route.file}: cor de navegador da marca ausente`);
   check(html.includes('<meta name="mobile-web-app-capable" content="yes"'), `${route.file}: modo instalável não declarado`);
   check(html.includes('<meta name="format-detection" content="telephone=no"'), `${route.file}: detecção automática de telefone não foi desativada`);
   check(visibleHtml.includes('class="skip-link"'), `${route.file}: atalho para conteúdo ausente`);
@@ -117,8 +118,8 @@ const requiredFiles = [
   'sitemap.xml',
   'manifest.webmanifest',
   'og.jpg',
-  'brand/decima-logo-dark.png',
-  'brand/decima-logo-light.png',
+  brandData.assets.logoDark.replace(/^\//, ''),
+  brandData.assets.logoLight.replace(/^\//, ''),
 ];
 requiredFiles.forEach((file) => check(existsSync(join(output, file)), `Arquivo ausente: out/${file}`));
 
@@ -130,11 +131,11 @@ try {
 }
 const manifestRoot = `${exportedBasePath}/`;
 check(manifest.id === manifestRoot && manifest.start_url === manifestRoot && manifest.scope === manifestRoot, 'manifest.webmanifest: id, início ou escopo divergem do basePath');
-check(manifest.name === 'DÉCIMA Edições' && manifest.short_name === 'DÉCIMA' && manifest.lang === 'pt-BR', 'manifest.webmanifest: identidade ou idioma incorretos');
+check(manifest.name === brandData.name && manifest.short_name === brandData.shortName && manifest.lang === brandData.locale, 'manifest.webmanifest: identidade ou idioma incorretos');
 check(manifest.display === 'standalone', 'manifest.webmanifest: apresentação instalável deve ser standalone');
-check(manifest.background_color === '#171411' && manifest.theme_color === '#171411', 'manifest.webmanifest: cores divergem da identidade');
-check(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.src === `${exportedBasePath}/icon.png` && icon.sizes === '512x512' && icon.type === 'image/png'), 'manifest.webmanifest: ícone 512×512 ausente ou incorreto');
-const iconMetadata = await sharp(join(output, 'icon.png')).metadata();
+check(manifest.background_color === brandData.palette.ink.hex && manifest.theme_color === brandData.palette.ink.hex, 'manifest.webmanifest: cores divergem da identidade');
+check(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.src === `${exportedBasePath}${brandData.assets.icon}` && icon.sizes === '512x512' && icon.type === 'image/png'), 'manifest.webmanifest: ícone 512×512 ausente ou incorreto');
+const iconMetadata = await sharp(join(output, brandData.assets.icon.replace(/^\//, ''))).metadata();
 check(iconMetadata.width === 512 && iconMetadata.height === 512 && iconMetadata.format === 'png', 'icon.png: dimensão ou formato diverge do manifesto');
 
 const publicImages = readdirSync(join(output, 'images')).filter((file) => /\.(webp|avif|jpe?g|png)$/i.test(file));
@@ -165,7 +166,10 @@ check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toF
 const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
 check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');
 check(sourceCss.includes('--ink-muted: rgba(23, 20, 17, .68);') && sourceCss.includes('--ivory-muted: rgba(238, 231, 218, .68);'), 'tokens de contraste informativo ausentes');
-check(sourceCss.includes('--bronze-ink: #684318;'), 'variante acessível do bronze ausente');
+for (const [token, color] of Object.entries(brandData.palette)) {
+  const cssToken = token.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+  check(sourceCss.toLowerCase().includes(`--${cssToken}: ${color.hex.toLowerCase()};`), `identidade: token CSS --${cssToken} diverge do contrato da marca`);
+}
 check(!/font-size:\s*[78]px/.test(sourceCss), 'texto de 7 ou 8 px voltou à interface');
 check((sourceCss.match(/min-height:\s*(24|44)px/g) ?? []).length >= 10, 'alvos mínimos de interação não estão protegidos');
 check(sourceCss.includes('.image-caption {') && sourceCss.includes('background: rgba(23,20,17,.72);'), 'legenda conceitual perdeu seu fundo de contraste');
@@ -235,12 +239,15 @@ check(!sitemap.includes(`${origin}/caderno/marca/`), 'Guia de Marca: rota intern
 check(brandGuide.includes('Sim. DÉCIMA Edições é uma direção forte.') && brandGuide.includes('não declara disponibilidade legal'), 'Guia de Marca: veredito ou limite jurídico ausente');
 check(brandGuide.includes('Círculo') && brandGuide.includes('numeral romano de dez') && brandGuide.includes('Ponto'), 'Guia de Marca: significado do símbolo incompleto');
 check(brandGuide.includes('/brand/decima-logo-dark.png') && brandGuide.includes('/brand/decima-logo-light.png') && brandGuide.includes('/icon.png'), 'Guia de Marca: assinaturas oficiais incompletas');
-check(brandGuide.includes('#171411') && brandGuide.includes('#EEE7DA') && brandGuide.includes('#B28A53') && brandGuide.includes('#684318'), 'Guia de Marca: paleta oficial incompleta');
+check(Object.values(brandData.palette).every((color) => brandGuide.includes(color.hex)), 'Guia de Marca: paleta oficial incompleta ou divergente');
 check(brandGuide.includes('Cormorant Garamond') && brandGuide.includes('MANROPE'), 'Guia de Marca: sistema tipográfico incompleto');
 check(brandGuide.includes('Nórdica — Yggdrasil') && brandGuide.includes('Peça 01/10') && brandGuide.includes('Protótipo 00'), 'Guia de Marca: sistema de nomenclatura incompleto');
 check(brandGuide.includes('pesquisar sinais semelhantes') && brandGuide.includes('registro no INPI'), 'Guia de Marca: portão de validação legal incompleto');
 const brandGuideCss = readFileSync(join(root, 'app', 'caderno', 'marca', 'brand-guide.module.css'), 'utf8');
 check(brandGuideCss.includes('@media (max-width: 1000px)') && brandGuideCss.includes('@media (max-width: 700px)'), 'Guia de Marca: adaptação responsiva ausente');
+for (const [token, color] of Object.entries(brandData.palette)) {
+  check(brandGuideCss.toLowerCase().includes(`.${token.toLowerCase()} { --swatch: ${color.hex.toLowerCase()}; }`), `Guia de Marca: amostra ${token} diverge do contrato`);
+}
 
 function structuredNodes(relativePath) {
   const html = read(relativePath);
@@ -292,8 +299,8 @@ for (const file of listFiles(output).filter((candidate) => candidate.endsWith('.
   checkedStructuredNodes += nodes.length;
   const brands = nodesOfType(nodes, 'Brand');
   const websites = nodesOfType(nodes, 'WebSite');
-  check(brands.length === 1 && brands[0]['@id'] === brandStructuredId && brands[0].logo === `${origin}/brand/decima-logo-dark.png`, `${relativePath}: nó Brand ausente ou desconectado`);
-  check(websites.length === 1 && websites[0]['@id'] === websiteStructuredId && websites[0].inLanguage === 'pt-BR' && websites[0].about?.['@id'] === brandStructuredId, `${relativePath}: nó WebSite ausente ou desconectado`);
+  check(brands.length === 1 && brands[0]['@id'] === brandStructuredId && brands[0].name === brandData.name && brands[0].slogan === brandData.slogan && brands[0].logo === `${origin}${brandData.assets.logoDark}`, `${relativePath}: nó Brand ausente, desconectado ou divergente do contrato`);
+  check(websites.length === 1 && websites[0]['@id'] === websiteStructuredId && websites[0].name === brandData.name && websites[0].inLanguage === brandData.locale && websites[0].about?.['@id'] === brandStructuredId, `${relativePath}: nó WebSite ausente ou desconectado`);
   const ids = nodes.map((node) => node['@id']).filter(Boolean);
   check(ids.length === new Set(ids).size, `${relativePath}: @id duplicado no JSON-LD`);
   if (projectData.edition.commercialStatus === 'prototyping') {
@@ -346,6 +353,14 @@ for (const relativePath of ['app/components/home-page.tsx', 'app/colecoes/nordic
   const source = readFileSync(join(root, relativePath), 'utf8');
   check(source.includes("lib/project'"), `${relativePath}: consumidor deixou de usar a fonte única do projeto`);
 }
+for (const relativePath of ['app/layout.tsx', 'app/manifest.ts', 'app/lib/site.ts', 'app/lib/structured-data.ts', 'app/components/brand-logo.tsx', 'app/components/site-header.tsx', 'app/components/footer.tsx', 'app/caderno/marca/page.tsx']) {
+  const source = readFileSync(join(root, relativePath), 'utf8');
+  check(/brand'/.test(source), `${relativePath}: consumidor deixou de usar o contrato da marca`);
+}
+check(brandData.name.includes(brandData.shortName) && brandData.editionLabel && brandData.slogan && brandData.locale === 'pt-BR', 'Contrato da marca: identidade verbal incompleta');
+check(new Set(Object.values(brandData.palette).map((color) => color.hex.toLowerCase())).size === Object.keys(brandData.palette).length, 'Contrato da marca: cores repetidas');
+check(Object.values(brandData.palette).every((color) => /^#[0-9A-F]{6}$/.test(color.hex) && color.name && color.use), 'Contrato da marca: cor, nome ou uso inválido');
+check(Object.values(brandData.assets).every((asset) => asset.startsWith('/') && existsSync(join(root, asset === '/icon.png' ? 'app/icon.png' : `public${asset}`))), 'Contrato da marca: ativo oficial ausente');
 
 const exportedHtmlFiles = listFiles(output).filter((file) => file.endsWith('.html'));
 const documentCache = new Map();
