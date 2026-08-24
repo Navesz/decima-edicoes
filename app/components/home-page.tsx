@@ -4,7 +4,7 @@ import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
 import { collection, edition } from '../lib/project';
 import { Footer } from './footer';
-import { InterestForm } from './interest-form';
+import { InterestFormLoader } from './interest-form-loader';
 import { MotionArticleLoader } from './motion-article-loader';
 import { ResponsiveImage } from './responsive-image';
 import { ScrollEffects } from './scroll-effects';
@@ -107,7 +107,7 @@ export function HomePage() {
 
       <section className="interest-section" id="interesse">
         <div className="interest-copy gsap-reveal"><p className="micro-label">Prévia do acesso privado</p><h2>Dez lugares.<br />Nenhum estoque.</h2><p>A edição ainda está em prototipagem. Este fluxo demonstra como será a manifestação de interesse; ele não cria reserva, cobrança ou direito sobre uma numeração.</p></div>
-        <InterestForm />
+        <InterestFormLoader defaultInterest={`${collection.name} ${edition.firstPieceFraction}`} />
       </section>
 
       <Footer />

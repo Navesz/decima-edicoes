@@ -831,3 +831,29 @@ O manifesto possuía apenas o ícone comum com `purpose: any`. A arte usa cantos
 ### Proteção contra regressão
 
 O verificador exige o segundo ícone no manifesto, caminho, tipo, tamanho e finalidade. Sharp confirma PNG 512 × 512 e todos os pixels opacos. O gerador precisa manter fonte quadrada carvão e saída reproduzível; cada rota precisa carregar o ícone Apple com o `basePath` correto.
+
+## Ciclo 36 — formulário de interesse por proximidade
+
+Data: 24 de agosto de 2026.
+
+### Lógica distante no carregamento inicial
+
+O formulário demonstrativo está quase no rodapé, mas sua validação, confirmação e ícones ainda chegavam junto do primeiro documento. A interface só pode ser usada depois de percorrer quase toda a home.
+
+### Intervenção
+
+- criado `InterestFormLoader`, com o formulário completo, estático e desabilitado no HTML;
+- o componente ativo passou para `import()` dinâmico;
+- a transferência acontece quando a seção chega a 360 px do viewport;
+- navegadores sem `IntersectionObserver` recebem a função depois da hidratação;
+- antes da ativação, não existe `action`, o `fieldset` permanece desabilitado e o aviso sem JavaScript continua visível;
+- os estados `data-interest-mode="static"` e `active` tornam a progressão auditável;
+- o valor inicial da edição passou a vir do componente de servidor;
+- o pacote ativo mede 3,4 KiB e ficou fora dos scripts iniciais;
+- a home caiu de 580,0 para 572,9 KiB, redução de 7,1 KiB neste ciclo;
+- desde 715,8 KiB, a redução acumulada é 142,9 KiB ou 20,0%;
+- a política foi registrada em `docs/FORMULARIO-DE-INTERESSE-PROGRESSIVO.md`.
+
+### Proteção contra regressão
+
+O orçamento inicial da home caiu para 580 KiB. O verificador exige fachada estática única, importação dinâmica, proximidade, alternativa sem observador, campos inativos sem JavaScript e pacote ativo fora dos scripts iniciais com limite de 10 KiB.

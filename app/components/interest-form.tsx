@@ -2,12 +2,11 @@
 
 import { ArrowRight, Check } from 'lucide-react';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { collection, edition } from '../lib/project';
 
 type FieldName = 'name' | 'email';
 type FormErrors = Partial<Record<FieldName, string>>;
 
-export function InterestForm() {
+export function InterestForm({ defaultInterest }: { defaultInterest: string }) {
   const [ready, setReady] = useState(false);
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -71,7 +70,7 @@ export function InterestForm() {
   }
 
   return (
-    <form className="interest-form" onSubmit={submit} aria-describedby="interest-note" noValidate data-local-demo>
+    <form className="interest-form" onSubmit={submit} aria-describedby="interest-note" noValidate data-local-demo data-interest-mode="active">
       <fieldset disabled={!ready}>
         <label className={errors.name ? 'field-invalid' : undefined}>
           <span>Nome</span>
@@ -83,7 +82,7 @@ export function InterestForm() {
           <input type="email" name="email" autoComplete="email" required maxLength={160} inputMode="email" spellCheck={false} aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? 'email-error' : undefined} onInput={() => clearError('email')} placeholder="voce@email.com" />
           {errors.email && <small className="field-error" id="email-error" role="alert">{errors.email}</small>}
         </label>
-        <label><span>Interesse</span><select name="interest" defaultValue={`${collection.name} ${edition.firstPieceFraction}`}><option>{collection.name} {edition.firstPieceFraction}</option><option>Próximas coleções</option><option>Parceria com arquitetos</option></select></label>
+        <label><span>Interesse</span><select name="interest" defaultValue={defaultInterest}><option>{defaultInterest}</option><option>Próximas coleções</option><option>Parceria com arquitetos</option></select></label>
         <button type="submit">Simular entrada na lista <ArrowRight size={17} /></button>
       </fieldset>
       <small id="interest-note">Demonstração do fluxo. Nenhum dado é transmitido, armazenado ou usado como reserva.</small>

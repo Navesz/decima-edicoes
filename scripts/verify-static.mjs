@@ -68,7 +68,7 @@ function listFiles(directory) {
 }
 
 const routes = [
-  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 580, cssBudgetKiB: 40 },
   { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
@@ -219,6 +219,13 @@ const scrollEffectsSource = readFileSync(join(root, 'app', 'components', 'scroll
 check(scrollEffectsSource.includes("import('gsap')") && scrollEffectsSource.includes("import('gsap/ScrollTrigger')") && scrollEffectsSource.includes('IntersectionObserver'), 'efeitos de rolagem: importações dinâmicas ou gatilho por proximidade ausente');
 check(scrollEffectsSource.includes('prefersReducedMotion()') && scrollEffectsSource.includes('shouldAvoidOptionalTransfer()'), 'efeitos de rolagem: contrato compartilhado de capacidades não preserva conteúdo estático');
 check(scrollEffectsSource.includes("rootMargin: '320px 0px'") && scrollEffectsSource.includes('threshold: .01') && scrollEffectsSource.includes("dataset.scrollEffects = 'active'") && scrollEffectsSource.includes('delete document.documentElement.dataset.scrollEffects'), 'efeitos de rolagem: margem de aproximação, estado ou limpeza ausente');
+const interestFormLoaderSource = readFileSync(join(root, 'app', 'components', 'interest-form-loader.tsx'), 'utf8');
+const interestFormSource = readFileSync(join(root, 'app', 'components', 'interest-form.tsx'), 'utf8');
+check(homePageSource.includes('<InterestFormLoader') && !homePageSource.includes("from './interest-form'"), 'interesse: home voltou a importar diretamente o formulário ativo');
+check(interestFormLoaderSource.includes("import('./interest-form')") && interestFormLoaderSource.includes('IntersectionObserver'), 'interesse: carregamento deixou de ser assíncrono ou orientado por proximidade');
+check(interestFormLoaderSource.includes("rootMargin: '360px 0px'") && interestFormLoaderSource.includes('threshold: .01') && interestFormLoaderSource.includes('data-interest-mode="static"'), 'interesse: margem, limiar ou fachada estática ausente');
+check(interestFormLoaderSource.includes("!('IntersectionObserver' in window)") && interestFormLoaderSource.includes('queueMicrotask(() => setEnhance(true))'), 'interesse: navegador sem observador não recebe a alternativa funcional');
+check(interestFormSource.includes('data-interest-mode="active"') && interestFormSource.includes('defaultInterest'), 'interesse: formulário ativo perdeu estado observável ou seleção recebida do servidor');
 
 const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');
@@ -261,6 +268,13 @@ const framerDeferredChunks = javascriptFiles.filter((file) => readFileSync(join(
 const framerDeferredBytes = framerDeferredChunks.reduce((total, file) => total + statSync(join(cssDirectory, file)).size, 0);
 check(framerDeferredChunks.length >= 3 && framerDeferredChunks.every((file) => !allInitialScripts.has(file)), 'home: ilha ou recursos do Framer voltaram aos scripts iniciais');
 check(framerDeferredBytes <= 90 * 1024, `home: pacotes assíncronos do Framer excedem 90 KiB (${(framerDeferredBytes / 1024).toFixed(1)} KiB)`);
+const interestFormChunks = javascriptFiles.filter((file) => {
+  const source = readFileSync(join(cssDirectory, file), 'utf8');
+  return source.includes('Fluxo de interesse concluído.') && source.includes('Voltar ao formulário');
+});
+const interestFormDeferredBytes = interestFormChunks.reduce((total, file) => total + statSync(join(cssDirectory, file)).size, 0);
+check(interestFormChunks.length === 1 && interestFormChunks.every((file) => !allInitialScripts.has(file)), 'interesse: formulário ativo voltou aos scripts iniciais');
+check(interestFormDeferredBytes <= 10 * 1024, `interesse: pacote assíncrono excede 10 KiB (${(interestFormDeferredBytes / 1024).toFixed(1)} KiB)`);
 
 const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
 check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');
@@ -363,6 +377,7 @@ check(!/\saction=/i.test(interestFormTag), 'início: demonstração não deve ap
 check(home.includes('<fieldset disabled="">'), 'início: campos devem permanecer inativos sem JavaScript');
 check(home.includes('A simulação local requer JavaScript. Nenhum campo foi habilitado e nenhum dado será enviado.'), 'início: aviso sem JavaScript ausente');
 check(home.includes('minLength="2"') && home.includes('type="email"'), 'início: restrições de validação do formulário ausentes');
+check((home.match(/data-interest-mode="static"/g) ?? []).length === 1 && !home.includes('data-interest-mode="active"'), 'início: formulário não nasce em modo estático único');
 check(product.includes(`${projectData.collection.name} ainda não está à venda`), `${projectData.collection.name}: indisponibilidade comercial não está explícita`);
 check(product.includes('ProductModel'), `${projectData.collection.name}: dados estruturados devem representar um modelo, não produto disponível`);
 check(product.includes(`${projectData.edition.producedPieces} produzidas`) && product.includes(`${projectData.edition.runSize} previstas`), `${projectData.collection.name}: contagem editorial diverge do contrato do projeto`);

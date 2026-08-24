@@ -48,6 +48,8 @@ GSAP e ScrollTrigger aguardam a primeira seção animável se aproximar do viewp
 
 O laboratório 3D é um aprimoramento progressivo: a direção acetinada, a meta de 32% e as quatro faixas comparativas já existem no HTML. WebGL só é solicitado perto da seção; economia de dados e conexões muito limitadas exigem confirmação manual, e falhas preservam a leitura. A arquitetura e os critérios estão em `docs/RESILIENCIA-DO-LABORATORIO-3D.md`.
 
+O formulário demonstrativo também nasce completo e inativo no HTML. A lógica de validação só é transferida quando a seção se aproxima; sem JavaScript, nenhum campo é habilitado e nenhum dado pode sair da página. A medição está em `docs/FORMULARIO-DE-INTERESSE-PROGRESSIVO.md`.
+
 ## Fonte única do projeto
 
 Tiragem, produção, dimensões, protótipo, versões, corpos de prova e aprovações vivem em `app/lib/project-data.json`. O site e o verificador consomem esse mesmo contrato para evitar divergência entre vitrine, produto, Caderno e ficha impressa. O procedimento de atualização está em `docs/CONTRATO-DO-PROJETO.md`.
