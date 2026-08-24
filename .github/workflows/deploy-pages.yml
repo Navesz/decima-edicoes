@@ -29,11 +29,15 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Check source quality
+        run: npm run lint
       - name: Build static site
         run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /decima-edicoes
           NEXT_PUBLIC_SITE_URL: https://navesz.github.io/decima-edicoes
+      - name: Verify exported site
+        run: npm run verify
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:

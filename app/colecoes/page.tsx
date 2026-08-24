@@ -6,15 +6,32 @@ import { Footer } from '../components/footer';
 import { SiteHeader } from '../components/site-header';
 import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
+import { absoluteUrl } from '../lib/site';
 
 export const metadata: Metadata = {
-  title: 'Coleções — DÉCIMA Edições',
+  title: 'Coleções',
   description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
+  alternates: { canonical: absoluteUrl('/colecoes/') },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'DÉCIMA Edições',
+    url: absoluteUrl('/colecoes/'),
+    title: 'Coleções · DÉCIMA Edições',
+    description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
+    images: [{ url: absoluteUrl('/images/collection-dark.png'), alt: 'Arquivo visual das coleções DÉCIMA' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Coleções · DÉCIMA Edições',
+    description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
+    images: [absoluteUrl('/images/collection-dark.png')],
+  },
 };
 
 export default function CollectionsPage() {
   return (
-    <main className="light-page">
+    <main className="light-page" id="conteudo">
       <SiteHeader tone="dark" />
       <header className="archive-hero">
         <p className="micro-label">Arquivo DÉCIMA · 2026—</p>

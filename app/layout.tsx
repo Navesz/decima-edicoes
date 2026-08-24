@@ -5,30 +5,57 @@ import '@fontsource/manrope/500.css';
 import '@fontsource/manrope/600.css';
 import type { Metadata } from 'next';
 import { SmoothScroll } from './components/smooth-scroll';
+import { absoluteUrl, siteDescription, siteName, siteOrigin } from './lib/site';
 import './globals.css';
-
-const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://navesz.github.io/decima-edicoes';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
   title: { default: 'DÉCIMA Edições — Objetos que não se repetem', template: '%s · DÉCIMA' },
-  description: 'Mesas autorais em madeira e aço, produzidas em coleções de apenas dez peças numeradas.',
+  description: siteDescription,
+  applicationName: siteName,
+  authors: [{ name: siteName, url: absoluteUrl('/') }],
+  creator: siteName,
+  publisher: siteName,
+  category: 'design de mobiliário',
+  keywords: ['mesas autorais', 'mobiliário brasileiro', 'edição limitada', 'madeira maciça', 'design colecionável'],
+  alternates: { canonical: absoluteUrl('/') },
+  robots: { index: true, follow: true },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'DÉCIMA Edições',
+    siteName,
+    url: absoluteUrl('/'),
     title: 'DÉCIMA Edições — Objetos que não se repetem',
     description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
-    images: [{ url: `${siteOrigin}/og.png`, width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
+    images: [{ url: absoluteUrl('/og.png'), width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'DÉCIMA Edições — Objetos que não se repetem',
     description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
-    images: [`${siteOrigin}/og.png`],
+    images: [absoluteUrl('/og.png')],
   },
 };
 
+const brandSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Brand',
+  name: siteName,
+  description: siteDescription,
+  url: absoluteUrl('/'),
+  logo: absoluteUrl('/brand/decima-logo-dark.png'),
+  slogan: 'Objetos que não se repetem.',
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pt-BR"><body><SmoothScroll />{children}</body></html>;
+  return (
+    <html lang="pt-BR">
+      <body>
+        <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
+        <SmoothScroll />
+        {children}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(brandSchema) }} />
+      </body>
+    </html>
+  );
 }

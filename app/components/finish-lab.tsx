@@ -2,15 +2,15 @@
 
 import { ContactShadows, OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Group } from 'three';
 
-function TableModel({ gloss }: { gloss: number }) {
+function TableModel({ gloss, autoRotate }: { gloss: number; autoRotate: boolean }) {
   const group = useRef<Group>(null);
   const roughness = Math.max(.08, 1 - gloss / 112);
 
   useFrame((_, delta) => {
-    if (group.current) group.current.rotation.y += delta * .07;
+    if (autoRotate && group.current) group.current.rotation.y += delta * .07;
   });
 
   return (
@@ -48,16 +48,25 @@ function finishName(value: number) {
 
 export function FinishLab() {
   const [gloss, setGloss] = useState(32);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setReduceMotion(media.matches);
+    updatePreference();
+    media.addEventListener('change', updatePreference);
+    return () => media.removeEventListener('change', updatePreference);
+  }, []);
 
   return (
     <div className="finish-lab">
       <div className="finish-canvas" role="img" aria-label="Modelo tridimensional interativo de uma mesa com acabamento ajustável">
-        <Canvas shadows camera={{ position: [5.5, 4.2, 6.5], fov: 38 }} dpr={[1, 1.6]}>
+        <Canvas shadows camera={{ position: [5.5, 4.2, 6.5], fov: 38 }} dpr={[1, 1.5]} frameloop={reduceMotion ? 'demand' : 'always'}>
           <color attach="background" args={['#d6c9b6']} />
           <ambientLight intensity={1.2} />
           <directionalLight position={[4, 7, 5]} intensity={5.5} castShadow color="#fff1d8" />
           <directionalLight position={[-5, 3, -4]} intensity={2.2} color="#9ab3cf" />
-          <TableModel gloss={gloss} />
+          <TableModel gloss={gloss} autoRotate={!reduceMotion} />
           <ContactShadows position={[0, -1.05, 0]} opacity={.48} scale={10} blur={2.2} far={5} />
           <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 3.2} maxPolarAngle={Math.PI / 2.25} />
         </Canvas>
@@ -65,11 +74,11 @@ export function FinishLab() {
       <div className="finish-controls">
         <div>
           <p className="micro-label">Simulador de superfície</p>
-          <h3>{finishName(gloss)}</h3>
-          <p>Arraste para perceber como a luz passa de difusa para especular. A meta inicial da DÉCIMA está marcada em 32%.</p>
+          <h3 id="finish-name" aria-live="polite">{finishName(gloss)}</h3>
+          <p id="finish-help">Arraste para perceber como a luz passa de difusa para especular. A meta inicial da DÉCIMA está marcada em 32%.</p>
         </div>
         <label htmlFor="gloss">Brilho percebido <output>{gloss}%</output></label>
-        <input id="gloss" type="range" min="0" max="100" value={gloss} onChange={(event) => setGloss(Number(event.target.value))} />
+        <input id="gloss" type="range" min="0" max="100" value={gloss} aria-valuetext={`${finishName(gloss)}, ${gloss}%`} aria-describedby="finish-help" onChange={(event) => setGloss(Number(event.target.value))} />
         <div className="range-legend"><span>Fosco</span><b>Meta 32%</b><span>Espelhado</span></div>
         <p className="lab-note">Simulação visual para decisão de conceito — o resultado real deve ser validado em corpos de prova com os materiais do fornecedor.</p>
       </div>

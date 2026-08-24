@@ -2,15 +2,32 @@ import type { Metadata } from 'next';
 import { ArrowUpRight, CircleAlert, FlaskConical, Hammer, Layers3, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FinishLab } from '../components/finish-lab';
+import { FinishLabLoader } from '../components/finish-lab-loader';
 import { Footer } from '../components/footer';
 import { SiteHeader } from '../components/site-header';
 import { buildRules } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
+import { absoluteUrl } from '../lib/site';
 
 export const metadata: Metadata = {
-  title: 'Caderno do Atelier — DÉCIMA Edições',
+  title: 'Caderno do Atelier',
   description: 'O caderno aberto de conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
+  alternates: { canonical: absoluteUrl('/caderno/') },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'DÉCIMA Edições',
+    url: absoluteUrl('/caderno/'),
+    title: 'Caderno do Atelier · DÉCIMA Edições',
+    description: 'Conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
+    images: [{ url: absoluteUrl('/images/collection-board.png'), alt: 'Prancha de estudos do Caderno do Atelier' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Caderno do Atelier · DÉCIMA Edições',
+    description: 'Conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
+    images: [absoluteUrl('/images/collection-board.png')],
+  },
 };
 
 const tests = [
@@ -22,7 +39,7 @@ const tests = [
 
 export default function StudioNotebookPage() {
   return (
-    <main className="notebook-page">
+    <main className="notebook-page" id="conteudo">
       <SiteHeader tone="dark" />
       <header className="notebook-hero">
         <div><p className="micro-label">Documento vivo · fundador</p><h1>Caderno<br />do Atelier.</h1></div>
@@ -42,7 +59,7 @@ export default function StudioNotebookPage() {
       <section className="finish-section" id="acabamento">
         <div className="notebook-section-title"><span>02</span><div><p className="micro-label">Brilho, fosco e acetinado</p><h2>A luz também<br />é material.</h2></div></div>
         <div className="finish-intro"><p>O epóxi curado tende a parecer “vidro molhado”. A aparência das referências pede outra coisa: profundidade sem espelho, luz difusa e um pequeno reflexo que revela a superfície quando a pessoa se move.</p><p>O objetivo inicial é encapsular a arte com epóxi e controlar o reflexo com a camada final compatível, possivelmente PU 2K acetinado. A especificação definitiva depende dos testes do sistema completo.</p></div>
-        <FinishLab />
+        <FinishLabLoader />
         <div className="finish-scale">
           <article><i style={{ '--shine': '.02' } as React.CSSProperties} /><span>0–15%</span><h3>Fosco</h3><p>Sóbrio, mas pode apagar a profundidade e marcar gordura dependendo do sistema.</p></article>
           <article className="recommended"><i style={{ '--shine': '.24' } as React.CSSProperties} /><span>25–40%</span><h3>Acetinado</h3><p>Reflexo difuso, toque visual nobre e melhor tolerância a micro-riscos.</p><b>Direção escolhida</b></article>

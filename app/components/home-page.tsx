@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,14 +12,16 @@ import { ScrollEffects } from './scroll-effects';
 import { SiteHeader } from './site-header';
 
 export function HomePage() {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <main>
+    <main id="conteudo">
       <section className="hero-shell">
         <Image className="hero-image" src={assetPath('/images/hero-yggdrasil.png')} alt="Mesa baixa redonda Yggdrasil em madeira e aço" fill priority sizes="100vw" />
         <div className="hero-wash" />
         <SiteHeader />
 
-        <motion.div className="hero-content" initial="hidden" animate="visible" variants={{
+        <motion.div className="hero-content" initial={false} animate="visible" variants={{
           hidden: {},
           visible: { transition: { staggerChildren: .14, delayChildren: .25 } },
         }}>
@@ -79,7 +81,7 @@ export function HomePage() {
         </div>
         <div className="collection-list">
           {collections.map((collection, index) => (
-            <motion.article className="collection-card gsap-reveal" key={collection.slug} whileHover={{ y: -8 }} transition={{ duration: .35 }}>
+            <motion.article className="collection-card gsap-reveal" key={collection.slug} whileHover={reduceMotion ? undefined : { y: -8 }} transition={{ duration: .35 }}>
               <Link href={index === 0 ? `/colecoes/${collection.slug}` : '/colecoes'} aria-label={`${collection.family} — ${collection.name}`}>
                 <div className="collection-media"><Image src={collection.image} alt={`Mesa ${collection.family} — ${collection.name}`} fill sizes="(max-width: 800px) 100vw, 33vw" /></div>
                 <div className="collection-meta"><span>{collection.number}</span><div><small>{collection.family}</small><h3>{collection.name}</h3></div><ArrowUpRight size={18} strokeWidth={1.25} /></div>

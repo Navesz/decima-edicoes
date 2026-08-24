@@ -3,18 +3,58 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BrandLogo } from './brand-logo';
 
 type Props = { tone?: 'light' | 'dark' };
 
 export function SiteHeader({ tone = 'light' }: Props) {
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const menuPanel = useRef<HTMLDivElement>(null);
   const links = [
     ['/colecoes', 'Coleções'],
     ['/#manifesto', 'Manifesto'],
     ['/caderno', 'Caderno do Atelier'],
   ];
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    document.body.style.overflow = 'hidden';
+    closeButton.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab' || !menuPanel.current) return;
+      const focusable = Array.from(menuPanel.current.querySelectorAll<HTMLElement>('a, button:not([disabled])'));
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [open]);
 
   return (
     <>
@@ -28,7 +68,7 @@ export function SiteHeader({ tone = 'light' }: Props) {
         <Link className="header-cta" href="/#interesse">
           Solicitar peça <ArrowUpRight size={13} strokeWidth={1.5} />
         </Link>
-        <button className="menu-button" type="button" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+        <button ref={menuButton} className="menu-button" type="button" aria-label="Abrir menu" aria-expanded={open} aria-controls="menu-movel" onClick={() => setOpen(true)}>
           <Menu size={20} strokeWidth={1.25} />
         </button>
       </header>
@@ -36,13 +76,18 @@ export function SiteHeader({ tone = 'light' }: Props) {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={menuPanel}
+            id="menu-movel"
             className="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navegação móvel"
             initial={{ opacity: 0, y: '-100%' }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '-100%' }}
             transition={{ duration: .55, ease: [0.76, 0, 0.24, 1] }}
           >
-            <button type="button" aria-label="Fechar menu" onClick={() => setOpen(false)}><X /></button>
+            <button ref={closeButton} type="button" aria-label="Fechar menu" onClick={() => setOpen(false)}><X /></button>
             <p>DÉCIMA EDIÇÕES</p>
             <nav aria-label="Menu móvel">
               {links.map(([href, label], index) => (

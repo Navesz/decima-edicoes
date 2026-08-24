@@ -6,19 +6,30 @@ import { Footer } from '../../components/footer';
 import { SiteHeader } from '../../components/site-header';
 import { gallery } from '../../lib/collections';
 import { assetPath } from '../../lib/base-path';
-
-const productionOrigin = 'https://navesz.github.io/decima-edicoes';
+import { absoluteUrl } from '../../lib/site';
 
 export const metadata: Metadata = {
-  title: 'Nórdica — Yggdrasil | DÉCIMA Edições',
+  title: 'Nórdica — Yggdrasil',
   description: 'A edição inaugural da DÉCIMA: dez mesas numeradas em madeira maciça e aço.',
-  openGraph: { title: 'Nórdica — Yggdrasil | DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [`${productionOrigin}/images/hero-yggdrasil.png`] },
-  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil | DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [`${productionOrigin}/images/hero-yggdrasil.png`] },
+  alternates: { canonical: absoluteUrl('/colecoes/nordica-yggdrasil/') },
+  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'DÉCIMA Edições', url: absoluteUrl('/colecoes/nordica-yggdrasil/'), title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [{ url: absoluteUrl('/images/hero-yggdrasil.png'), alt: 'Mesa Nórdica — Yggdrasil' }] },
+  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [absoluteUrl('/images/hero-yggdrasil.png')] },
+};
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Nórdica — Yggdrasil',
+  description: 'Mesa autoral em madeira maciça e aço, concebida em uma edição limitada de dez peças numeradas.',
+  image: gallery.map((image) => absoluteUrl(image.replace(/^\/decima-edicoes/, ''))),
+  material: ['Madeira maciça', 'Aço carbono'],
+  brand: { '@type': 'Brand', name: 'DÉCIMA Edições' },
+  productionDate: '2026',
 };
 
 export default function YggdrasilPage() {
   return (
-    <main className="product-page">
+    <main className="product-page" id="conteudo">
       <section className="product-hero">
         <Image src={assetPath('/images/hero-yggdrasil.png')} alt="Mesa Nórdica — Yggdrasil" fill priority sizes="100vw" />
         <div className="product-wash" /><SiteHeader />
@@ -38,6 +49,7 @@ export default function YggdrasilPage() {
       </section>
       <section className="product-cta"><p>Manifestação de interesse</p><h2>Escolha um número.<br />Não apenas uma mesa.</h2><Link href="/#interesse">Solicitar o dossiê da edição <ArrowRight /></Link></section>
       <Footer />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
     </main>
   );
 }
