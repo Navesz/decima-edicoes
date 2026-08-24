@@ -435,6 +435,12 @@ check(worksheet.includes(`${proofBodiesHeading} corpos de prova`) && worksheet.i
 check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === projectData.prototypeGate.length, `Ficha ${prototypeNumber}: aprovações imprimíveis incompletas`);
 const worksheetCss = readFileSync(join(root, 'app', 'caderno', 'ficha-00', 'worksheet.module.css'), 'utf8');
 check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@media print'), 'Ficha 00: configuração de impressão A4 ausente');
+check(worksheetCss.includes('.block { break-inside: auto;') && worksheetCss.includes('.block h2 { break-after: avoid-page;'), 'documentos imprimíveis: seções não possuem paginação progressiva');
+check(worksheetCss.includes('.table thead { display: table-header-group; }') && worksheetCss.includes('.table tr, .checks > div, .gate > div, .decision, .fixed, .line { break-inside: avoid; }'), 'documentos imprimíveis: cabeçalhos repetidos ou unidades indivisíveis ausentes');
+check(worksheetCss.includes('orphans: 3; widows: 3;') && worksheetCss.includes('print-color-adjust: exact;') && worksheetCss.includes('-webkit-print-color-adjust: exact;'), 'documentos imprimíveis: controle tipográfico ou de cor ausente');
+for (const documentHtml of [visibleCertificateModel, topQuote, visibleWorksheet]) {
+  check(documentHtml.includes('Imprimir ou salvar em PDF') && documentHtml.includes('<button') && documentHtml.includes('type="button"'), 'documentos imprimíveis: ação local de impressão ausente');
+}
 check(topQuote.includes('<meta name="robots" content="noindex, nofollow"'), 'Cotação do tampo: bloqueio de indexação ausente');
 check(!sitemap.includes(`${origin}/caderno/cotacao-tampo/`), 'Cotação do tampo: rota interna não deve entrar no sitemap público');
 check(topQuote.includes(`Diâmetro final</th><td>${projectData.product.diameterCm} cm`) && topQuote.includes(`Espessura final</th><td>${projectData.product.topThicknessMm.minimum}–${projectData.product.topThicknessMm.maximum} mm`), 'Cotação do tampo: dimensões divergem do contrato do projeto');

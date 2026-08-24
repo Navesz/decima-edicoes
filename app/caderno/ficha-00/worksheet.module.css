@@ -65,13 +65,17 @@
   :global(body) { background: #fff !important; color: #000; }
   .page { min-height: auto; background: #fff; }
   .page :global(.site-header), .page > :global(.footer), .actions { display: none !important; }
-  .sheet { width: 100%; margin: 0; padding: 0; background: #fff; box-shadow: none; }
-  .heading { padding-bottom: 18px; }
+  .sheet { width: 100%; margin: 0; padding: 0; background: #fff; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .sheet p { orphans: 3; widows: 3; }
+  .heading { break-after: avoid-page; padding-bottom: 18px; }
   .heading h1 { font-size: 58px; }
-  .block { break-inside: avoid; padding: 22px 0; }
-  .block h2 { margin-bottom: 16px; font-size: 26px; }
+  .block { break-inside: auto; padding: 22px 0; }
+  .block h2 { break-after: avoid-page; margin-bottom: 16px; font-size: 26px; }
   .fields, .costs { gap: 13px 24px; }
   .blank { height: 18px; }
+  .table { break-inside: auto; }
+  .table thead { display: table-header-group; }
+  .table tr, .checks > div, .gate > div, .decision, .fixed, .line { break-inside: avoid; }
   .table th, .table td { padding: 8px; }
   .table td, .checks span, .gate span, .decision span { font-size: 9px; }
   .checks > div, .gate > div { padding: 9px 0; }

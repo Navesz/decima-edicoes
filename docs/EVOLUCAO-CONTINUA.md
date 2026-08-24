@@ -902,3 +902,27 @@ O desenho do cabeçalho era consistente, mas seus links não informavam programa
 ### Proteção contra regressão
 
 O verificador percorre as oito rotas e exige contagem e destino exatos para `aria-current="page"`: um indicador na home, dois nas páginas de Coleções e dois nas páginas do Caderno. O contrato do componente e as três aplicações semânticas também são conferidos no fonte.
+
+## Ciclo 39 — paginação dos documentos internos
+
+Data: 24 de agosto de 2026.
+
+### Seções indivisíveis maiores que a página
+
+Ficha 00, briefing do tampo e modelo de certificado já compartilhavam uma folha A4. Porém, cada seção solicitava `break-inside: avoid`; quando tabelas e checklists excediam a área útil, essa regra podia ser ignorada de forma imprevisível ou empurrar conteúdo demais.
+
+### Intervenção
+
+- seções longas passaram a fluir naturalmente entre páginas;
+- títulos evitam separação do conteúdo seguinte;
+- cabeçalhos de tabela são configurados como grupos repetíveis;
+- linhas, itens de checklist, decisões, notas e campos lineares evitam corte interno;
+- parágrafos preservam três linhas contra órfãs e viúvas;
+- a folha solicita reprodução fiel de cores nos mecanismos padrão e WebKit;
+- cabeçalho do site, rodapé e controles continuam excluídos do papel;
+- as três rotas mantêm ação local de impressão, sem envio de dados;
+- a regra foi registrada em `docs/IMPRESSAO-DOS-DOCUMENTOS.md`.
+
+### Proteção contra regressão
+
+O verificador confere as regras de fluxo, títulos, cabeçalhos repetidos, unidades indivisíveis, tipografia e cor. Também exige botão local do tipo `button` nas três páginas imprimíveis.
