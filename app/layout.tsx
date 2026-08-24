@@ -39,7 +39,6 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: brand.shortName, statusBarStyle: 'black-translucent' },
   keywords: ['mesas autorais', 'mobiliário brasileiro', 'edição limitada', 'madeira maciça', 'design colecionável'],
   alternates: { canonical: absoluteUrl('/') },
-  robots: { index: true, follow: true },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',

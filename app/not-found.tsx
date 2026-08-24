@@ -1,7 +1,33 @@
+import type { Metadata } from 'next';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { brand } from './lib/brand';
 import { BrandLogo } from './components/brand-logo';
 import { edition } from './lib/project';
+import { absoluteUrl } from './lib/site';
+
+const notFoundTitle = 'Arquivo não encontrado';
+const notFoundDescription = 'Este endereço não corresponde a uma edição ou página ativa da DÉCIMA.';
+const notFoundUrl = absoluteUrl('/404.html');
+
+export const metadata: Metadata = {
+  title: notFoundTitle,
+  description: notFoundDescription,
+  alternates: { canonical: notFoundUrl },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: brand.name,
+    url: notFoundUrl,
+    title: `${notFoundTitle} · ${brand.name}`,
+    description: notFoundDescription,
+  },
+  twitter: {
+    card: 'summary',
+    title: `${notFoundTitle} · ${brand.name}`,
+    description: notFoundDescription,
+  },
+};
 
 export default function NotFound() {
   return (

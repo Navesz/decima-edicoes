@@ -51,6 +51,8 @@ Os pares de cor aprovados e restritos também vivem nesse contrato. O Guia publi
 
 A modelagem de SEO liga marca, website, páginas, breadcrumbs e o conceito Yggdrasil sem publicar oferta fictícia. As regras estão em `docs/SEO-E-DADOS-ESTRUTURADOS.md`.
 
+O documento `404.html` possui título, descrição, canonical e URLs sociais próprios, com uma única diretiva `noindex`; a home não força `index` globalmente. A regra específica está em `docs/METADADOS-DA-PAGINA-404.md`.
+
 O registro público da tiragem deriva do mesmo contrato, separa produção de disponibilidade e não publica dados pessoais. Estados e procedimento estão em `docs/REGISTRO-PUBLICO-DA-EDICAO.md`.
 
 ## Rodar localmente

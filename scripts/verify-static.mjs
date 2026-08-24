@@ -274,6 +274,7 @@ for (const file of socialCards) {
 
 const sitemap = read('sitemap.xml');
 routes.filter((route) => route.sitemap !== false).forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`), `sitemap.xml: rota ausente ${route.canonical}`));
+check(!sitemap.includes(`${origin}/404`) && !sitemap.includes(`${origin}/_not-found`), 'sitemap.xml: página de erro não pode ser indexável');
 
 const robots = read('robots.txt');
 check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap ausente ou incorreto');
@@ -285,11 +286,20 @@ const certificateModel = withoutRscMarkers(read('caderno/certificado-modelo/inde
 const topQuote = withoutRscMarkers(read('caderno/cotacao-tampo/index.html'));
 const brandGuide = withoutRscMarkers(read('caderno/marca/index.html'));
 const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
+const notFound = withoutRscMarkers(read('404.html'));
 const visibleProduct = product.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleNotebook = notebook.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleCertificateModel = certificateModel.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
+const notFoundRobots = [...notFound.matchAll(/<meta name="robots" content="([^"]+)"/g)].map((match) => match[1]);
+const rootLayoutSource = readFileSync(join(root, 'app', 'layout.tsx'), 'utf8');
+check(!rootLayoutSource.includes('robots: { index: true'), 'layout: diretiva index explícita pode contradizer páginas de erro');
+check(notFoundRobots.length === 1 && notFoundRobots[0] === 'noindex', `404: esperada uma única diretiva noindex, encontradas ${notFoundRobots.join(' | ') || 'nenhuma'}`);
+check(notFound.includes(`<title>Arquivo não encontrado · ${brandData.shortName}</title>`) && notFound.includes('Este endereço não corresponde a uma edição ou página ativa'), '404: título ou descrição própria ausente');
+check(notFound.includes(`<link rel="canonical" href="${origin}/404.html"`) && notFound.includes(`<meta property="og:url" content="${origin}/404.html"`), '404: canonical ou URL social herdou endereço incorreto');
+check(notFound.includes(`<meta property="og:title" content="Arquivo não encontrado · ${brandData.name}"`) && notFound.includes('<meta name="twitter:card" content="summary"'), '404: metadados de compartilhamento próprios ausentes');
+check(notFound.includes('Esta edição') && notFound.includes('Voltar ao início'), '404: experiência de recuperação incompleta');
 check(home.includes(`protótipo ${prototypeNumber} em desenvolvimento`), 'início: estágio conceitual não está explícito');
 check(home.includes(`Estágio atual: ${numberWords[projectData.edition.producedPieces]} de ${numberWords[projectData.edition.runSize]} peças produzidas`), 'início: estágio editorial diverge do contrato do projeto');
 check(home.includes(`Protocolo ${lastPieceFraction}`), 'início: protocolo editorial diverge da tiragem declarada');

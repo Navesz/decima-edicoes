@@ -662,3 +662,26 @@ O componente responsivo conhecia a largura dos 11 WebPs mestres para montar `src
 ### Proteção contra regressão
 
 O verificador compara o inventário do contrato com os WebPs mestres publicados, lê cada dimensão com Sharp e confere as variantes de 480 e 800 px. A proporção das variantes pode diferir do mestre em no máximo 0,002 por arredondamento. Em todos os HTMLs exportados, cada elemento `.responsive-image` precisa ter `width` e `height` iguais ao seu arquivo registrado; pelo menos 17 ocorrências devem permanecer cobertas.
+
+## Ciclo 29 — metadados coerentes no erro 404
+
+Data: 24 de agosto de 2026.
+
+### Contradição encontrada
+
+O Next.js adicionava `noindex` automaticamente ao documento 404, mas o layout raiz também publicava `index, follow`. O mesmo arquivo herdava título, descrição, canonical e `og:url` da home. O resultado era um erro corretamente desenhado, porém com duas instruções de indexação contraditórias e identidade de URL falsa no cabeçalho.
+
+### Intervenção
+
+- removida a diretiva `index, follow` global, desnecessária para páginas públicas indexáveis por padrão;
+- mantido o `noindex` automático e único do `not-found`;
+- definido título “Arquivo não encontrado · DÉCIMA”;
+- criada descrição própria para o endereço inexistente;
+- canonical e `og:url` agora apontam para `/404.html`, nunca para a home;
+- Open Graph e Twitter receberam título e descrição coerentes com o erro;
+- a página continua fora do sitemap e mantém o caminho de recuperação para o início;
+- os critérios foram registrados em `docs/METADADOS-DA-PAGINA-404.md`.
+
+### Proteção contra regressão
+
+O verificador rejeita uma diretiva `index` explícita no layout raiz, exige exatamente uma meta robots com `noindex` no 404, confere título, descrição, canonical, `og:url`, cartão social e ação de retorno. O sitemap falha se incluir `/404` ou `/_not-found`.
