@@ -23,6 +23,7 @@ O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idi
 - `/colecoes/nordica-yggdrasil` — dossiê da primeira coleção;
 - `/caderno` — área aberta do fundador com regras, protótipos, acabamento e simulador 3D.
 - `/caderno/marca` — guia interno, não indexado, com avaliação do nome, símbolo, aplicações, paleta, tipografia, voz e nomenclatura;
+- `/caderno/cotacao-tampo` — briefing interno e imprimível para cotar e receber o tampo inteiro pré-nivelado;
 - `/caderno/ficha-00` — ficha interna e imprimível do primeiro protótipo.
 
 ## Tecnologia

@@ -470,3 +470,27 @@ O Guia de Marca tornou nome, slogan, paleta e assinaturas explícitos, mas essas
 ### Proteção contra regressão
 
 O verificador lê o JSON diretamente, rejeita cores inválidas ou repetidas, ativos ausentes e consumidores desconectados. Também compara os seis tokens com o CSS, identidade e cor do manifesto, ícone real, conteúdo do Guia e nós estruturados exportados. O contrato evita deriva técnica; busca de marca e validação pública continuam como portões separados.
+
+## Ciclo 21 — briefing de cotação do tampo
+
+Data: 24 de agosto de 2026.
+
+### Restrição transformada em ferramenta
+
+O projeto dizia que o tampo inteiro, de uma única espécie e comprado já nivelado era a prioridade, mas essa decisão ainda não estava convertida em um pedido comparável para fornecedores. Isso deixava margem para receber propostas com construções diferentes sob a mesma descrição de “tampo de madeira”.
+
+### Intervenção
+
+- nova rota interna e imprimível `/caderno/cotacao-tampo/`, ligada diretamente à regra de construção e ao Portão M01;
+- Prioridade A definida como peça contínua de madeira maciça, uma única espécie, sem emenda como padrão;
+- diâmetro de 80 cm e espessura de 30–40 mm vêm do contrato do projeto;
+- pedido exige faces planas e paralelas, lateral limpa, medidas reais, método de verificação, tolerância declarada e defeitos informados;
+- umidade passou a pedir leituras em vários pontos, data, ambiente e equipamento, sem inventar um limite antes do Protótipo 00;
+- fotos, medições e inspeção de plano formam o pacote de evidência anterior à compra;
+- painel colado de uma única espécie aparece somente como Alternativa B, cotada separadamente e sem equivalência automática;
+- três cotações podem ser comparadas sem esconder construção, frete, prazo ou falta de prova;
+- o recebimento ganhou roteiro de medição, aclimatação, registro de transporte e decisão M01.
+
+### Proteção contra regressão
+
+A rota declara `noindex, nofollow`, não entra no sitemap e reutiliza a folha A4 já validada da ficha do protótipo. O verificador exige o acesso pelo Caderno, dimensões vindas do contrato, prioridade sem emenda, separação da alternativa colada, evidência de umidade, três cotações, impressão e decisão M01.

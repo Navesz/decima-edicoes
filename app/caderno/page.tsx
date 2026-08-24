@@ -63,6 +63,7 @@ export default function StudioNotebookPage() {
           {buildRules.map(([number, title, text]) => <article key={number}><span>{number}</span><h3>{title}</h3><p>{text}</p></article>)}
         </div>
         <aside className="decision-callout"><CircleAlert /><p><strong>Decisão de partida</strong>O tampo inteiro e pré-nivelado é a especificação padrão. Emendar madeira só entra no futuro, depois que houver ferramental e processo capazes de garantir nivelamento perfeito.</p></aside>
+        <Link className="gate-sheet-link" href="/caderno/cotacao-tampo">Abrir briefing imprimível para cotar o tampo <ArrowUpRight size={17} /></Link>
       </section>
 
       <section className="finish-section" id="acabamento">

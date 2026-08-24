@@ -56,6 +56,7 @@ const routes = [
   { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'caderno/cotacao-tampo/index.html', title: `Briefing de Cotação do Tampo · ${brandData.shortName}`, canonical: `${origin}/caderno/cotacao-tampo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false },
   { file: 'caderno/marca/index.html', title: `Guia de Marca · ${brandData.shortName}`, canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false },
   { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
 ];
@@ -197,6 +198,7 @@ check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap au
 const home = withoutRscMarkers(read('index.html'));
 const product = withoutRscMarkers(read(`colecoes/${projectData.collection.slug}/index.html`));
 const notebook = withoutRscMarkers(read('caderno/index.html'));
+const topQuote = withoutRscMarkers(read('caderno/cotacao-tampo/index.html'));
 const brandGuide = withoutRscMarkers(read('caderno/marca/index.html'));
 const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
@@ -220,6 +222,7 @@ check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-ni
 check((notebook.match(/data-gate=/g) ?? []).length === projectData.prototypeGate.length, `Caderno: esperado estado para as ${gateItemsWord} aprovações do Portão ${prototypeNumber}`);
 check(notebook.includes('<table class="gate-table">') && notebook.includes(`<caption>${gateItemsHeading} aprovações obrigatórias`), `Caderno: matriz do Portão ${prototypeNumber} não está semanticamente estruturada`);
 check(/href="(?:\/decima-edicoes)?\/caderno\/ficha-00\/?"/.test(notebook), 'Caderno: acesso à ficha do Protótipo 00 ausente');
+check(/href="(?:\/decima-edicoes)?\/caderno\/cotacao-tampo\/?"/.test(notebook), 'Caderno: acesso ao briefing de cotação do tampo ausente');
 check(/href="(?:\/decima-edicoes)?\/caderno\/marca\/?"/.test(notebook), 'Caderno: acesso ao Guia de Marca ausente');
 check(notebook.includes('href="#registro"') && notebook.includes('id="registro"'), 'Caderno: navegação para o registro de decisões ausente');
 check(notebook.includes(`<caption>Base da revisão ${projectData.documents.notebookVersion}`) && notebook.includes(`<time dateTime="${projectData.documents.updatedAtIso}"`), 'Caderno: revisão do registro de decisões ausente ou divergente');
@@ -234,6 +237,14 @@ check(worksheet.includes(`${proofBodiesHeading} corpos de prova`) && worksheet.i
 check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === projectData.prototypeGate.length, `Ficha ${prototypeNumber}: aprovações imprimíveis incompletas`);
 const worksheetCss = readFileSync(join(root, 'app', 'caderno', 'ficha-00', 'worksheet.module.css'), 'utf8');
 check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@media print'), 'Ficha 00: configuração de impressão A4 ausente');
+check(topQuote.includes('<meta name="robots" content="noindex, nofollow"'), 'Cotação do tampo: bloqueio de indexação ausente');
+check(!sitemap.includes(`${origin}/caderno/cotacao-tampo/`), 'Cotação do tampo: rota interna não deve entrar no sitemap público');
+check(topQuote.includes(`Diâmetro final</th><td>${projectData.product.diameterCm} cm`) && topQuote.includes(`Espessura final</th><td>${projectData.product.topThicknessMm.minimum}–${projectData.product.topThicknessMm.maximum} mm`), 'Cotação do tampo: dimensões divergem do contrato do projeto');
+check(topQuote.includes('uma peça contínua de madeira maciça, de uma única espécie') && topQuote.includes('Sem emenda como padrão'), 'Cotação do tampo: pedido principal não protege a peça contínua');
+check(topQuote.includes('Alternativa B — cotar separadamente') && topQuote.includes('não é equivalente automática'), 'Cotação do tampo: alternativa colada não está corretamente separada');
+check(topQuote.includes('mais de um ponto, com método informado') && topQuote.includes('sem estimativa verbal'), 'Cotação do tampo: evidência de umidade insuficiente');
+check((topQuote.match(/Cotação [123]/g) ?? []).length === 3, 'Cotação do tampo: comparação de três fornecedores incompleta');
+check(topQuote.includes('Imprimir ou salvar em PDF') && topQuote.includes('Decisão M01'), 'Cotação do tampo: ação imprimível ou decisão de matéria ausente');
 check(brandGuide.includes('<meta name="robots" content="noindex, nofollow"'), 'Guia de Marca: bloqueio de indexação ausente');
 check(!sitemap.includes(`${origin}/caderno/marca/`), 'Guia de Marca: rota interna não deve entrar no sitemap público');
 check(brandGuide.includes('Sim. DÉCIMA Edições é uma direção forte.') && brandGuide.includes('não declara disponibilidade legal'), 'Guia de Marca: veredito ou limite jurídico ausente');
@@ -349,7 +360,7 @@ check(/^\d+\.\d+$/.test(projectData.documents.notebookVersion), 'Contrato do pro
 check(new Set(decisionLog.map((item) => item.code)).size === decisionLog.length, 'Contrato do projeto: códigos do registro de decisões repetidos');
 check(decisionLog.every((item) => ['Confirmada', 'Em teste', 'Aguardando 00', 'Em vigor'].includes(item.state)), 'Contrato do projeto: estado desconhecido no registro de decisões');
 check(decisionLog.every((item) => !/[{}]/.test(item.decision) && !/[{}]/.test(item.record)), 'Contrato do projeto: marcador não resolvido no registro de decisões');
-for (const relativePath of ['app/components/home-page.tsx', 'app/colecoes/nordica-yggdrasil/page.tsx', 'app/caderno/page.tsx', 'app/caderno/ficha-00/page.tsx']) {
+for (const relativePath of ['app/components/home-page.tsx', 'app/colecoes/nordica-yggdrasil/page.tsx', 'app/caderno/page.tsx', 'app/caderno/ficha-00/page.tsx', 'app/caderno/cotacao-tampo/page.tsx']) {
   const source = readFileSync(join(root, relativePath), 'utf8');
   check(source.includes("lib/project'"), `${relativePath}: consumidor deixou de usar a fonte única do projeto`);
 }
@@ -523,9 +534,9 @@ for (const file of exportedHtmlFiles) {
 }
 
 check(exportedHtmlFiles.length >= routes.length + 3, `rastreador: quantidade inesperada de documentos HTML (${exportedHtmlFiles.length})`);
-check(checkedInternalReferences >= 220, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
-check(checkedSemanticElements >= 200, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
-check(checkedStructuredNodes >= 23, `SEO: poucos nós estruturados verificados (${checkedStructuredNodes})`);
+check(checkedInternalReferences >= 290, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
+check(checkedSemanticElements >= 330, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
+check(checkedStructuredNodes >= 27, `SEO: poucos nós estruturados verificados (${checkedStructuredNodes})`);
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);
