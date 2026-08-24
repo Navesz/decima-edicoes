@@ -23,7 +23,7 @@ function Blank({ wide = false }: { wide?: boolean }) {
 export default function CertificateModelPage() {
   return (
     <main className={styles.page} id="conteudo">
-      <SiteHeader tone="dark" />
+      <SiteHeader tone="dark" current="notebook" />
       <div className={styles.actions}>
         <Link href="/caderno/#edicao"><ArrowLeft size={16} /> Voltar ao protocolo de edição</Link>
         <PrintButton className={styles.print} />

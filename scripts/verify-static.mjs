@@ -68,14 +68,14 @@ function listFiles(directory) {
 }
 
 const routes = [
-  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 580, cssBudgetKiB: 40 },
-  { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: 'caderno/certificado-modelo/index.html', title: `Modelo de Certificado de Edição · ${brandData.shortName}`, canonical: `${origin}/caderno/certificado-modelo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false },
-  { file: 'caderno/cotacao-tampo/index.html', title: `Briefing de Cotação do Tampo · ${brandData.shortName}`, canonical: `${origin}/caderno/cotacao-tampo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false },
-  { file: 'caderno/marca/index.html', title: `Guia de Marca · ${brandData.shortName}`, canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false },
-  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
+  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 580, cssBudgetKiB: 40, currentPath: '/', currentCount: 1 },
+  { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/colecoes/', currentCount: 2 },
+  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/colecoes/', currentCount: 2 },
+  { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40, currentPath: '/caderno/', currentCount: 2 },
+  { file: 'caderno/certificado-modelo/index.html', title: `Modelo de Certificado de Edição · ${brandData.shortName}`, canonical: `${origin}/caderno/certificado-modelo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
+  { file: 'caderno/cotacao-tampo/index.html', title: `Briefing de Cotação do Tampo · ${brandData.shortName}`, canonical: `${origin}/caderno/cotacao-tampo/`, scriptBudgetKiB: 600, cssBudgetKiB: 46, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
+  { file: 'caderno/marca/index.html', title: `Guia de Marca · ${brandData.shortName}`, canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
+  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false, currentPath: '/caderno/', currentCount: 2 },
 ];
 
 function initialScriptSources(html) {
@@ -122,6 +122,10 @@ for (const route of routes) {
   check(h1Count === 1, `${route.file}: esperado um h1, encontrado ${h1Count}`);
   check(!visibleHtml.includes('style="opacity:0'), `${route.file}: conteúdo essencial nasce invisível`);
   check(html.includes('aria-expanded="false"'), `${route.file}: estado acessível do menu ausente`);
+  const currentLinks = [...visibleHtml.matchAll(/<a\b[^>]*aria-current="page"[^>]*>/gi)].map((match) => match[0]);
+  const expectedCurrentHref = `${exportedBasePath}${route.currentPath}`;
+  check(currentLinks.length === route.currentCount, `${route.file}: esperados ${route.currentCount} indicadores de página atual, encontrados ${currentLinks.length}`);
+  check(currentLinks.every((tag) => tag.includes(`href="${expectedCurrentHref}"`)), `${route.file}: indicador de página atual aponta para área incorreta`);
   if (route.responsiveImages !== false) {
     check(/\ssrcset="[^"]+-480\.webp 480w,[^"]+-800\.webp 800w/i.test(visibleHtml), `${route.file}: variantes responsivas de imagem ausentes`);
     check(/\ssizes="[^"]+"/i.test(visibleHtml), `${route.file}: instrução de tamanho responsivo ausente`);
@@ -237,6 +241,9 @@ check(interestFormLoaderSource.includes("import('./interest-form')") && interest
 check(interestFormLoaderSource.includes("rootMargin: '360px 0px'") && interestFormLoaderSource.includes('threshold: .01') && interestFormLoaderSource.includes('data-interest-mode="static"'), 'interesse: margem, limiar ou fachada estática ausente');
 check(interestFormLoaderSource.includes("!('IntersectionObserver' in window)") && interestFormLoaderSource.includes('queueMicrotask(() => setEnhance(true))'), 'interesse: navegador sem observador não recebe a alternativa funcional');
 check(interestFormSource.includes('data-interest-mode="active"') && interestFormSource.includes('defaultInterest'), 'interesse: formulário ativo perdeu estado observável ou seleção recebida do servidor');
+const siteHeaderSource = readFileSync(join(root, 'app', 'components', 'site-header.tsx'), 'utf8');
+check(siteHeaderSource.includes("type CurrentSection = 'home' | 'collections' | 'notebook'") && siteHeaderSource.includes("aria-current={current === 'home' ? 'page' : undefined}"), 'navegação: contrato de área atual ou indicação da home ausente');
+check((siteHeaderSource.match(/aria-current=/g) ?? []).length === 3 && siteHeaderSource.includes("section === current ? 'page' : undefined"), 'navegação: desktop e menu móvel não compartilham o estado atual');
 
 const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');

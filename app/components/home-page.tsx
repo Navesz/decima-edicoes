@@ -16,7 +16,7 @@ export function HomePage() {
       <section className="hero-shell">
         <ResponsiveImage className="hero-image" src={assetPath('/images/hero-yggdrasil.webp')} alt={`Visualização conceitual da mesa baixa redonda ${collection.name} em madeira e aço`} priority sizes="100vw" />
         <div className="hero-wash" />
-        <SiteHeader />
+        <SiteHeader current="home" />
 
         <div className="hero-content">
           <p className="eyebrow">

@@ -25,7 +25,7 @@ function Blank({ wide = false }: { wide?: boolean }) {
 export default function PrototypeWorksheetPage() {
   return (
     <main className={styles.page} id="conteudo">
-      <SiteHeader tone="dark" />
+      <SiteHeader tone="dark" current="notebook" />
       <div className={styles.actions}><Link href="/caderno/#portao"><ArrowLeft size={16} /> Voltar ao Portão {edition.prototypeNumber}</Link><PrintButton className={styles.print} /></div>
       <article className={styles.sheet}>
         <header className={styles.heading}><div><p>DÉCIMA Edições · documento interno</p><h1>Ficha do<br />Protótipo {edition.prototypeNumber}.</h1></div><div><strong>{edition.prototypeCode}</strong><span>Versão {documents.worksheetVersion} · {documents.updatedAt}</span></div></header>

@@ -43,7 +43,7 @@ function Blank({ wide = false }: { wide?: boolean }) {
 export default function TopQuoteBriefPage() {
   return (
     <main className={styles.page} id="conteudo">
-      <SiteHeader tone="dark" />
+      <SiteHeader tone="dark" current="notebook" />
       <div className={styles.actions}>
         <Link href="/caderno/#regras"><ArrowLeft size={16} /> Voltar às regras de construção</Link>
         <PrintButton className={styles.print} />

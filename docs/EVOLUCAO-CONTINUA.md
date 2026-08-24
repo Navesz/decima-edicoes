@@ -879,3 +879,26 @@ O manifesto já publicava identidade, escopo, cores e ícones corretos, mas toda
 ### Proteção contra regressão
 
 O verificador exige exatamente os dois atalhos editoriais, confere nome, nome curto, descrição e URL transformada, e rejeita destino fora do escopo declarado. Idioma e direção também integram o contrato.
+
+## Ciclo 38 — estado atual na navegação
+
+Data: 24 de agosto de 2026.
+
+### Orientação visual sem equivalente semântico
+
+O desenho do cabeçalho era consistente, mas seus links não informavam programaticamente qual área estava aberta. Um leitor de tela recebia os destinos sem a indicação de contexto oferecida visualmente pelo conteúdo da página.
+
+### Intervenção
+
+- criado o contrato tipado `home | collections | notebook`;
+- a home marca o link da assinatura como página atual;
+- arquivo e dossiê Yggdrasil marcam Coleções;
+- capa, certificado, cotação do tampo, ficha e guia de marca marcam Caderno;
+- navegação principal e menu móvel recebem a mesma indicação;
+- Manifesto continua sem estado de página, pois é uma âncora interna;
+- o valor é fornecido pelo servidor, sem leitura de URL nem novo efeito no cliente;
+- a regra foi registrada em `docs/NAVEGACAO-E-ESTADO-ATUAL.md`.
+
+### Proteção contra regressão
+
+O verificador percorre as oito rotas e exige contagem e destino exatos para `aria-current="page"`: um indicador na home, dois nas páginas de Coleções e dois nas páginas do Caderno. O contrato do componente e as três aplicações semânticas também são conferidos no fonte.

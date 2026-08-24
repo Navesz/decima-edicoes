@@ -41,7 +41,7 @@ const contrastRows = [
 export default function BrandGuidePage() {
   return (
     <main className={styles.page} id="conteudo">
-      <SiteHeader tone="dark" />
+      <SiteHeader tone="dark" current="notebook" />
 
       <header className={styles.hero}>
         <div className={styles.heroIntro}>

@@ -48,7 +48,7 @@ const collectionsStructuredData = {
 export default function CollectionsPage() {
   return (
     <main className="light-page" id="conteudo">
-      <SiteHeader tone="dark" />
+      <SiteHeader tone="dark" current="collections" />
       <header className="archive-hero">
         <p className="micro-label">Arquivo DÉCIMA · {collection.year}—</p>
         <h1>Coleções que<br />sabem terminar.</h1>

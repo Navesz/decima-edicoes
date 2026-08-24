@@ -50,6 +50,8 @@ O laboratório 3D é um aprimoramento progressivo: a direção acetinada, a meta
 
 O formulário demonstrativo também nasce completo e inativo no HTML. A lógica de validação só é transferida quando a seção se aproxima; sem JavaScript, nenhum campo é habilitado e nenhum dado pode sair da página. A medição está em `docs/FORMULARIO-DE-INTERESSE-PROGRESSIVO.md`.
 
+O cabeçalho identifica semanticamente a área atual na home, em Coleções e em todo o Caderno, sem detectar rota no cliente. A regra está em `docs/NAVEGACAO-E-ESTADO-ATUAL.md`.
+
 ## Fonte única do projeto
 
 Tiragem, produção, dimensões, protótipo, versões, corpos de prova e aprovações vivem em `app/lib/project-data.json`. O site e o verificador consomem esse mesmo contrato para evitar divergência entre vitrine, produto, Caderno e ficha impressa. O procedimento de atualização está em `docs/CONTRATO-DO-PROJETO.md`.

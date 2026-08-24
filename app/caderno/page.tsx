@@ -49,7 +49,7 @@ const notebookStructuredData = {
 export default function StudioNotebookPage() {
   return (
     <main className="notebook-page" id="conteudo">
-      <SiteHeader tone="dark" />
+      <SiteHeader tone="dark" current="notebook" />
       <header className="notebook-hero">
         <div><p className="micro-label">Documento vivo · fundador</p><h1>Caderno<br />do Atelier.</h1></div>
         <div><p>Esta é a parte do projeto que normalmente fica escondida: o raciocínio por trás do produto, as restrições reais da oficina e o que ainda precisa ser provado antes de vender.</p><span>Versão {documents.notebookVersion} · {documents.updatedAt}</span></div>

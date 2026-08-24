@@ -6,17 +6,18 @@ import { useEffect, useRef, useState } from 'react';
 import { brand, brandSignature } from '../lib/brand';
 import { BrandLogo } from './brand-logo';
 
-type Props = { tone?: 'light' | 'dark' };
+type CurrentSection = 'home' | 'collections' | 'notebook';
+type Props = { tone?: 'light' | 'dark'; current: CurrentSection };
 
-export function SiteHeader({ tone = 'light' }: Props) {
+export function SiteHeader({ tone = 'light', current }: Props) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const menuPanel = useRef<HTMLDivElement>(null);
-  const links = [
-    ['/colecoes', 'Coleções'],
-    ['/#manifesto', 'Manifesto'],
-    ['/caderno', 'Caderno do Atelier'],
+  const links: { href: string; label: string; section?: CurrentSection }[] = [
+    { href: '/colecoes', label: 'Coleções', section: 'collections' },
+    { href: '/#manifesto', label: 'Manifesto' },
+    { href: '/caderno', label: 'Caderno do Atelier', section: 'notebook' },
   ];
 
   useEffect(() => {
@@ -59,11 +60,11 @@ export function SiteHeader({ tone = 'light' }: Props) {
   return (
     <>
       <header className={`site-header ${tone === 'dark' ? 'header-dark' : ''}`}>
-        <Link className="brand" href="/" aria-label={`${brand.name} — início`}>
+        <Link className="brand" href="/" aria-label={`${brand.name} — início`} aria-current={current === 'home' ? 'page' : undefined}>
           <BrandLogo />
         </Link>
         <nav aria-label="Navegação principal">
-          {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}
+          {links.map(({ href, label, section }) => <Link key={href} href={href} aria-current={section === current ? 'page' : undefined}>{label}</Link>)}
         </nav>
         <Link className="header-cta" href="/#interesse">
           Acompanhar edição <ArrowUpRight size={13} strokeWidth={1.5} />
@@ -87,8 +88,8 @@ export function SiteHeader({ tone = 'light' }: Props) {
         <button ref={closeButton} type="button" aria-label="Fechar menu" onClick={() => setOpen(false)}><X /></button>
         <p>{brandSignature}</p>
         <nav aria-label="Menu móvel">
-          {links.map(([href, label], index) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)}>
+          {links.map(({ href, label, section }, index) => (
+            <Link key={href} href={href} aria-current={section === current ? 'page' : undefined} onClick={() => setOpen(false)}>
               <span>0{index + 1}</span>{label}
             </Link>
           ))}

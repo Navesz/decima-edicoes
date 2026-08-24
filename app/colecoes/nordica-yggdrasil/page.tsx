@@ -63,7 +63,7 @@ export default function YggdrasilPage() {
     <main className="product-page" id="conteudo">
       <section className="product-hero">
         <ResponsiveImage src={assetPath('/images/hero-yggdrasil.webp')} alt={`Visualização conceitual da mesa ${collection.family} — ${collection.name}`} priority sizes="100vw" />
-        <div className="product-wash" /><SiteHeader />
+        <div className="product-wash" /><SiteHeader current="collections" />
         <div className="product-title"><p>{collection.family} · Edição {edition.collectionNumber} · conceito</p><h1>{collection.name}</h1><div><span>{collection.year}</span><span>{edition.producedPieces} produzidas</span><span>{edition.runSize} previstas</span></div></div>
         <a className="product-scroll" href="#historia">Conhecer o conceito <ArrowDown size={15} /></a>
       </section>
