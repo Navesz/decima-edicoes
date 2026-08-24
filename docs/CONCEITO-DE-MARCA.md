@@ -6,6 +6,10 @@
 
 O nome é uma proposta conceitual e precisa de busca jurídica de marca e domínio antes do uso comercial.
 
+## Símbolo
+
+Um círculo representa a mesa observada de cima. Dentro dele, o `X` romano comunica dez, a tiragem máxima de cada edição, e também lembra o encontro dos perfis retos da estrutura metálica. Um ponto central em bronze funciona como assinatura e eixo da composição.
+
 ## Posicionamento
 
 Mesas baixas autorais para clientes, arquitetos e colecionadores que procuram um objeto protagonista, com procedência, história e escassez verificável.

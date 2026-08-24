@@ -6,6 +6,14 @@ Site-conceito de uma marca brasileira de mesas autorais em edições de dez peç
 
 Uma coleção não volta ao estoque. A peça 10/10 encerra a arte, que passa para o arquivo. Uma família estética pode retornar no futuro, mas com novo subtítulo, novo desenho e nova história — `Nórdica — Yggdrasil` pode dar lugar a `Nórdica — Skald`, jamais a uma simples reimpressão.
 
+## Logo
+
+O círculo representa o tampo visto de cima. O `X` é simultaneamente a estrutura cruzada da base e o numeral romano de dez; o ponto em bronze marca o centro de cada edição.
+
+- `public/brand/decima-logo-dark.png` — aplicação sobre fundos claros;
+- `public/brand/decima-logo-light.png` — aplicação sobre fundos escuros;
+- `app/icon.png` — símbolo reduzido para navegador e redes.
+
 ## Experiências do site
 
 - `/` — apresentação da marca, coleção inaugural, manifesto e lista privada;
@@ -15,12 +23,12 @@ Uma coleção não volta ao estoque. A peça 10/10 encerra a arte, que passa par
 
 ## Tecnologia
 
-- Next.js/Vinext e React;
+- Next.js com exportação estática e React;
 - Framer Motion para entrada e navegação móvel;
 - GSAP + ScrollTrigger para revelações e profundidade no scroll;
 - Lenis para rolagem suave;
 - Three.js + React Three Fiber para o laboratório de acabamento;
-- Cloudflare/Sites para publicação.
+- GitHub Actions e GitHub Pages para publicação em `navesz.github.io/decima-edicoes`.
 
 ## Rodar localmente
 
@@ -34,6 +42,8 @@ Build de produção:
 ```bash
 npm run build
 ```
+
+O push na branch `main` publica automaticamente no GitHub Pages.
 
 ## Antes do lançamento comercial
 

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Footer } from '../components/footer';
 import { SiteHeader } from '../components/site-header';
 import { collections } from '../lib/collections';
+import { assetPath } from '../lib/base-path';
 
 export const metadata: Metadata = {
   title: 'Coleções — DÉCIMA Edições',
@@ -32,7 +33,7 @@ export default function CollectionsPage() {
           </article>
         ))}
       </section>
-      <section className="archive-board"><Image src="/images/collection-dark.png" alt="Mapa visual de dez conceitos iniciais" fill sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
+      <section className="archive-board"><Image src={assetPath('/images/collection-dark.png')} alt="Mapa visual de dez conceitos iniciais" fill sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
       <Footer />
     </main>
   );

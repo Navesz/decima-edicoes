@@ -6,6 +6,7 @@ import { FinishLab } from '../components/finish-lab';
 import { Footer } from '../components/footer';
 import { SiteHeader } from '../components/site-header';
 import { buildRules } from '../lib/collections';
+import { assetPath } from '../lib/base-path';
 
 export const metadata: Metadata = {
   title: 'Caderno do Atelier — DÉCIMA Edições',
@@ -57,7 +58,7 @@ export default function StudioNotebookPage() {
       </section>
 
       <section className="process-section" id="processo">
-        <div className="process-image"><Image src="/images/yggdrasil-runes.png" alt="Mesa Yggdrasil em estudo de acabamento" fill sizes="(max-width: 900px) 100vw, 46vw" /></div>
+        <div className="process-image"><Image src={assetPath('/images/yggdrasil-runes.png')} alt="Mesa Yggdrasil em estudo de acabamento" fill sizes="(max-width: 900px) 100vw, 46vw" /></div>
         <div className="process-copy"><div className="notebook-section-title"><span>04</span><div><p className="micro-label">Fluxo proposto</p><h2>Da madeira<br />ao certificado.</h2></div></div><ol><li><span>01</span><div><strong>Receber e estabilizar</strong><p>Selecionar tampo inteiro, plano e com umidade adequada ao ambiente de produção.</p></div></li><li><span>02</span><div><strong>Preparar e selar</strong><p>Lixar, limpar e aplicar o sistema de selagem compatível definido nos testes.</p></div></li><li><span>03</span><div><strong>Aplicar a linguagem</strong><p>Posicionar arte apenas no plano superior, preservando integralmente a lateral.</p></div></li><li><span>04</span><div><strong>Encapsular e finalizar</strong><p>Epóxi, cura conforme ficha técnica, nivelamento e acabamento final acetinado validado.</p></div></li><li><span>05</span><div><strong>Montar e numerar</strong><p>Base em aço, inspeção, plaqueta 01/10–10/10 e certificado da edição.</p></div></li></ol></div>
       </section>
 

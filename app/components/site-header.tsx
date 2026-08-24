@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { BrandLogo } from './brand-logo';
 
 type Props = { tone?: 'light' | 'dark' };
 
@@ -19,8 +20,7 @@ export function SiteHeader({ tone = 'light' }: Props) {
     <>
       <header className={`site-header ${tone === 'dark' ? 'header-dark' : ''}`}>
         <Link className="brand" href="/" aria-label="DÉCIMA Edições — início">
-          <span className="brand-mark">X</span>
-          <span>DÉCIMA <i>EDIÇÕES</i></span>
+          <BrandLogo />
         </Link>
         <nav aria-label="Navegação principal">
           {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}

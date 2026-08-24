@@ -5,19 +5,22 @@ import Link from 'next/link';
 import { Footer } from '../../components/footer';
 import { SiteHeader } from '../../components/site-header';
 import { gallery } from '../../lib/collections';
+import { assetPath } from '../../lib/base-path';
+
+const productionOrigin = 'https://navesz.github.io/decima-edicoes';
 
 export const metadata: Metadata = {
   title: 'Nórdica — Yggdrasil | DÉCIMA Edições',
   description: 'A edição inaugural da DÉCIMA: dez mesas numeradas em madeira maciça e aço.',
-  openGraph: { title: 'Nórdica — Yggdrasil | DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: ['/images/hero-yggdrasil.png'] },
-  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil | DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: ['/images/hero-yggdrasil.png'] },
+  openGraph: { title: 'Nórdica — Yggdrasil | DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [`${productionOrigin}/images/hero-yggdrasil.png`] },
+  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil | DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [`${productionOrigin}/images/hero-yggdrasil.png`] },
 };
 
 export default function YggdrasilPage() {
   return (
     <main className="product-page">
       <section className="product-hero">
-        <Image src="/images/hero-yggdrasil.png" alt="Mesa Nórdica — Yggdrasil" fill priority sizes="100vw" />
+        <Image src={assetPath('/images/hero-yggdrasil.png')} alt="Mesa Nórdica — Yggdrasil" fill priority sizes="100vw" />
         <div className="product-wash" /><SiteHeader />
         <div className="product-title"><p>Nórdica · Edição 01</p><h1>Yggdrasil</h1><div><span>2026</span><span>10 peças</span><span>Brasil</span></div></div>
         <a className="product-scroll" href="#historia">Conhecer a peça <ArrowDown size={15} /></a>

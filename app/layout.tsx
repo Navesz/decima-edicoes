@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import { SmoothScroll } from './components/smooth-scroll';
 import './globals.css';
 
-const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://decima-edicoes.leonardonavesworking.chatgpt.site';
+const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://navesz.github.io/decima-edicoes';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
@@ -19,13 +19,13 @@ export const metadata: Metadata = {
     siteName: 'DÉCIMA Edições',
     title: 'DÉCIMA Edições — Objetos que não se repetem',
     description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
+    images: [{ url: `${siteOrigin}/og.png`, width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'DÉCIMA Edições — Objetos que não se repetem',
     description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
-    images: ['/og.png'],
+    images: [`${siteOrigin}/og.png`],
   },
 };
 
