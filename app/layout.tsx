@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import { SmoothScroll } from './components/smooth-scroll';
 import './globals.css';
 
-const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://decima-edicoes.leonardonavesworking.chatgpt.site';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
