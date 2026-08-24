@@ -80,6 +80,8 @@ As imagens originais ficam em `assets/source-images`. Para regenerar os WebPs p�
 npm run images:optimize
 ```
 
+O mesmo comando atualiza `app/lib/image-data.json`. Esse contrato fornece largura e altura intrínsecas às 17 imagens responsivas renderizadas e é conferido contra os arquivos no build. Critérios e procedimento estão em `docs/IMAGENS-E-ESTABILIDADE.md`.
+
 O push na branch `main` publica automaticamente no GitHub Pages.
 
 As cinco Actions oficiais estão fixadas em commits completos e os jobs usam permissões mínimas separadas. Pins e procedimento de atualização estão em `docs/SEGURANCA-DO-DEPLOY.md`.

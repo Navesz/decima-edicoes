@@ -1,18 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 
-const sourceWidths: Record<string, number> = {
-  'art-deco.webp': 1122,
-  'collection-board.webp': 1536,
-  'collection-dark.webp': 1254,
-  'hero-yggdrasil.webp': 1254,
-  'renaissance-medallion.webp': 1122,
-  'sunburst.webp': 1122,
-  'yggdrasil-dark.webp': 1230,
-  'yggdrasil-ivory.webp': 1536,
-  'yggdrasil-light.webp': 1254,
-  'yggdrasil-runes.webp': 1254,
-  'yggdrasil-satin.webp': 1254,
-};
+import imageData from '../lib/image-data.json';
+
+const sourceDimensions = imageData as Record<string, { width: number; height: number }>;
 
 type ResponsiveImageProps = {
   src: string;
@@ -28,9 +18,9 @@ function variantPath(src: string, width: number) {
 
 export function ResponsiveImage({ src, alt, sizes, className, priority = false }: ResponsiveImageProps) {
   const fileName = src.split('/').at(-1) ?? '';
-  const sourceWidth = sourceWidths[fileName];
-  const srcSet = sourceWidth
-    ? `${variantPath(src, 480)} 480w, ${variantPath(src, 800)} 800w, ${src} ${sourceWidth}w`
+  const dimensions = sourceDimensions[fileName];
+  const srcSet = dimensions
+    ? `${variantPath(src, 480)} 480w, ${variantPath(src, 800)} 800w, ${src} ${dimensions.width}w`
     : undefined;
 
   return (
@@ -38,6 +28,8 @@ export function ResponsiveImage({ src, alt, sizes, className, priority = false }
       src={src}
       srcSet={srcSet}
       sizes={sizes}
+      width={dimensions?.width}
+      height={dimensions?.height}
       alt={alt}
       className={['responsive-image', className].filter(Boolean).join(' ')}
       loading={priority ? 'eager' : 'lazy'}

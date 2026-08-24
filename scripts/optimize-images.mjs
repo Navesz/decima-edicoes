@@ -1,4 +1,4 @@
-import { mkdir, readdir, stat } from 'node:fs/promises';
+import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import sharp from 'sharp';
 
@@ -15,6 +15,7 @@ const sourceFiles = (await readdir(sourceDirectory))
 
 let sourceBytes = 0;
 let outputBytes = 0;
+const imageData = {};
 
 for (const file of sourceFiles) {
   const source = join(sourceDirectory, file);
@@ -23,6 +24,7 @@ for (const file of sourceFiles) {
 
   const sourceImage = sharp(source).rotate();
   const metadata = await sourceImage.metadata();
+  imageData[`${basename(file, '.png')}.webp`] = { width: metadata.width, height: metadata.height };
   const renderedFiles = [];
 
   await sourceImage
@@ -47,6 +49,8 @@ for (const file of sourceFiles) {
   outputBytes += outputInfo.reduce((total, info) => total + info.size, 0);
   console.log(`${file} -> ${renderedFiles.map((renderedFile, index) => `${basename(renderedFile)} ${(outputInfo[index].size / 1024).toFixed(0)} KiB`).join(' · ')}`);
 }
+
+await writeFile(join(root, 'app', 'lib', 'image-data.json'), `${JSON.stringify(imageData, null, 2)}\n`);
 
 const socialSource = join(sourceDirectory, 'og.png');
 const socialTarget = join(root, 'public', 'og.jpg');

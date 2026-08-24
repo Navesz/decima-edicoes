@@ -1,0 +1,46 @@
+{
+  "art-deco.webp": {
+    "width": 1122,
+    "height": 1402
+  },
+  "collection-board.webp": {
+    "width": 1536,
+    "height": 1024
+  },
+  "collection-dark.webp": {
+    "width": 1254,
+    "height": 1254
+  },
+  "hero-yggdrasil.webp": {
+    "width": 1254,
+    "height": 1254
+  },
+  "renaissance-medallion.webp": {
+    "width": 1122,
+    "height": 1402
+  },
+  "sunburst.webp": {
+    "width": 1122,
+    "height": 1402
+  },
+  "yggdrasil-dark.webp": {
+    "width": 1230,
+    "height": 1278
+  },
+  "yggdrasil-ivory.webp": {
+    "width": 1536,
+    "height": 1024
+  },
+  "yggdrasil-light.webp": {
+    "width": 1254,
+    "height": 1254
+  },
+  "yggdrasil-runes.webp": {
+    "width": 1254,
+    "height": 1254
+  },
+  "yggdrasil-satin.webp": {
+    "width": 1254,
+    "height": 1254
+  }
+}

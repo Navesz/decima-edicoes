@@ -10,6 +10,7 @@ const origin = `https://navesz.github.io${basePath}`;
 const failures = [];
 const projectData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'project-data.json'), 'utf8'));
 const brandData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'brand-data.json'), 'utf8'));
+const imageData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'image-data.json'), 'utf8'));
 const numberWords = ['zero', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez'];
 const pad2 = (value) => String(value).padStart(2, '0');
 const collectionPath = `/colecoes/${projectData.collection.slug}/`;
@@ -165,12 +166,29 @@ const publicImageBytes = publicImages.reduce((total, file) => {
   return total + bytes;
 }, 0);
 const sourceImages = publicImages.filter((file) => /\.webp$/i.test(file) && !/-\d+\.webp$/i.test(file));
-sourceImages.forEach((file) => {
+check(JSON.stringify(Object.keys(imageData).sort()) === JSON.stringify(sourceImages.sort()), 'contrato de imagens: inventário diverge dos WebPs mestres publicados');
+for (const file of sourceImages) {
   const stem = file.replace(/\.webp$/i, '');
-  [480, 800].forEach((width) => check(publicImages.includes(`${stem}-${width}.webp`), `variante ausente: ${stem}-${width}.webp`));
-});
+  const sourceMetadata = await sharp(join(output, 'images', file)).metadata();
+  check(imageData[file]?.width === sourceMetadata.width && imageData[file]?.height === sourceMetadata.height, `contrato de imagens: dimensões divergentes em ${file}`);
+  for (const width of [480, 800]) {
+    const variant = `${stem}-${width}.webp`;
+    check(publicImages.includes(variant), `variante ausente: ${variant}`);
+    if (!publicImages.includes(variant)) continue;
+    const variantMetadata = await sharp(join(output, 'images', variant)).metadata();
+    const sourceRatio = sourceMetadata.width / sourceMetadata.height;
+    const variantRatio = variantMetadata.width / variantMetadata.height;
+    check(variantMetadata.width === width, `variante ${variant}: largura deveria ser ${width}px`);
+    check(Math.abs(sourceRatio - variantRatio) <= 0.002, `variante ${variant}: proporção diverge do mestre`);
+  }
+}
 check(publicImageBytes <= 4 * 1024 * 1024, `mídia pública excede 4 MiB: ${(publicImageBytes / 1024 / 1024).toFixed(2)} MiB`);
 check(statSync(join(output, 'og.jpg')).size <= 200 * 1024, 'og.jpg excede 200 KiB');
+
+const responsiveImageSource = readFileSync(join(root, 'app', 'components', 'responsive-image.tsx'), 'utf8');
+const imageOptimizerSource = readFileSync(join(root, 'scripts', 'optimize-images.mjs'), 'utf8');
+check(responsiveImageSource.includes("import imageData from '../lib/image-data.json'") && responsiveImageSource.includes('width={dimensions?.width}') && responsiveImageSource.includes('height={dimensions?.height}'), 'imagens responsivas: componente deixou de publicar dimensões do contrato');
+check(imageOptimizerSource.includes("'image-data.json'") && imageOptimizerSource.includes('JSON.stringify(imageData, null, 2)'), 'imagens responsivas: otimizador deixou de atualizar o contrato dimensional');
 
 const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');
@@ -513,6 +531,7 @@ const documentCache = new Map();
 const internalOrigin = new URL(origin).origin;
 let checkedInternalReferences = 0;
 let checkedSemanticElements = 0;
+let checkedResponsiveImages = 0;
 
 function attributeValue(tag, name) {
   return tag.match(new RegExp(`\\s${name}="([^"]*)"`, 'i'))?.[1];
@@ -630,6 +649,16 @@ for (const file of exportedHtmlFiles) {
     const alt = attributeValue(match[0], 'alt');
     check(alt !== undefined, `${sourceRelativePath}: imagem sem atributo alt`);
     if (alt === '') check(/(?:aria-hidden="true"|role="presentation")/i.test(match[0]), `${sourceRelativePath}: imagem com alt vazio sem semântica decorativa`);
+    if (attributeValue(match[0], 'class')?.split(/\s+/).includes('responsive-image')) {
+      const src = attributeValue(match[0], 'src') ?? '';
+      const imageFile = src.replace(`${exportedBasePath}/images/`, '').split('/').at(-1);
+      const dimensions = imageData[imageFile];
+      check(Boolean(dimensions), `${sourceRelativePath}: imagem responsiva fora do contrato (${src})`);
+      if (dimensions) {
+        check(Number(attributeValue(match[0], 'width')) === dimensions.width && Number(attributeValue(match[0], 'height')) === dimensions.height, `${sourceRelativePath}: dimensões HTML divergem do arquivo ${imageFile}`);
+      }
+      checkedResponsiveImages += 1;
+    }
     checkedSemanticElements += 1;
   }
   for (const match of document.visible.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)) {
@@ -671,6 +700,7 @@ for (const file of exportedHtmlFiles) {
 check(exportedHtmlFiles.length >= routes.length + 3, `rastreador: quantidade inesperada de documentos HTML (${exportedHtmlFiles.length})`);
 check(checkedInternalReferences >= 324, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
 check(checkedSemanticElements >= 374, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
+check(checkedResponsiveImages >= 17, `desempenho: poucas imagens responsivas com dimensões verificadas (${checkedResponsiveImages})`);
 check(checkedStructuredNodes >= 29, `SEO: poucos nós estruturados verificados (${checkedStructuredNodes})`);
 
 if (failures.length) {
@@ -679,4 +709,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos, ${checkedInternalReferences} referências internas, ${checkedSemanticElements} elementos semânticos e ${checkedStructuredNodes} nós JSON-LD; metadados sociais, acessibilidade, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos, ${checkedInternalReferences} referências internas, ${checkedSemanticElements} elementos semânticos, ${checkedResponsiveImages} imagens responsivas e ${checkedStructuredNodes} nós JSON-LD; metadados sociais, acessibilidade, SEO e orçamentos de JavaScript, CSS, fontes e imagens.`);

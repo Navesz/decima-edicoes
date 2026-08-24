@@ -641,3 +641,24 @@ O laboratório de brilho e fosco aguardava o campo de visão para carregar, mas 
 ### Proteção contra regressão
 
 O verificador exige os três sinais de rede, detecção WebGL, barreira de erro, `noscript`, botão de 44 px e preferência de movimento. No export, confirma o conteúdo útil do estado inicial. No build, localiza o pacote do laboratório pelas mensagens do próprio controle e prova que ele não aparece entre os scripts iniciais do Caderno. O Caderno permanece abaixo do orçamento de 40 KiB de CSS inicial.
+
+## Ciclo 28 — dimensões intrínsecas das imagens
+
+Data: 24 de agosto de 2026.
+
+### Metadado incompleto
+
+O componente responsivo conhecia a largura dos 11 WebPs mestres para montar `srcset`, mas não publicava `width` e `height`. Vários contêineres já reservavam espaço com CSS, porém essa proteção era indireta e cada imagem deixava de levar sua própria proporção no HTML.
+
+### Intervenção
+
+- criado `app/lib/image-data.json` com largura e altura reais das 11 imagens-mestre;
+- `ResponsiveImage` passou a derivar `srcset`, `width` e `height` do mesmo registro;
+- as 17 ocorrências publicadas agora carregam dimensões intrínsecas sem abandonar `sizes`, carregamento tardio ou prioridade da imagem principal;
+- `scripts/optimize-images.mjs` atualiza o contrato sempre que regenera os WebPs;
+- a estilização existente com `object-fit` continua definindo o recorte visual, enquanto os atributos preservam a razão natural como informação do recurso;
+- o procedimento foi registrado em `docs/IMAGENS-E-ESTABILIDADE.md`.
+
+### Proteção contra regressão
+
+O verificador compara o inventário do contrato com os WebPs mestres publicados, lê cada dimensão com Sharp e confere as variantes de 480 e 800 px. A proporção das variantes pode diferir do mestre em no máximo 0,002 por arredondamento. Em todos os HTMLs exportados, cada elemento `.responsive-image` precisa ter `width` e `height` iguais ao seu arquivo registrado; pelo menos 17 ocorrências devem permanecer cobertas.
