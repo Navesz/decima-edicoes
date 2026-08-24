@@ -374,3 +374,5 @@ O site possuía favicon e logotipo, mas não declarava manifesto, cor do navegad
 ### Proteção contra regressão
 
 Cada rota precisa apontar para o manifesto no base path correto e declarar tema, capacidade e detecção. O verificador lê o JSON, compara identidade, idioma, início, escopo, cores e ícone, e inspeciona o PNG real com Sharp. A auditoria agora cobre 179 referências internas.
+
+Durante a primeira publicação, essa proteção revelou que `NEXT_PUBLIC_BASE_PATH` e `NEXT_PUBLIC_SITE_URL` existiam apenas na etapa de build. O job passou a compartilhar as duas variáveis também com lint, verificação e upload, garantindo que o artefato e sua auditoria usem a mesma configuração de hospedagem.
