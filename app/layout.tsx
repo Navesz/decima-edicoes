@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { SmoothScroll } from './components/smooth-scroll';
 import { edition } from './lib/project';
@@ -33,6 +33,8 @@ export const metadata: Metadata = {
   creator: siteName,
   publisher: siteName,
   category: 'design de mobiliário',
+  formatDetection: { telephone: false },
+  appleWebApp: { capable: true, title: 'DÉCIMA', statusBarStyle: 'black-translucent' },
   keywords: ['mesas autorais', 'mobiliário brasileiro', 'edição limitada', 'madeira maciça', 'design colecionável'],
   alternates: { canonical: absoluteUrl('/') },
   robots: { index: true, follow: true },
@@ -51,6 +53,11 @@ export const metadata: Metadata = {
     description: `Mesas autorais em séries de ${edition.runSizeWord} peças. Uma edição. Nenhuma reimpressão.`,
     images: [absoluteUrl('/og.jpg')],
   },
+};
+
+export const viewport: Viewport = {
+  colorScheme: 'light dark',
+  themeColor: '#171411',
 };
 
 const brandSchema = {

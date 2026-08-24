@@ -89,6 +89,10 @@ for (const route of routes) {
     check(html.includes(`<meta name="twitter:image" content="${route.social}"`), `${route.file}: cartão Twitter incorreto`);
   }
   check(html.includes(`<title>${route.title}`), `${route.file}: título incorreto`);
+  check(html.includes(`<link rel="manifest" href="${exportedBasePath}/manifest.webmanifest"`), `${route.file}: manifesto da marca ausente ou fora do basePath`);
+  check(html.includes('<meta name="theme-color" content="#171411"'), `${route.file}: cor de navegador da marca ausente`);
+  check(html.includes('<meta name="mobile-web-app-capable" content="yes"'), `${route.file}: modo instalável não declarado`);
+  check(html.includes('<meta name="format-detection" content="telephone=no"'), `${route.file}: detecção automática de telefone não foi desativada`);
   check(visibleHtml.includes('class="skip-link"'), `${route.file}: atalho para conteúdo ausente`);
   check(visibleHtml.includes('id="conteudo"'), `${route.file}: destino do atalho ausente`);
   check(h1Count === 1, `${route.file}: esperado um h1, encontrado ${h1Count}`);
@@ -110,11 +114,27 @@ const requiredFiles = [
   '404.html',
   'robots.txt',
   'sitemap.xml',
+  'manifest.webmanifest',
   'og.jpg',
   'brand/decima-logo-dark.png',
   'brand/decima-logo-light.png',
 ];
 requiredFiles.forEach((file) => check(existsSync(join(output, file)), `Arquivo ausente: out/${file}`));
+
+let manifest = {};
+try {
+  manifest = JSON.parse(read('manifest.webmanifest'));
+} catch {
+  failures.push('manifest.webmanifest: JSON inválido');
+}
+const manifestRoot = `${exportedBasePath}/`;
+check(manifest.id === manifestRoot && manifest.start_url === manifestRoot && manifest.scope === manifestRoot, 'manifest.webmanifest: id, início ou escopo divergem do basePath');
+check(manifest.name === 'DÉCIMA Edições' && manifest.short_name === 'DÉCIMA' && manifest.lang === 'pt-BR', 'manifest.webmanifest: identidade ou idioma incorretos');
+check(manifest.display === 'standalone', 'manifest.webmanifest: apresentação instalável deve ser standalone');
+check(manifest.background_color === '#171411' && manifest.theme_color === '#171411', 'manifest.webmanifest: cores divergem da identidade');
+check(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.src === `${exportedBasePath}/icon.png` && icon.sizes === '512x512' && icon.type === 'image/png'), 'manifest.webmanifest: ícone 512×512 ausente ou incorreto');
+const iconMetadata = await sharp(join(output, 'icon.png')).metadata();
+check(iconMetadata.width === 512 && iconMetadata.height === 512 && iconMetadata.format === 'png', 'icon.png: dimensão ou formato diverge do manifesto');
 
 const publicImages = readdirSync(join(output, 'images')).filter((file) => /\.(webp|avif|jpe?g|png)$/i.test(file));
 const publicImageBytes = publicImages.reduce((total, file) => {

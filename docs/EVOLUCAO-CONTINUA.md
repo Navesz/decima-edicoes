@@ -352,3 +352,25 @@ O verificador conhecia as cinco rotas principais e alguns arquivos obrigatórios
 ### Validação
 
 O rastreador passou tanto no export local quanto em um segundo build com as mesmas variáveis de ambiente do GitHub Pages. A diferença de base path é tratada explicitamente, sem relaxar o deploy real.
+
+## Ciclo 16 — identidade instalável da marca
+
+Data: 24 de agosto de 2026.
+
+### Lacuna encontrada
+
+O site possuía favicon e logotipo, mas não declarava manifesto, cor do navegador, identidade de instalação ou escopo. Em dispositivos que oferecem “adicionar à tela inicial”, a experiência ficava dependente de inferências do navegador.
+
+### Intervenção
+
+- nova rota estática `/manifest.webmanifest`;
+- nome completo `DÉCIMA Edições`, nome curto `DÉCIMA` e idioma `pt-BR`;
+- fundo e tema em `#171411`, o carvão principal da marca;
+- início, ID e escopo adaptáveis à raiz local ou a `/decima-edicoes/`;
+- reutilização do símbolo existente de 512 × 512 px, sem criar logo paralelo;
+- modo `standalone`, título para Apple e cor de interface declarada pelo metadata de viewport;
+- detecção automática de números como telefone desativada, evitando links falsos em numeração editorial.
+
+### Proteção contra regressão
+
+Cada rota precisa apontar para o manifesto no base path correto e declarar tema, capacidade e detecção. O verificador lê o JSON, compara identidade, idioma, início, escopo, cores e ícone, e inspeciona o PNG real com Sharp. A auditoria agora cobre 179 referências internas.

@@ -14,6 +14,8 @@ O círculo representa o tampo visto de cima. O `X` é simultaneamente a estrutur
 - `public/brand/decima-logo-light.png` — aplicação sobre fundos escuros;
 - `app/icon.png` — símbolo reduzido para navegador e redes.
 
+O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idioma, cores, escopo e início ajustados automaticamente para o caminho local ou para `/decima-edicoes` no GitHub Pages.
+
 ## Experiências do site
 
 - `/` — apresentação da marca, coleção inaugural, manifesto e lista privada;
