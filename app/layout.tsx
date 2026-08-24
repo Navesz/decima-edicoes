@@ -1,12 +1,27 @@
-import '@fontsource/cormorant-garamond/400.css';
-import '@fontsource/cormorant-garamond/500.css';
-import '@fontsource/manrope/400.css';
-import '@fontsource/manrope/500.css';
-import '@fontsource/manrope/600.css';
 import type { Metadata } from 'next';
+import localFont from 'next/font/local';
 import { SmoothScroll } from './components/smooth-scroll';
 import { absoluteUrl, siteDescription, siteName, siteOrigin } from './lib/site';
 import './globals.css';
+
+const cormorant = localFont({
+  src: [
+    { path: '../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2', weight: '500', style: 'normal' },
+  ],
+  variable: '--font-cormorant',
+  display: 'swap',
+});
+
+const manrope = localFont({
+  src: [
+    { path: '../node_modules/@fontsource/manrope/files/manrope-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../node_modules/@fontsource/manrope/files/manrope-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../node_modules/@fontsource/manrope/files/manrope-latin-600-normal.woff2', weight: '600', style: 'normal' },
+  ],
+  variable: '--font-manrope',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
@@ -50,7 +65,7 @@ const brandSchema = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body className={`${cormorant.variable} ${manrope.variable}`}>
         <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
         <SmoothScroll />
         {children}

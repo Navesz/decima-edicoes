@@ -49,6 +49,8 @@ for (const route of routes) {
   check(html.includes('aria-expanded="false"'), `${route.file}: estado acessível do menu ausente`);
   check(/\ssrcset="[^"]+-480\.webp 480w,[^"]+-800\.webp 800w/i.test(visibleHtml), `${route.file}: variantes responsivas de imagem ausentes`);
   check(/\ssizes="[^"]+"/i.test(visibleHtml), `${route.file}: instrução de tamanho responsivo ausente`);
+  const fontPreloadCount = (html.match(/<link[^>]+rel="preload"[^>]+as="font"/gi) ?? []).length;
+  check(fontPreloadCount === 5, `${route.file}: esperado preload das 5 fontes usadas, encontrado ${fontPreloadCount}`);
   const initialKiB = initialScriptBytes(html) / 1024;
   check(initialKiB <= route.scriptBudgetKiB, `${route.file}: JavaScript inicial ${initialKiB.toFixed(1)} KiB excede ${route.scriptBudgetKiB} KiB`);
 }
@@ -77,6 +79,18 @@ sourceImages.forEach((file) => {
 });
 check(publicImageBytes <= 4 * 1024 * 1024, `mídia pública excede 4 MiB: ${(publicImageBytes / 1024 / 1024).toFixed(2)} MiB`);
 check(statSync(join(output, 'og.jpg')).size <= 200 * 1024, 'og.jpg excede 200 KiB');
+
+const staticDirectory = join(output, '_next', 'static');
+const cssDirectory = join(staticDirectory, 'chunks');
+const mediaDirectory = join(staticDirectory, 'media');
+const cssFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.css'));
+const cssBytes = cssFiles.reduce((total, file) => total + statSync(join(cssDirectory, file)).size, 0);
+const fontFiles = readdirSync(mediaDirectory).filter((file) => /\.woff2?$/i.test(file));
+const fontBytes = fontFiles.reduce((total, file) => total + statSync(join(mediaDirectory, file)).size, 0);
+check(cssFiles.length === 1, `esperado um CSS inicial, encontrados ${cssFiles.length}`);
+check(cssBytes <= 40 * 1024, `CSS inicial excede 40 KiB: ${(cssBytes / 1024).toFixed(1)} KiB`);
+check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
+check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
 const sitemap = read('sitemap.xml');
 routes.forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`), `sitemap.xml: rota ausente ${route.canonical}`));

@@ -7,8 +7,8 @@
   --bronze: #b28a53;
   --line-dark: rgba(23, 20, 17, .18);
   --line-light: rgba(238, 231, 218, .25);
-  --serif: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
-  --sans: 'Manrope', Arial, sans-serif;
+  --serif: var(--font-cormorant), 'Iowan Old Style', Georgia, serif;
+  --sans: var(--font-manrope), Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }

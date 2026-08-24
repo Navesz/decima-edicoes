@@ -160,3 +160,33 @@ O workflow instalava versões compatíveis por faixa com `npm install`, em vez d
 ### Critério de saída
 
 Uma instalação limpa precisa aprovar auditoria, lint, compilação estática, verificador próprio, upload e deploy sem o aviso de Node 20 observado anteriormente.
+
+### Resultado
+
+- instalação limpa aprovada em Windows e no runner Linux do GitHub;
+- zero vulnerabilidades e zero anotações no check final;
+- build e deploy concluídos com as Actions em Node 24;
+- site publicado respondeu com status 200 após a mudança.
+
+## Ciclo 08 — tipografia sem alfabetos ociosos
+
+Data: 24 de agosto de 2026.
+
+### Desperdício encontrado
+
+Os imports genéricos do Fontsource empacotavam, para cada peso, arquivos WOFF e WOFF2 de subconjuntos latino, latino estendido, cirílico, cirílico estendido, grego e vietnamita. O resultado exportado continha 57 arquivos de fonte e 28 declarações `@font-face`, embora o conteúdo seja em português.
+
+### Intervenção
+
+- a família Cormorant Garamond foi limitada aos pesos latinos 400 e 500 realmente usados;
+- Manrope foi limitada aos pesos latinos 400, 500 e 600;
+- o carregamento passou pelo sistema local do Next, que gera preload e preserva `font-display: swap`;
+- as famílias de sistema continuam como fallback;
+- o verificador agora exige cinco WOFF2, orçamento total de 100 KiB e CSS inicial abaixo de 40 KiB.
+
+### Resultado medido
+
+- arquivos de fonte: 57 → 5;
+- payload de fontes no build: 672.353 → 88.512 bytes, redução de 86,8%;
+- CSS inicial: 43.664 → 34.918 bytes, redução de 20%;
+- lint, build, tipos e verificação estática aprovados.
