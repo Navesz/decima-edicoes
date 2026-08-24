@@ -118,6 +118,7 @@ export default function StudioNotebookPage() {
             <tbody>{decisionLog.map((item) => <tr key={item.code} data-decision={item.code}><td>{item.code}</td><th scope="row">{item.area}</th><td>{item.decision}</td><td>{item.record}</td><td><span data-state={item.state}>{item.state}</span></td></tr>)}</tbody>
           </table>
         </div>
+        <Link className="gate-sheet-link" href="/caderno/marca">Abrir Guia de Marca: nome, símbolo e linguagem <ArrowUpRight size={17} /></Link>
       </section>
 
       <section className="notebook-warning"><CircleAlert /><div><p className="micro-label">Segurança de oficina</p><h2>Acabamento premium exige processo profissional.</h2><p>Epóxi, solventes e sistemas PU 2K podem exigir ventilação, proteção respiratória e equipamentos específicos. A execução deve seguir as fichas de segurança e técnicas dos fabricantes; este caderno orienta o conceito, não substitui treinamento nem especificação profissional.</p></div></section>

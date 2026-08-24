@@ -425,3 +425,26 @@ As definições oficiais do Schema.org confirmaram `ProductModel` para uma espec
 ### Proteção contra regressão
 
 O verificador parseia cada bloco JSON-LD, exige contexto Schema.org, IDs únicos, marca e website em todos os documentos, breadcrumbs ordenados, relações entre página e modelo, medidas alinhadas ao contrato e quatro imagens internas. Enquanto o estado for `prototyping`, propriedades comerciais fazem o deploy falhar. Ao todo, 23 nós estruturados são auditados.
+
+## Ciclo 19 — guia interno de marca
+
+Data: 24 de agosto de 2026.
+
+### Questão retomada
+
+O projeto já possuía assinatura visual, símbolo e uma justificativa curta no repositório, mas ainda não respondia de forma organizada à pergunta central do fundador: “DÉCIMA Edições é mesmo um bom nome e como a logo deve ser usada?”. Sem regras visíveis, o sistema poderia perder o acento, variar de cor ou prometer mais do que o protótipo provou.
+
+### Direção consolidada
+
+- o nome foi mantido como direção forte porque liga a tiragem de dez ao vocabulário de coleção e arquivo;
+- o guia também registra os riscos: associação com mercado editorial e disponibilidade jurídica ainda não verificada;
+- o símbolo passou a ter leitura formal documentada: tampo/ciclo, numeral romano dez/base cruzada e centro singular;
+- assinaturas positiva e negativa, respiro, tamanhos mínimos e usos proibidos foram reunidos em uma rota própria;
+- a paleta distingue o bronze material do bronze-tinta acessível em texto pequeno;
+- Cormorant Garamond e Manrope receberam funções editoriais e técnicas distintas;
+- voz, sistema `Família — Título`, peça `01/10`, Protótipo `00` e regra de aposentadoria do desenho ficaram explícitos;
+- busca, estratégia de registro no INPI, ecossistema digital e teste de leitura viraram portões anteriores ao lançamento.
+
+### Escopo e proteção
+
+`/caderno/marca/` permanece visível a quem tem o endereço e acessível pelo Caderno, mas declara `noindex, nofollow` e não entra no sitemap público. O verificador protege metadados, conteúdo mínimo, ativos oficiais, paleta, tipografia, nomenclatura, alerta jurídico e responsividade. O guia avalia posicionamento; não afirma que o nome esteja juridicamente disponível.

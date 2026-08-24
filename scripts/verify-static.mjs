@@ -55,6 +55,7 @@ const routes = [
   { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · DÉCIMA`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'caderno/marca/index.html', title: 'Guia de Marca · DÉCIMA', canonical: `${origin}/caderno/marca/`, scriptBudgetKiB: 600, cssBudgetKiB: 54, responsiveImages: false, sitemap: false },
   { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · DÉCIMA`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
 ];
 
@@ -157,7 +158,7 @@ const mediaDirectory = join(staticDirectory, 'media');
 const cssFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.css'));
 const fontFiles = readdirSync(mediaDirectory).filter((file) => /\.woff2?$/i.test(file));
 const fontBytes = fontFiles.reduce((total, file) => total + statSync(join(mediaDirectory, file)).size, 0);
-check(cssFiles.length <= 2, `esperados no máximo dois pacotes CSS, encontrados ${cssFiles.length}`);
+check(cssFiles.length <= 3, `esperados no máximo três pacotes CSS, encontrados ${cssFiles.length}`);
 check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
@@ -192,6 +193,7 @@ check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap au
 const home = withoutRscMarkers(read('index.html'));
 const product = withoutRscMarkers(read(`colecoes/${projectData.collection.slug}/index.html`));
 const notebook = withoutRscMarkers(read('caderno/index.html'));
+const brandGuide = withoutRscMarkers(read('caderno/marca/index.html'));
 const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
@@ -214,6 +216,7 @@ check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-ni
 check((notebook.match(/data-gate=/g) ?? []).length === projectData.prototypeGate.length, `Caderno: esperado estado para as ${gateItemsWord} aprovações do Portão ${prototypeNumber}`);
 check(notebook.includes('<table class="gate-table">') && notebook.includes(`<caption>${gateItemsHeading} aprovações obrigatórias`), `Caderno: matriz do Portão ${prototypeNumber} não está semanticamente estruturada`);
 check(/href="(?:\/decima-edicoes)?\/caderno\/ficha-00\/?"/.test(notebook), 'Caderno: acesso à ficha do Protótipo 00 ausente');
+check(/href="(?:\/decima-edicoes)?\/caderno\/marca\/?"/.test(notebook), 'Caderno: acesso ao Guia de Marca ausente');
 check(notebook.includes('href="#registro"') && notebook.includes('id="registro"'), 'Caderno: navegação para o registro de decisões ausente');
 check(notebook.includes(`<caption>Base da revisão ${projectData.documents.notebookVersion}`) && notebook.includes(`<time dateTime="${projectData.documents.updatedAtIso}"`), 'Caderno: revisão do registro de decisões ausente ou divergente');
 check((notebook.match(/data-decision=/g) ?? []).length === decisionLog.length, 'Caderno: quantidade de decisões diverge do contrato do projeto');
@@ -227,6 +230,17 @@ check(worksheet.includes(`${proofBodiesHeading} corpos de prova`) && worksheet.i
 check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === projectData.prototypeGate.length, `Ficha ${prototypeNumber}: aprovações imprimíveis incompletas`);
 const worksheetCss = readFileSync(join(root, 'app', 'caderno', 'ficha-00', 'worksheet.module.css'), 'utf8');
 check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@media print'), 'Ficha 00: configuração de impressão A4 ausente');
+check(brandGuide.includes('<meta name="robots" content="noindex, nofollow"'), 'Guia de Marca: bloqueio de indexação ausente');
+check(!sitemap.includes(`${origin}/caderno/marca/`), 'Guia de Marca: rota interna não deve entrar no sitemap público');
+check(brandGuide.includes('Sim. DÉCIMA Edições é uma direção forte.') && brandGuide.includes('não declara disponibilidade legal'), 'Guia de Marca: veredito ou limite jurídico ausente');
+check(brandGuide.includes('Círculo') && brandGuide.includes('numeral romano de dez') && brandGuide.includes('Ponto'), 'Guia de Marca: significado do símbolo incompleto');
+check(brandGuide.includes('/brand/decima-logo-dark.png') && brandGuide.includes('/brand/decima-logo-light.png') && brandGuide.includes('/icon.png'), 'Guia de Marca: assinaturas oficiais incompletas');
+check(brandGuide.includes('#171411') && brandGuide.includes('#EEE7DA') && brandGuide.includes('#B28A53') && brandGuide.includes('#684318'), 'Guia de Marca: paleta oficial incompleta');
+check(brandGuide.includes('Cormorant Garamond') && brandGuide.includes('MANROPE'), 'Guia de Marca: sistema tipográfico incompleto');
+check(brandGuide.includes('Nórdica — Yggdrasil') && brandGuide.includes('Peça 01/10') && brandGuide.includes('Protótipo 00'), 'Guia de Marca: sistema de nomenclatura incompleto');
+check(brandGuide.includes('pesquisar sinais semelhantes') && brandGuide.includes('registro no INPI'), 'Guia de Marca: portão de validação legal incompleto');
+const brandGuideCss = readFileSync(join(root, 'app', 'caderno', 'marca', 'brand-guide.module.css'), 'utf8');
+check(brandGuideCss.includes('@media (max-width: 1000px)') && brandGuideCss.includes('@media (max-width: 700px)'), 'Guia de Marca: adaptação responsiva ausente');
 
 function structuredNodes(relativePath) {
   const html = read(relativePath);
