@@ -151,6 +151,7 @@ O workflow instalava versões compatíveis por faixa com `npm install`, em vez d
 ### Correções
 
 - instalação do CI alterada para `npm ci`, tornando o pacote de dependências determinístico;
+- pares WASM opcionais do resolvedor foram fixados no lockfile para que a instalação seja idêntica em Windows e Linux;
 - auditoria passou a interromper a publicação diante de vulnerabilidade alta ou crítica;
 - `configure-pages` atualizado para v6, com runtime Node 24;
 - `upload-pages-artifact` atualizado para v5, que usa a geração atual do serviço de artefatos;
