@@ -376,3 +376,29 @@ O site possuía favicon e logotipo, mas não declarava manifesto, cor do navegad
 Cada rota precisa apontar para o manifesto no base path correto e declarar tema, capacidade e detecção. O verificador lê o JSON, compara identidade, idioma, início, escopo, cores e ícone, e inspeciona o PNG real com Sharp. A auditoria agora cobre 179 referências internas.
 
 Durante a primeira publicação, essa proteção revelou que `NEXT_PUBLIC_BASE_PATH` e `NEXT_PUBLIC_SITE_URL` existiam apenas na etapa de build. O job passou a compartilhar as duas variáveis também com lint, verificação e upload, garantindo que o artefato e sua auditoria usem a mesma configuração de hospedagem.
+
+## Ciclo 17 — auditoria semântica do HTML
+
+Data: 24 de agosto de 2026.
+
+### Auditoria inicial
+
+Os oito documentos já possuíam `alt` em todas as imagens, nomes nos links e botões, labels nos controles e nenhum `tabindex` positivo. A auditoria não encontrou um caso que justificasse alteração visual; o ganho deste ciclo foi transformar essa qualidade existente em contrato de publicação.
+
+### Proteções adicionadas
+
+- exatamente um landmark `main` e um `h1` por documento;
+- headings com texto e sem salto de nível;
+- imagens obrigadas a declarar `alt`, com regra explícita para decoração;
+- links e botões obrigados a ter nome acessível;
+- todos os botões precisam declarar `type`;
+- navegações precisam de `aria-label` ou `aria-labelledby`;
+- SVGs precisam ser decorativos ou imagens nomeadas;
+- inputs, selects e textareas precisam de label envolvente, `for` ou nome ARIA;
+- `target="_blank"` exige `rel="noopener"`;
+- `tabindex` positivo é proibido;
+- foco visível e preferência de movimento reduzido permanecem protegidos no CSS.
+
+### Correção de cobertura
+
+A nova auditoria também percebeu que o rastreador do ciclo 15 tratava `srcset` com caixa sensível, enquanto o export do React escreve `srcSet`. A leitura passou a ser insensível a caixa e cada candidato responsivo agora é verificado. O total subiu para 230 referências internas e 245 elementos semânticos auditados.

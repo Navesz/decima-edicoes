@@ -168,6 +168,8 @@ check(sourceCss.includes('--bronze-ink: #684318;'), 'variante acessível do bron
 check(!/font-size:\s*[78]px/.test(sourceCss), 'texto de 7 ou 8 px voltou à interface');
 check((sourceCss.match(/min-height:\s*(24|44)px/g) ?? []).length >= 10, 'alvos mínimos de interação não estão protegidos');
 check(sourceCss.includes('.image-caption {') && sourceCss.includes('background: rgba(23,20,17,.72);'), 'legenda conceitual perdeu seu fundo de contraste');
+check(sourceCss.includes(':focus-visible { outline: 2px solid var(--bronze);'), 'indicador global de foco visível ausente');
+check(sourceCss.includes('@media (prefers-reduced-motion: reduce)'), 'preferência por movimento reduzido deixou de ser respeitada');
 
 const socialCards = ['collections.jpg', 'yggdrasil.jpg', 'caderno.jpg'];
 for (const file of socialCards) {
@@ -244,6 +246,28 @@ const exportedHtmlFiles = listFiles(output).filter((file) => file.endsWith('.htm
 const documentCache = new Map();
 const internalOrigin = new URL(origin).origin;
 let checkedInternalReferences = 0;
+let checkedSemanticElements = 0;
+
+function attributeValue(tag, name) {
+  return tag.match(new RegExp(`\\s${name}="([^"]*)"`, 'i'))?.[1];
+}
+
+function readableText(fragment) {
+  return fragment
+    .replace(/<svg\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/svg>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&(?:nbsp|amp|quot|apos|#x?[0-9a-f]+);/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function hasAccessibleName(openingTag, content) {
+  if (attributeValue(openingTag, 'aria-label')?.trim()) return true;
+  if (attributeValue(openingTag, 'aria-labelledby')?.trim()) return true;
+  if (readableText(content)) return true;
+  if ([...content.matchAll(/\salt="([^"]+)"/gi)].some((match) => match[1].trim())) return true;
+  return /<svg\b[^>]*(?:aria-label="[^"]+"|role="img")[^>]*>/i.test(content);
+}
 
 function exportedRelativePath(url) {
   let pathname;
@@ -315,7 +339,7 @@ for (const file of exportedHtmlFiles) {
   for (const match of document.visible.matchAll(/\s(?:href|src|poster)="([^"]+)"/g)) {
     checkInternalReference(match[1], sourceRelativePath);
   }
-  for (const match of document.visible.matchAll(/\ssrcset="([^"]+)"/g)) {
+  for (const match of document.visible.matchAll(/\ssrcset="([^"]+)"/gi)) {
     for (const candidate of match[1].split(',')) checkInternalReference(candidate.trim().split(/\s+/)[0], sourceRelativePath);
   }
   for (const relation of ['aria-controls', 'aria-describedby', 'aria-labelledby', 'for']) {
@@ -323,10 +347,64 @@ for (const file of exportedHtmlFiles) {
       for (const id of match[1].trim().split(/\s+/)) check(document.idSet.has(id), `${sourceRelativePath}: ${relation} aponta para ID ausente #${id}`);
     }
   }
+
+  const mainCount = (document.visible.match(/<main\b/gi) ?? []).length;
+  check(mainCount === 1, `${sourceRelativePath}: esperado um landmark main, encontrado ${mainCount}`);
+  const headings = [...document.visible.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)];
+  check(headings.filter((heading) => heading[1] === '1').length === 1, `${sourceRelativePath}: esperado exatamente um h1 no documento completo`);
+  let previousHeadingLevel = 0;
+  for (const heading of headings) {
+    const level = Number(heading[1]);
+    check(Boolean(readableText(heading[2])), `${sourceRelativePath}: heading h${level} sem texto acessível`);
+    if (previousHeadingLevel) check(level <= previousHeadingLevel + 1, `${sourceRelativePath}: salto de heading h${previousHeadingLevel} → h${level}`);
+    previousHeadingLevel = level;
+    checkedSemanticElements += 1;
+  }
+  for (const match of document.visible.matchAll(/<img\b[^>]*>/gi)) {
+    const alt = attributeValue(match[0], 'alt');
+    check(alt !== undefined, `${sourceRelativePath}: imagem sem atributo alt`);
+    if (alt === '') check(/(?:aria-hidden="true"|role="presentation")/i.test(match[0]), `${sourceRelativePath}: imagem com alt vazio sem semântica decorativa`);
+    checkedSemanticElements += 1;
+  }
+  for (const match of document.visible.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi)) {
+    const openingTag = `<button${match[1]}>`;
+    check(hasAccessibleName(openingTag, match[2]), `${sourceRelativePath}: botão sem nome acessível`);
+    check(Boolean(attributeValue(openingTag, 'type')), `${sourceRelativePath}: botão sem type explícito`);
+    checkedSemanticElements += 1;
+  }
+  for (const match of document.visible.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    const openingTag = `<a${match[1]}>`;
+    check(Boolean(attributeValue(openingTag, 'href')), `${sourceRelativePath}: link sem href`);
+    check(hasAccessibleName(openingTag, match[2]), `${sourceRelativePath}: link sem nome acessível`);
+    if (attributeValue(openingTag, 'target') === '_blank') check(/\srel="[^"]*noopener/i.test(openingTag), `${sourceRelativePath}: target="_blank" sem rel="noopener"`);
+    checkedSemanticElements += 1;
+  }
+  for (const match of document.visible.matchAll(/<nav\b[^>]*>/gi)) {
+    check(Boolean(attributeValue(match[0], 'aria-label') || attributeValue(match[0], 'aria-labelledby')), `${sourceRelativePath}: navegação sem nome acessível`);
+    checkedSemanticElements += 1;
+  }
+  for (const match of document.visible.matchAll(/<svg\b[^>]*>/gi)) {
+    check(/(?:aria-hidden="true"|role="img")/i.test(match[0]), `${sourceRelativePath}: SVG sem estado decorativo ou papel de imagem`);
+    if (/role="img"/i.test(match[0])) check(Boolean(attributeValue(match[0], 'aria-label') || attributeValue(match[0], 'aria-labelledby')), `${sourceRelativePath}: SVG informativo sem nome acessível`);
+    checkedSemanticElements += 1;
+  }
+  for (const match of document.visible.matchAll(/<(?:input|select|textarea)\b[^>]*>/gi)) {
+    const type = attributeValue(match[0], 'type');
+    if (type === 'hidden') continue;
+    const id = attributeValue(match[0], 'id');
+    const preceding = document.visible.slice(0, match.index);
+    const wrapped = preceding.lastIndexOf('<label') > preceding.lastIndexOf('</label>');
+    const explicit = id ? new RegExp(`<label\\b[^>]*for="${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i').test(document.visible) : false;
+    const ariaNamed = Boolean(attributeValue(match[0], 'aria-label') || attributeValue(match[0], 'aria-labelledby'));
+    check(wrapped || explicit || ariaNamed, `${sourceRelativePath}: controle de formulário sem label (${attributeValue(match[0], 'name') ?? id ?? match[0]})`);
+    checkedSemanticElements += 1;
+  }
+  check(!/\stabindex="[1-9][0-9]*"/i.test(document.visible), `${sourceRelativePath}: tabindex positivo altera a ordem natural de foco`);
 }
 
 check(exportedHtmlFiles.length >= routes.length + 3, `rastreador: quantidade inesperada de documentos HTML (${exportedHtmlFiles.length})`);
-check(checkedInternalReferences >= 150, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
+check(checkedInternalReferences >= 220, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
+check(checkedSemanticElements >= 200, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);
@@ -334,4 +412,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos e ${checkedInternalReferences} referências internas; metadados sociais, acessibilidade básica, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos, ${checkedInternalReferences} referências internas e ${checkedSemanticElements} elementos semânticos; metadados sociais, acessibilidade, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);
