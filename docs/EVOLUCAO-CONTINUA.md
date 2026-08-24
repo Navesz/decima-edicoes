@@ -616,3 +616,28 @@ O dossiê dizia “0 produzidas / 10 previstas”, mas não mostrava as dez posi
 ### Proteção contra regressão
 
 O verificador recorta apenas o registro visível, exige dez posições e frações, compara quantidades `produced`/`not-produced` com `producedPieces`, rejeita linguagem de reserva, disponibilidade ou proprietário e confirma limites de estado e privacidade. A contagem estruturada precisa coincidir e, durante a prototipagem, nenhuma peça numerada pode surgir. O módulo preserva cinco colunas no desktop e duas no celular sem aumentar o pacote global.
+
+## Ciclo 27 — laboratório 3D progressivo e resiliente
+
+Data: 24 de agosto de 2026.
+
+### Dependência visual frágil
+
+O laboratório de brilho e fosco aguardava o campo de visão para carregar, mas o estado anterior dizia apenas “preparando”. Sem WebGL, numa transferência interrompida ou com JavaScript desativado, a decisão de acabamento desaparecia justamente no trecho que deveria explicá-la. O carregamento também não reconhecia economia de dados nem conexão muito limitada.
+
+### Intervenção
+
+- o HTML inicial agora declara a direção acetinada, a meta conceitual de 32% e aponta para as quatro amostras estáticas;
+- um botão permite solicitar o 3D manualmente antes da interseção ou quando a transferência automática é evitada;
+- `saveData`, `prefers-reduced-data` e conexões `slow-2g`/`2g` mantêm o modo manual, sempre por detecção progressiva;
+- a disponibilidade de WebGL 2 ou WebGL 1 é conferida antes da importação do simulador;
+- ausência de WebGL gera alternativa textual específica, sem esconder a comparação;
+- uma barreira de erro cobre falha da importação ou da renderização da cena;
+- o estado de carregamento é o único anunciado como atualização viva; os estados estáveis permanecem leitura comum;
+- o aviso em `noscript` conduz às quatro faixas quando JavaScript está desativado;
+- movimento reduzido continua desligando rotação automática e mudando o canvas para renderização sob demanda;
+- o pequeno estilo do controle e do aviso ficou num módulo exclusivo, preservando o pacote global e o dossiê público.
+
+### Proteção contra regressão
+
+O verificador exige os três sinais de rede, detecção WebGL, barreira de erro, `noscript`, botão de 44 px e preferência de movimento. No export, confirma o conteúdo útil do estado inicial. No build, localiza o pacote do laboratório pelas mensagens do próprio controle e prova que ele não aparece entre os scripts iniciais do Caderno. O Caderno permanece abaixo do orçamento de 40 KiB de CSS inicial.

@@ -1,0 +1,37 @@
+.loadButton {
+  min-height: 44px;
+  margin-top: 18px;
+  border: 1px solid var(--ivory);
+  padding: 11px 15px;
+  background: transparent;
+  color: var(--ivory);
+  cursor: pointer;
+  font-size: var(--micro);
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.description {
+  max-width: 440px;
+  opacity: .58;
+  font-family: var(--serif);
+  line-height: 1.6;
+}
+
+@media (hover: hover) {
+  .loadButton:hover {
+    background: var(--ivory);
+    color: var(--ink);
+  }
+}
+
+.noScript {
+  margin: 0;
+  padding: 18px 24px;
+  background: var(--ink);
+  color: var(--ivory);
+  font-size: var(--micro);
+  line-height: 1.6;
+  text-align: center;
+}

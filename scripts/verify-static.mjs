@@ -77,9 +77,12 @@ const routes = [
   { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · ${brandData.shortName}`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
 ];
 
+function initialScriptSources(html) {
+  return [...new Set([...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((match) => match[1]))];
+}
+
 function initialScriptBytes(html) {
-  const sources = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((match) => match[1]);
-  return [...new Set(sources)].reduce((total, src) => {
+  return initialScriptSources(html).reduce((total, src) => {
     const relative = src.replace(`${basePath}/`, '');
     const path = join(output, relative);
     return total + (existsSync(path) ? statSync(path).size : 0);
@@ -175,9 +178,18 @@ const mediaDirectory = join(staticDirectory, 'media');
 const cssFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.css'));
 const fontFiles = readdirSync(mediaDirectory).filter((file) => /\.woff2?$/i.test(file));
 const fontBytes = fontFiles.reduce((total, file) => total + statSync(join(mediaDirectory, file)).size, 0);
-check(cssFiles.length <= 4, `esperados no máximo quatro pacotes CSS, encontrados ${cssFiles.length}`);
+check(cssFiles.length <= 5, `esperados no máximo cinco pacotes CSS, encontrados ${cssFiles.length}`);
 check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
+
+const javascriptFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.js'));
+const finishLabChunks = javascriptFiles.filter((file) => {
+  const source = readFileSync(join(cssDirectory, file), 'utf8');
+  return source.includes('Fosco absoluto') && source.includes('Brilho percebido');
+});
+const notebookInitialScripts = new Set(initialScriptSources(read('caderno/index.html')).map((source) => source.split('/').at(-1)));
+check(finishLabChunks.length >= 1, 'laboratório 3D: pacote assíncrono não foi identificado no build');
+check(finishLabChunks.every((file) => !notebookInitialScripts.has(file)), 'laboratório 3D: pacote pesado voltou ao carregamento inicial do Caderno');
 
 const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
 check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');
@@ -191,6 +203,16 @@ check((sourceCss.match(/min-height:\s*(24|44)px/g) ?? []).length >= 10, 'alvos m
 check(sourceCss.includes('.image-caption {') && sourceCss.includes('background: rgba(23,20,17,.72);'), 'legenda conceitual perdeu seu fundo de contraste');
 check(sourceCss.includes(':focus-visible { outline: 2px solid var(--bronze);'), 'indicador global de foco visível ausente');
 check(sourceCss.includes('@media (prefers-reduced-motion: reduce)'), 'preferência por movimento reduzido deixou de ser respeitada');
+const finishLabLoaderSource = readFileSync(join(root, 'app', 'components', 'finish-lab-loader.tsx'), 'utf8');
+const finishLabSource = readFileSync(join(root, 'app', 'components', 'finish-lab.tsx'), 'utf8');
+const finishLabLoaderCss = readFileSync(join(root, 'app', 'components', 'finish-lab-loader.module.css'), 'utf8');
+check(finishLabLoaderSource.includes("import('./finish-lab')") && finishLabLoaderSource.includes('IntersectionObserver'), 'laboratório 3D: carregamento progressivo deixou de ser assíncrono ou orientado por visibilidade');
+check(finishLabLoaderSource.includes('supportsWebGL') && finishLabLoaderSource.includes("getContext('webgl2')") && finishLabLoaderSource.includes("getContext('webgl')"), 'laboratório 3D: detecção de WebGL ausente');
+check(finishLabLoaderSource.includes('connection?.saveData') && finishLabLoaderSource.includes('(prefers-reduced-data: reduce)') && finishLabLoaderSource.includes("'slow-2g'") && finishLabLoaderSource.includes("'2g'"), 'laboratório 3D: proteção de economia de dados ou conexão limitada ausente');
+check(finishLabLoaderSource.includes('FinishLabErrorBoundary') && finishLabLoaderSource.includes('<noscript>') && finishLabLoaderSource.includes('type="button"'), 'laboratório 3D: recuperação de erro, alternativa sem JavaScript ou controle manual ausente');
+check(finishLabLoaderSource.includes("mode === 'loading' ? 'status' : undefined") && finishLabLoaderSource.includes("mode === 'loading' ? 'polite' : undefined"), 'laboratório 3D: anúncio de estado não está limitado ao carregamento');
+check(finishLabSource.includes('(prefers-reduced-motion: reduce)') && finishLabSource.includes("frameloop={reduceMotion ? 'demand' : 'always'}") && finishLabSource.includes('autoRotate={!reduceMotion}'), 'laboratório 3D: preferência por movimento reduzido deixou de controlar renderização e rotação');
+check(finishLabLoaderCss.includes('min-height: 44px;') && finishLabLoaderCss.includes('.noScript'), 'laboratório 3D: controle manual ou alternativa sem JavaScript perdeu estilo essencial');
 const editionRegisterCss = readFileSync(join(root, 'app', 'colecoes', projectData.collection.slug, 'edition-register.module.css'), 'utf8');
 check(editionRegisterCss.includes('.grid { display: grid; grid-template-columns: repeat(5,1fr);') && editionRegisterCss.includes('.grid { grid-template-columns: repeat(2,1fr);') && editionRegisterCss.includes('@media (max-width: 800px)'), 'registro público da edição perdeu grade desktop ou adaptação móvel');
 
@@ -246,6 +268,7 @@ const topQuote = withoutRscMarkers(read('caderno/cotacao-tampo/index.html'));
 const brandGuide = withoutRscMarkers(read('caderno/marca/index.html'));
 const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
 const visibleProduct = product.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+const visibleNotebook = notebook.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleCertificateModel = certificateModel.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
@@ -273,6 +296,9 @@ for (let piece = 1; piece <= projectData.edition.runSize; piece += 1) {
 check(editionRegister.includes('não existe objeto numerado, certificado, reserva ou propriedade') && editionRegister.includes('Nome, contato, endereço e histórico privado de custódia não serão publicados'), `${projectData.collection.name}: limites de estado ou privacidade ausentes do registro`);
 check(!/Reservada|Disponível|Proprietári[oa]:/i.test(editionRegister), `${projectData.collection.name}: registro público inventa disponibilidade, reserva ou proprietário`);
 check(notebook.includes(`Versão ${projectData.documents.notebookVersion}`), 'Caderno: versão do documento vivo não foi atualizada');
+check(visibleNotebook.includes('data-finish-mode="idle"') && visibleNotebook.includes('Acetinado como direção.') && visibleNotebook.includes('A meta conceitual é 32%'), 'Caderno: laboratório não nasce com direção de acabamento útil');
+check(visibleNotebook.includes('quatro amostras logo abaixo') && visibleNotebook.includes('<button') && visibleNotebook.includes('type="button"') && visibleNotebook.includes('Carregar simulador 3D'), 'Caderno: comparação estática ou carregamento manual do laboratório ausente');
+check(visibleNotebook.includes('<noscript>') && visibleNotebook.includes('JavaScript está desativado.') && visibleNotebook.includes('fosco, acetinado, semibrilho e espelhado'), 'Caderno: alternativa sem JavaScript do laboratório ausente');
 check(notebook.includes(`Só existe peça ${firstPiece} depois de ${gateItemsWord} aprovações documentadas`), `Caderno: regra do Portão ${prototypeNumber} ausente`);
 check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado'), 'Caderno: especificação de partida da madeira ausente');
 check((notebook.match(/data-gate=/g) ?? []).length === projectData.prototypeGate.length, `Caderno: esperado estado para as ${gateItemsWord} aprovações do Portão ${prototypeNumber}`);
