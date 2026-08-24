@@ -709,3 +709,27 @@ A home carregava 715,8 KiB de JavaScript inicial. Um pacote de 137,6 KiB continh
 ### Proteção contra regressão
 
 O teto inicial da home caiu de 750 para 650 KiB. O verificador rejeita `HomePage` como componente cliente ou importador direto do Framer, exige a ilha `LazyMotion`, o ponto de entrada mínimo, o pacote de recursos dinâmico, modo estrito e preferência por movimento reduzido.
+
+## Ciclo 31 — rolagem suave como aprimoramento progressivo
+
+Data: 24 de agosto de 2026.
+
+### Transferência sem benefício
+
+Lenis já usava `import()` e não fazia parte dos scripts iniciais, mas era solicitado 250 ms depois em qualquer rota e dispositivo sem preferência por movimento reduzido. Isso transferia a biblioteca inclusive em celular, toque, economia de dados e conexões 2G, contextos em que a rolagem nativa é a base mais previsível.
+
+### Intervenção
+
+- rolagem nativa é mantida com `prefers-reduced-motion`;
+- `prefers-reduced-data`, `saveData`, `slow-2g` e `2g` também impedem a transferência;
+- ponteiro grosseiro ou ausência de hover preservam o comportamento nativo em dispositivos de toque;
+- em desktop elegível, a importação espera `requestIdleCallback` com limite de 1,6 s;
+- navegadores sem a API ociosa usam fallback de 900 ms;
+- um atributo `data-smooth-scroll="active"` só existe durante a instância ativa e é removido na limpeza;
+- animação, callback ocioso, temporizador e instância são cancelados no desmontar;
+- o pacote Lenis de 18,3 KiB permanece separado de todos os scripts iniciais;
+- a política foi registrada em `docs/ROLAGEM-SUAVE-PROGRESSIVA.md`.
+
+### Proteção contra regressão
+
+O verificador identifica o pacote compilado do Lenis por marcadores internos e rejeita sua presença nos scripts iniciais de qualquer rota. No código-fonte, exige importação dinâmica, agendamento ocioso, fallback, quatro consultas de preferência/capacidade, três sinais de rede, estado observável e limpeza.

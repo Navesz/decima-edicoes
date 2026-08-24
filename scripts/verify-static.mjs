@@ -196,6 +196,11 @@ const motionFeaturesSource = readFileSync(join(root, 'app', 'components', 'motio
 check(!homePageSource.startsWith("'use client'") && !homePageSource.includes("from 'framer-motion'") && homePageSource.includes('<MotionArticle'), 'home: página inteira voltou a depender do Framer no cliente');
 check(motionArticleSource.includes('LazyMotion') && motionArticleSource.includes("from 'framer-motion/m'") && motionArticleSource.includes("import('./motion-features')") && motionArticleSource.includes('useReducedMotion') && motionArticleSource.includes('strict'), 'home: ilha de movimento perdeu carregamento mínimo, preferência reduzida ou modo estrito');
 check(motionFeaturesSource.includes('domAnimation as default'), 'home: pacote assíncrono de recursos do Framer ausente');
+const smoothScrollSource = readFileSync(join(root, 'app', 'components', 'smooth-scroll.tsx'), 'utf8');
+check(smoothScrollSource.includes("import('lenis')") && smoothScrollSource.includes('requestIdleCallback') && smoothScrollSource.includes('timeout: 1600') && smoothScrollSource.includes('setTimeout(() => void start(), 900)'), 'rolagem suave: importação dinâmica ou agendamento ocioso ausente');
+check(smoothScrollSource.includes('(prefers-reduced-motion: reduce)') && smoothScrollSource.includes('(prefers-reduced-data: reduce)') && smoothScrollSource.includes('(pointer: coarse)') && smoothScrollSource.includes('(hover: none)'), 'rolagem suave: preferências de movimento, dados, ponteiro ou hover ausentes');
+check(smoothScrollSource.includes('connection?.saveData') && smoothScrollSource.includes("'slow-2g'") && smoothScrollSource.includes("'2g'"), 'rolagem suave: economia de dados ou conexão limitada não preserva rolagem nativa');
+check(smoothScrollSource.includes("dataset.smoothScroll = 'active'") && smoothScrollSource.includes('delete document.documentElement.dataset.smoothScroll'), 'rolagem suave: estado observável ou limpeza ausente');
 
 const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');
@@ -208,6 +213,7 @@ check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2'
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
 const javascriptFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.js'));
+const allInitialScripts = new Set(routes.flatMap((route) => initialScriptSources(read(route.file)).map((source) => source.split('/').at(-1))));
 const finishLabChunks = javascriptFiles.filter((file) => {
   const source = readFileSync(join(cssDirectory, file), 'utf8');
   return source.includes('Fosco absoluto') && source.includes('Brilho percebido');
@@ -215,6 +221,12 @@ const finishLabChunks = javascriptFiles.filter((file) => {
 const notebookInitialScripts = new Set(initialScriptSources(read('caderno/index.html')).map((source) => source.split('/').at(-1)));
 check(finishLabChunks.length >= 1, 'laboratório 3D: pacote assíncrono não foi identificado no build');
 check(finishLabChunks.every((file) => !notebookInitialScripts.has(file)), 'laboratório 3D: pacote pesado voltou ao carregamento inicial do Caderno');
+const lenisChunks = javascriptFiles.filter((file) => {
+  const source = readFileSync(join(cssDirectory, file), 'utf8');
+  return source.includes('lenisVersion') && source.includes('virtualScroll') && source.includes('actualScroll');
+});
+check(lenisChunks.length === 1, `rolagem suave: esperado um pacote Lenis, encontrados ${lenisChunks.length}`);
+check(lenisChunks.every((file) => !allInitialScripts.has(file)), 'rolagem suave: biblioteca Lenis voltou aos scripts iniciais');
 
 const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
 check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');

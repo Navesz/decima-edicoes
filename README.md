@@ -41,6 +41,8 @@ O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idi
 
 Na home, o Framer fica restrito à ilha interativa dos cartões e usa `LazyMotion` com `domAnimation` assíncrono. A página e o hero permanecem componentes de servidor; GSAP e Lenis também continuam sob importação tardia. Medição e limites estão em `docs/CARREGAMENTO-DE-MOVIMENTO.md`.
 
+Lenis só aprimora a rolagem por roda em desktop com ponteiro preciso, rede adequada e movimento permitido. Em toque, economia de dados, 2G ou preferência reduzida, o navegador mantém a rolagem nativa e nem transfere a biblioteca. A política está em `docs/ROLAGEM-SUAVE-PROGRESSIVA.md`.
+
 O laboratório 3D é um aprimoramento progressivo: a direção acetinada, a meta de 32% e as quatro faixas comparativas já existem no HTML. WebGL só é solicitado perto da seção; economia de dados e conexões muito limitadas exigem confirmação manual, e falhas preservam a leitura. A arquitetura e os critérios estão em `docs/RESILIENCIA-DO-LABORATORIO-3D.md`.
 
 ## Fonte única do projeto
