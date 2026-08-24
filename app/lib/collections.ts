@@ -19,7 +19,7 @@ export const collections: Collection[] = [
     family: 'Nórdica',
     name: 'Yggdrasil',
     year: '2026',
-    image: assetPath('/images/hero-yggdrasil.png'),
+    image: assetPath('/images/hero-yggdrasil.webp'),
     status: 'Em prototipagem · tiragem prevista de 10',
     description: 'Uma árvore, dez objetos irrepetíveis. Carvão, madeira natural e o calor contido do bronze.',
     palette: ['#171411', '#9a6e3f', '#c8a875'],
@@ -30,7 +30,7 @@ export const collections: Collection[] = [
     family: 'Renaissance',
     name: 'Medallion',
     year: 'Estudo',
-    image: assetPath('/images/renaissance-medallion.png'),
+    image: assetPath('/images/renaissance-medallion.webp'),
     status: 'Em desenvolvimento',
     description: 'Ornamento e simetria conduzidos por uma paleta contida de nogueira, marfim e ouro velho.',
     palette: ['#241b16', '#d7c5a0', '#89643a'],
@@ -41,7 +41,7 @@ export const collections: Collection[] = [
     family: 'Atelier',
     name: 'Meridian',
     year: 'Estudo',
-    image: assetPath('/images/sunburst.png'),
+    image: assetPath('/images/sunburst.webp'),
     status: 'Arquivo de conceito',
     description: 'Ritmo radial e geometrias precisas em madeira escura, marfim mineral e linhas de bronze.',
     palette: ['#191512', '#e4d3af', '#a77b40'],
@@ -57,8 +57,8 @@ export const buildRules = [
 ] as const;
 
 export const gallery = [
-  assetPath('/images/hero-yggdrasil.png'),
-  assetPath('/images/yggdrasil-dark.png'),
-  assetPath('/images/yggdrasil-ivory.png'),
-  assetPath('/images/yggdrasil-satin.png'),
+  assetPath('/images/hero-yggdrasil.webp'),
+  assetPath('/images/yggdrasil-dark.webp'),
+  assetPath('/images/yggdrasil-ivory.webp'),
+  assetPath('/images/yggdrasil-satin.webp'),
 ];

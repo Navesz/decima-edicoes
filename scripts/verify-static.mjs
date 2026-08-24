@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = process.cwd();
@@ -55,11 +55,20 @@ const requiredFiles = [
   '404.html',
   'robots.txt',
   'sitemap.xml',
-  'og.png',
+  'og.jpg',
   'brand/decima-logo-dark.png',
   'brand/decima-logo-light.png',
 ];
 requiredFiles.forEach((file) => check(existsSync(join(output, file)), `Arquivo ausente: out/${file}`));
+
+const publicImages = readdirSync(join(output, 'images')).filter((file) => /\.(webp|avif|jpe?g|png)$/i.test(file));
+const publicImageBytes = publicImages.reduce((total, file) => {
+  const bytes = statSync(join(output, 'images', file)).size;
+  check(bytes <= 450 * 1024, `imagem acima de 450 KiB: ${file} (${(bytes / 1024).toFixed(0)} KiB)`);
+  return total + bytes;
+}, 0);
+check(publicImageBytes <= 2.5 * 1024 * 1024, `mídia pública excede 2,5 MiB: ${(publicImageBytes / 1024 / 1024).toFixed(2)} MiB`);
+check(statSync(join(output, 'og.jpg')).size <= 200 * 1024, 'og.jpg excede 200 KiB');
 
 const sitemap = read('sitemap.xml');
 routes.forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`), `sitemap.xml: rota ausente ${route.canonical}`));
@@ -80,4 +89,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados, acessibilidade básica, SEO e orçamento inicial de JavaScript.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados, acessibilidade básica, SEO e orçamentos de JavaScript e mídia.`);

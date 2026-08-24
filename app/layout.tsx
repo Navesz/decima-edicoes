@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     url: absoluteUrl('/'),
     title: 'DÉCIMA Edições — Objetos que não se repetem',
     description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
-    images: [{ url: absoluteUrl('/og.png'), width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
+    images: [{ url: absoluteUrl('/og.jpg'), width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'DÉCIMA Edições — Objetos que não se repetem',
     description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
-    images: [absoluteUrl('/og.png')],
+    images: [absoluteUrl('/og.jpg')],
   },
 };
 

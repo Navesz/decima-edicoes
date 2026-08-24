@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   title: 'Nórdica — Yggdrasil',
   description: 'O conceito da edição inaugural da DÉCIMA: uma tiragem prevista de dez mesas numeradas em madeira maciça e aço.',
   alternates: { canonical: absoluteUrl('/colecoes/nordica-yggdrasil/') },
-  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'DÉCIMA Edições', url: absoluteUrl('/colecoes/nordica-yggdrasil/'), title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [{ url: absoluteUrl('/images/hero-yggdrasil.png'), alt: 'Mesa Nórdica — Yggdrasil' }] },
-  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [absoluteUrl('/images/hero-yggdrasil.png')] },
+  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'DÉCIMA Edições', url: absoluteUrl('/colecoes/nordica-yggdrasil/'), title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [{ url: absoluteUrl('/images/hero-yggdrasil.webp'), alt: 'Mesa Nórdica — Yggdrasil' }] },
+  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [absoluteUrl('/images/hero-yggdrasil.webp')] },
 };
 
 const productSchema = {
@@ -30,7 +30,7 @@ export default function YggdrasilPage() {
   return (
     <main className="product-page" id="conteudo">
       <section className="product-hero">
-        <Image src={assetPath('/images/hero-yggdrasil.png')} alt="Visualização conceitual da mesa Nórdica — Yggdrasil" fill priority sizes="100vw" />
+        <Image src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa Nórdica — Yggdrasil" fill priority sizes="100vw" />
         <div className="product-wash" /><SiteHeader />
         <div className="product-title"><p>Nórdica · Edição 01 · conceito</p><h1>Yggdrasil</h1><div><span>2026</span><span>0 produzidas</span><span>10 previstas</span></div></div>
         <a className="product-scroll" href="#historia">Conhecer o conceito <ArrowDown size={15} /></a>

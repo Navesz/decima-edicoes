@@ -43,6 +43,12 @@ Build de produção:
 npm run build
 ```
 
+As imagens originais ficam em `assets/source-images`. Para regenerar os WebPs públicos e o card social otimizado:
+
+```bash
+npm run images:optimize
+```
+
 O push na branch `main` publica automaticamente no GitHub Pages.
 
 ## Antes do lançamento comercial

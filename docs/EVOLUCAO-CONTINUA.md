@@ -71,3 +71,26 @@ O site apresentava imagens conceituais com linguagem de peça já produzida e us
 - o formulário se apresenta como demonstração e declara que não transmite dados nem cria reserva ou cobrança;
 - os dados estruturados descrevem Yggdrasil como `ProductModel`, coerente com o estágio atual;
 - o verificador impede que essas declarações essenciais desapareçam em mudanças futuras.
+
+## Ciclo 04 — mídia eficiente
+
+Data: 24 de agosto de 2026.
+
+### Linha de base
+
+As onze imagens conceituais e o card social somavam aproximadamente 27 MiB em PNG. A imagem principal sozinha ocupava 2,78 MiB e era servida sem transformação pelo GitHub Pages.
+
+### Intervenção
+
+- os PNGs originais foram preservados em `assets/source-images`, fora do pacote público;
+- as imagens do site passaram para WebP com qualidade visual alta e metadados dispensáveis removidos;
+- o card social passou para JPEG otimizado, formato amplamente aceito por indexadores e redes;
+- um comando reproduzível regenera todos os derivados a partir das fontes;
+- a validação impede imagens individuais acima de 450 KiB, conjunto público acima de 2,5 MiB e card social acima de 200 KiB.
+
+### Resultado medido
+
+- conjunto público final: 2,20 MiB;
+- imagem principal: 388 KiB;
+- card social: 137 KiB;
+- redução total: 91,8%, preservando resolução e composição das fontes.

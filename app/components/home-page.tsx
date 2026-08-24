@@ -17,7 +17,7 @@ export function HomePage() {
   return (
     <main id="conteudo">
       <section className="hero-shell">
-        <Image className="hero-image" src={assetPath('/images/hero-yggdrasil.png')} alt="Visualização conceitual da mesa baixa redonda Yggdrasil em madeira e aço" fill priority sizes="100vw" />
+        <Image className="hero-image" src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa baixa redonda Yggdrasil em madeira e aço" fill priority sizes="100vw" />
         <div className="hero-wash" />
         <SiteHeader />
 
@@ -59,7 +59,7 @@ export function HomePage() {
 
       <section className="object-study">
         <div className="object-image-frame">
-          <Image className="parallax-media" src={assetPath('/images/yggdrasil-dark.png')} alt="Visualização conceitual do tampo Yggdrasil em madeira escura" fill sizes="(max-width: 800px) 100vw, 55vw" />
+          <Image className="parallax-media" src={assetPath('/images/yggdrasil-dark.webp')} alt="Visualização conceitual do tampo Yggdrasil em madeira escura" fill sizes="(max-width: 800px) 100vw, 55vw" />
           <span>O tampo é a obra.</span>
         </div>
         <div className="object-copy gsap-reveal">
@@ -94,7 +94,7 @@ export function HomePage() {
       </section>
 
       <section className="edition-protocol">
-        <Image className="protocol-image" src={assetPath('/images/yggdrasil-ivory.png')} alt="Visualização conceitual Yggdrasil em acabamento marfim" fill sizes="100vw" />
+        <Image className="protocol-image" src={assetPath('/images/yggdrasil-ivory.webp')} alt="Visualização conceitual Yggdrasil em acabamento marfim" fill sizes="100vw" />
         <div className="protocol-wash" />
         <div className="protocol-copy gsap-reveal">
           <p className="micro-label">Protocolo 10/10</p>
@@ -106,7 +106,7 @@ export function HomePage() {
       <section className="studio-teaser">
         <div className="studio-intro gsap-reveal"><p className="micro-label">Área aberta do fundador</p><h2>O Caderno<br />do Atelier.</h2></div>
         <div className="studio-panel gsap-reveal">
-          <div className="studio-panel-image"><Image src={assetPath('/images/collection-board.png')} alt="Prancha conceitual das coleções DÉCIMA" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
+          <div className="studio-panel-image"><Image src={assetPath('/images/collection-board.webp')} alt="Prancha conceitual das coleções DÉCIMA" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
           <div><p>Um espaço para enxergar o negócio por dentro: acabamento brilhante, fosco e acetinado; construção possível com metalon brasileiro; testes de adesivo, epóxi e PU; regras da marca e decisões ainda em aberto.</p><Link href="/caderno">Entrar no Caderno <ArrowUpRight size={16} /></Link></div>
         </div>
       </section>

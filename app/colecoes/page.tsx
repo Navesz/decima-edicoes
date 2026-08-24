@@ -19,13 +19,13 @@ export const metadata: Metadata = {
     url: absoluteUrl('/colecoes/'),
     title: 'Coleções · DÉCIMA Edições',
     description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
-    images: [{ url: absoluteUrl('/images/collection-dark.png'), alt: 'Arquivo visual das coleções DÉCIMA' }],
+    images: [{ url: absoluteUrl('/images/collection-dark.webp'), alt: 'Arquivo visual das coleções DÉCIMA' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Coleções · DÉCIMA Edições',
     description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
-    images: [absoluteUrl('/images/collection-dark.png')],
+    images: [absoluteUrl('/images/collection-dark.webp')],
   },
 };
 
@@ -50,7 +50,7 @@ export default function CollectionsPage() {
           </article>
         ))}
       </section>
-      <section className="archive-board"><Image src={assetPath('/images/collection-dark.png')} alt="Mapa visual de dez estudos conceituais iniciais" fill sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
+      <section className="archive-board"><Image src={assetPath('/images/collection-dark.webp')} alt="Mapa visual de dez estudos conceituais iniciais" fill sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
       <Footer />
     </main>
   );
