@@ -19,14 +19,24 @@ function read(relativePath) {
 }
 
 const routes = [
-  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750 },
-  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600 },
-  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600 },
-  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600 },
+  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750, cssBudgetKiB: 40 },
+  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: 'caderno/ficha-00/index.html', title: 'Ficha do Protótipo 00 · DÉCIMA', canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
 ];
 
 function initialScriptBytes(html) {
   const sources = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((match) => match[1]);
+  return [...new Set(sources)].reduce((total, src) => {
+    const relative = src.replace(`${basePath}/`, '');
+    const path = join(output, relative);
+    return total + (existsSync(path) ? statSync(path).size : 0);
+  }, 0);
+}
+
+function initialCssBytes(html) {
+  const sources = [...html.matchAll(/<link[^>]+rel="stylesheet" href="([^"]+\.css)"/g)].map((match) => match[1]);
   return [...new Set(sources)].reduce((total, src) => {
     const relative = src.replace(`${basePath}/`, '');
     const path = join(output, relative);
@@ -42,20 +52,26 @@ for (const route of routes) {
   check(html.includes('<html lang="pt-BR">'), `${route.file}: idioma pt-BR ausente`);
   check(html.includes('<meta name="description"'), `${route.file}: descrição ausente`);
   check(html.includes(`<link rel="canonical" href="${route.canonical}"`), `${route.file}: canonical incorreta`);
-  check(html.includes(`<meta property="og:image" content="${route.social}"`), `${route.file}: cartão Open Graph incorreto`);
-  check(html.includes(`<meta name="twitter:image" content="${route.social}"`), `${route.file}: cartão Twitter incorreto`);
+  if (route.social) {
+    check(html.includes(`<meta property="og:image" content="${route.social}"`), `${route.file}: cartão Open Graph incorreto`);
+    check(html.includes(`<meta name="twitter:image" content="${route.social}"`), `${route.file}: cartão Twitter incorreto`);
+  }
   check(html.includes(`<title>${route.title}`), `${route.file}: título incorreto`);
   check(visibleHtml.includes('class="skip-link"'), `${route.file}: atalho para conteúdo ausente`);
   check(visibleHtml.includes('id="conteudo"'), `${route.file}: destino do atalho ausente`);
   check(h1Count === 1, `${route.file}: esperado um h1, encontrado ${h1Count}`);
   check(!visibleHtml.includes('style="opacity:0'), `${route.file}: conteúdo essencial nasce invisível`);
   check(html.includes('aria-expanded="false"'), `${route.file}: estado acessível do menu ausente`);
-  check(/\ssrcset="[^"]+-480\.webp 480w,[^"]+-800\.webp 800w/i.test(visibleHtml), `${route.file}: variantes responsivas de imagem ausentes`);
-  check(/\ssizes="[^"]+"/i.test(visibleHtml), `${route.file}: instrução de tamanho responsivo ausente`);
+  if (route.responsiveImages !== false) {
+    check(/\ssrcset="[^"]+-480\.webp 480w,[^"]+-800\.webp 800w/i.test(visibleHtml), `${route.file}: variantes responsivas de imagem ausentes`);
+    check(/\ssizes="[^"]+"/i.test(visibleHtml), `${route.file}: instrução de tamanho responsivo ausente`);
+  }
   const fontPreloadCount = (html.match(/<link[^>]+rel="preload"[^>]+as="font"/gi) ?? []).length;
   check(fontPreloadCount === 5, `${route.file}: esperado preload das 5 fontes usadas, encontrado ${fontPreloadCount}`);
   const initialKiB = initialScriptBytes(html) / 1024;
   check(initialKiB <= route.scriptBudgetKiB, `${route.file}: JavaScript inicial ${initialKiB.toFixed(1)} KiB excede ${route.scriptBudgetKiB} KiB`);
+  const initialCssKiB = initialCssBytes(html) / 1024;
+  check(initialCssKiB <= route.cssBudgetKiB, `${route.file}: CSS inicial ${initialCssKiB.toFixed(1)} KiB excede ${route.cssBudgetKiB} KiB`);
 }
 
 const requiredFiles = [
@@ -87,11 +103,9 @@ const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');
 const mediaDirectory = join(staticDirectory, 'media');
 const cssFiles = readdirSync(cssDirectory).filter((file) => file.endsWith('.css'));
-const cssBytes = cssFiles.reduce((total, file) => total + statSync(join(cssDirectory, file)).size, 0);
 const fontFiles = readdirSync(mediaDirectory).filter((file) => /\.woff2?$/i.test(file));
 const fontBytes = fontFiles.reduce((total, file) => total + statSync(join(mediaDirectory, file)).size, 0);
-check(cssFiles.length === 1, `esperado um CSS inicial, encontrados ${cssFiles.length}`);
-check(cssBytes <= 40 * 1024, `CSS inicial excede 40 KiB: ${(cssBytes / 1024).toFixed(1)} KiB`);
+check(cssFiles.length <= 2, `esperados no máximo dois pacotes CSS, encontrados ${cssFiles.length}`);
 check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
@@ -116,7 +130,7 @@ for (const file of socialCards) {
 }
 
 const sitemap = read('sitemap.xml');
-routes.forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`), `sitemap.xml: rota ausente ${route.canonical}`));
+routes.filter((route) => route.sitemap !== false).forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`), `sitemap.xml: rota ausente ${route.canonical}`));
 
 const robots = read('robots.txt');
 check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap ausente ou incorreto');
@@ -124,6 +138,8 @@ check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap au
 const home = read('index.html');
 const product = read('colecoes/nordica-yggdrasil/index.html');
 const notebook = read('caderno/index.html');
+const worksheet = read('caderno/ficha-00/index.html');
+const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
 check(home.includes('protótipo 00 em desenvolvimento'), 'início: estágio conceitual não está explícito');
 check(home.includes('não cria reserva, cobrança ou direito'), 'início: limite do fluxo de interesse não está explícito');
@@ -139,6 +155,14 @@ check(notebook.includes('Só existe peça 01 depois de seis aprovações documen
 check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado'), 'Caderno: especificação de partida da madeira ausente');
 check((notebook.match(/data-state=/g) ?? []).length === 6, 'Caderno: esperado estado para as seis aprovações do Portão 00');
 check(notebook.includes('<table class="gate-table">') && notebook.includes('<caption>Seis aprovações obrigatórias'), 'Caderno: matriz do Portão 00 não está semanticamente estruturada');
+check(/href="(?:\/decima-edicoes)?\/caderno\/ficha-00\/?"/.test(notebook), 'Caderno: acesso à ficha do Protótipo 00 ausente');
+check(worksheet.includes('<meta name="robots" content="noindex, nofollow"'), 'Ficha 00: bloqueio de indexação ausente');
+check(!sitemap.includes(`${origin}/caderno/ficha-00/`), 'Ficha 00: rota interna não deve entrar no sitemap público');
+check(worksheet.includes('Imprimir ou salvar em PDF') && worksheet.includes('Ficha do'), 'Ficha 00: ação de impressão ou título ausente');
+check(worksheet.includes('Quatro corpos de prova') && worksheet.includes('Fechamento do Portão 00'), 'Ficha 00: blocos operacionais incompletos');
+check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === 6, 'Ficha 00: aprovações imprimíveis incompletas');
+const worksheetCss = readFileSync(join(root, 'app', 'caderno', 'ficha-00', 'worksheet.module.css'), 'utf8');
+check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@media print'), 'Ficha 00: configuração de impressão A4 ausente');
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);

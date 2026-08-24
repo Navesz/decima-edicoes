@@ -343,6 +343,7 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .gate-rule svg { flex: none; color: var(--bronze-ink); }
 .gate-rule p { margin: 0; color: var(--ink-muted); line-height: 1.65; }
 .gate-rule strong { display: block; margin-bottom: 5px; color: var(--ink); font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.gate-sheet-link { display: flex; align-items: center; gap: 10px; width: fit-content; min-height: 44px; margin: 28px 0 0 auto; border: 1px solid var(--ink); padding: 12px 15px; font-size: var(--micro); font-weight: 600; letter-spacing: .11em; text-transform: uppercase; }
 .notebook-warning { display: grid; grid-template-columns: auto 1fr; gap: 30px; padding: 70px 12vw; background: #9f704b; color: #fff7eb; }
 .notebook-warning > svg { margin-top: 4px; }
 .notebook-warning h2 { margin: 15px 0; font-family: var(--serif); font-size: clamp(38px,4vw,62px); font-weight: 400; line-height: 1; }

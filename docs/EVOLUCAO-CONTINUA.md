@@ -258,3 +258,32 @@ O Caderno descrevia regras, quatro corpos de prova, processo e protocolo de esca
 ### Proteção contra regressão
 
 O verificador exige a versão 0.2, a regra das seis aprovações, a especificação do tampo, seis estados e a estrutura semântica da tabela.
+
+## Ciclo 12 — ficha operacional do Protótipo 00
+
+Data: 24 de agosto de 2026.
+
+### Objetivo
+
+Transformar as seis aprovações do Caderno em um registro que possa acompanhar o trabalho na oficina, sem criar banco de dados, conta ou falsa automação.
+
+### Entrega
+
+- nova rota interna `/caderno/ficha-00/`, ligada diretamente ao Portão 00;
+- identificação do tampo, fornecedor, nota, espécie, umidade e dimensões reais;
+- tabela para os quatro corpos de prova A–D;
+- ensaios de acabamento, uso e estrutura;
+- custos, horas, perdas, embalagem e gargalo de repetibilidade;
+- fechamento individual das seis frentes e decisão final do ciclo;
+- ação local para imprimir ou salvar em PDF;
+- folha de estilo própria para A4, isolada do CSS das páginas públicas.
+
+### Privacidade e descoberta
+
+A ficha não possui formulário de envio nem persistência. Ela recebe `noindex, nofollow` e permanece fora do sitemap público, embora continue visível por enquanto como solicitado pelo fundador.
+
+### Validação
+
+- cinco rotas estáticas compiladas;
+- CSS público continua abaixo de 40 KiB; somente a ficha carrega seu pacote adicional, ficando abaixo de 48 KiB no total;
+- verificador exige a rota, bloqueio de indexação, A4, quatro corpos de prova e seis aprovações imprimíveis.

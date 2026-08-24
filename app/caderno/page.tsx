@@ -105,6 +105,7 @@ export default function StudioNotebookPage() {
           </table>
         </div>
         <aside className="gate-rule"><ShieldCheck /><p><strong>Regra de lançamento</strong>Se uma aprovação voltar para teste, a abertura comercial volta com ela. Escassez não substitui segurança, repetibilidade ou clareza.</p></aside>
+        <Link className="gate-sheet-link" href="/caderno/ficha-00">Abrir ficha imprimível do Protótipo 00 <ArrowUpRight size={17} /></Link>
       </section>
 
       <section className="notebook-warning"><CircleAlert /><div><p className="micro-label">Segurança de oficina</p><h2>Acabamento premium exige processo profissional.</h2><p>Epóxi, solventes e sistemas PU 2K podem exigir ventilação, proteção respiratória e equipamentos específicos. A execução deve seguir as fichas de segurança e técnicas dos fabricantes; este caderno orienta o conceito, não substitui treinamento nem especificação profissional.</p></div></section>
