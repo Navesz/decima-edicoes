@@ -857,3 +857,25 @@ O formulário demonstrativo está quase no rodapé, mas sua validação, confirm
 ### Proteção contra regressão
 
 O orçamento inicial da home caiu para 580 KiB. O verificador exige fachada estática única, importação dinâmica, proximidade, alternativa sem observador, campos inativos sem JavaScript e pacote ativo fora dos scripts iniciais com limite de 10 KiB.
+
+## Ciclo 37 — atalhos da experiência instalada
+
+Data: 24 de agosto de 2026.
+
+### Navegação instalada genérica
+
+O manifesto já publicava identidade, escopo, cores e ícones corretos, mas toda abertura começava na home. Coleções e Caderno são os dois destinos recorrentes e podiam ser declarados sem criar uma navegação paralela nem depender de JavaScript.
+
+### Intervenção
+
+- declarada direção de leitura `ltr` junto do idioma `pt-BR`;
+- adicionado atalho prioritário para Coleções;
+- adicionado atalho para o Caderno do Atelier;
+- nomes completos, nomes curtos e descrições permanecem em português;
+- os destinos usam `assetPath`, portanto ficam dentro do escopo local e do GitHub Pages;
+- nenhum comportamento da navegação web foi alterado;
+- a política foi registrada em `docs/EXPERIENCIA-INSTALADA.md` com referência à especificação W3C.
+
+### Proteção contra regressão
+
+O verificador exige exatamente os dois atalhos editoriais, confere nome, nome curto, descrição e URL transformada, e rejeita destino fora do escopo declarado. Idioma e direção também integram o contrato.

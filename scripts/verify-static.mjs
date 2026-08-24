@@ -153,8 +153,19 @@ try {
 const manifestRoot = `${exportedBasePath}/`;
 check(manifest.id === manifestRoot && manifest.start_url === manifestRoot && manifest.scope === manifestRoot, 'manifest.webmanifest: id, início ou escopo divergem do basePath');
 check(manifest.name === brandData.name && manifest.short_name === brandData.shortName && manifest.lang === brandData.locale, 'manifest.webmanifest: identidade ou idioma incorretos');
+check(manifest.dir === 'ltr', 'manifest.webmanifest: direção de leitura pt-BR ausente');
 check(manifest.display === 'standalone', 'manifest.webmanifest: apresentação instalável deve ser standalone');
 check(manifest.background_color === brandData.palette.ink.hex && manifest.theme_color === brandData.palette.ink.hex, 'manifest.webmanifest: cores divergem da identidade');
+const expectedShortcuts = [
+  { name: 'Ver coleções DÉCIMA', shortName: 'Coleções', url: `${exportedBasePath}/colecoes/` },
+  { name: 'Abrir o Caderno do Atelier', shortName: 'Caderno', url: `${exportedBasePath}/caderno/` },
+];
+check(Array.isArray(manifest.shortcuts) && manifest.shortcuts.length === expectedShortcuts.length, `manifest.webmanifest: esperados ${expectedShortcuts.length} atalhos instalados`);
+for (const shortcut of expectedShortcuts) {
+  const published = manifest.shortcuts?.find((item) => item.name === shortcut.name);
+  check(published?.short_name === shortcut.shortName && published?.url === shortcut.url && typeof published?.description === 'string' && published.description.length >= 20, `manifest.webmanifest: atalho ${shortcut.shortName} ausente ou incompleto`);
+  check(published?.url?.startsWith(manifest.scope), `manifest.webmanifest: atalho ${shortcut.shortName} saiu do escopo`);
+}
 check(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.src === `${exportedBasePath}${brandData.assets.icon}` && icon.sizes === '512x512' && icon.type === 'image/png'), 'manifest.webmanifest: ícone 512×512 ausente ou incorreto');
 check(manifest.icons.some((icon) => icon.src === `${exportedBasePath}${brandData.assets.maskableIcon}` && icon.sizes === '512x512' && icon.type === 'image/png' && icon.purpose === 'maskable'), 'manifest.webmanifest: ícone mascarável ausente ou incorreto');
 const iconMetadata = await sharp(join(output, brandData.assets.icon.replace(/^\//, ''))).metadata();

@@ -18,7 +18,7 @@ O círculo representa o tampo visto de cima. O `X` é simultaneamente a estrutur
 
 Geometria, portabilidade e limites para fabricação dos arquivos estão documentados em `docs/ATIVOS-DA-MARCA.md`.
 
-O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idioma, cores, escopo e início ajustados automaticamente para o caminho local ou para `/decima-edicoes` no GitHub Pages.
+O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idioma, cores, escopo e início ajustados automaticamente para o caminho local ou para `/decima-edicoes` no GitHub Pages. Quando o sistema oferece instalação e atalhos, Coleções e Caderno podem ser abertos diretamente; o contrato está em `docs/EXPERIENCIA-INSTALADA.md`.
 
 ## Experiências do site
 

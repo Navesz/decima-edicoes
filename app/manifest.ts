@@ -17,7 +17,22 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: brand.palette.ink.hex,
     theme_color: brand.palette.ink.hex,
     lang: brand.locale,
+    dir: 'ltr',
     categories: ['design', 'lifestyle'],
+    shortcuts: [
+      {
+        name: 'Ver coleções DÉCIMA',
+        short_name: 'Coleções',
+        description: 'Abrir o arquivo de edições e estudos da DÉCIMA.',
+        url: assetPath('/colecoes/'),
+      },
+      {
+        name: 'Abrir o Caderno do Atelier',
+        short_name: 'Caderno',
+        description: 'Consultar decisões, protótipos e critérios de produção.',
+        url: assetPath('/caderno/'),
+      },
+    ],
     icons: [
       {
         src: assetPath(brand.assets.icon),
