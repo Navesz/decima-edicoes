@@ -123,7 +123,7 @@ export default function BrandGuidePage() {
         </div>
         <aside className={styles.caution}>
           <CircleAlert aria-hidden="true" />
-          <div><strong>Masters vetoriais do símbolo</strong><p>Os SVGs são transparentes, escaláveis e usam apenas geometria e as cores do contrato — nenhuma fonte ou recurso externo. Servem como master de identidade. Para laser, CNC, gravação ou plaqueta, o fabricante ainda precisa converter traços conforme o próprio processo e aprovar uma prova física.</p><a className="gate-sheet-link" href={assetPath(brand.assets.symbolDark)} download>Baixar símbolo escuro · SVG <ArrowDownToLine aria-hidden="true" /></a><a className="gate-sheet-link" href={assetPath(brand.assets.symbolLight)} download>Baixar símbolo claro · SVG <ArrowDownToLine aria-hidden="true" /></a></div>
+          <div><strong>Masters e ícone instalável</strong><p>Os SVGs são transparentes, escaláveis e usam apenas geometria e as cores do contrato — nenhuma fonte ou recurso externo. Para laser, CNC, gravação ou plaqueta, o fabricante ainda precisa converter traços conforme o processo. O PNG mascarável possui fundo carvão opaco e zona segura para atalhos do sistema; não substitui os vetores na produção física.</p><a className="gate-sheet-link" href={assetPath(brand.assets.symbolDark)} download>Baixar símbolo escuro · SVG <ArrowDownToLine aria-hidden="true" /></a><a className="gate-sheet-link" href={assetPath(brand.assets.symbolLight)} download>Baixar símbolo claro · SVG <ArrowDownToLine aria-hidden="true" /></a><a className="gate-sheet-link" href={assetPath(brand.assets.maskableIcon)} download>Baixar ícone mascarável · PNG <ArrowDownToLine aria-hidden="true" /></a></div>
         </aside>
       </section>
 

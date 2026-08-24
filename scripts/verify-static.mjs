@@ -113,6 +113,7 @@ for (const route of routes) {
   }
   check(html.includes(`<title>${route.title}`), `${route.file}: título incorreto`);
   check(html.includes(`<link rel="manifest" href="${exportedBasePath}/manifest.webmanifest"`), `${route.file}: manifesto da marca ausente ou fora do basePath`);
+  check(html.includes(`<link rel="apple-touch-icon" href="${exportedBasePath}${brandData.assets.icon}"`), `${route.file}: ícone Apple ausente ou fora do basePath`);
   check(html.includes(`<meta name="theme-color" content="${brandData.palette.ink.hex}"`), `${route.file}: cor de navegador da marca ausente`);
   check(html.includes('<meta name="mobile-web-app-capable" content="yes"'), `${route.file}: modo instalável não declarado`);
   check(html.includes('<meta name="format-detection" content="telephone=no"'), `${route.file}: detecção automática de telefone não foi desativada`);
@@ -155,8 +156,15 @@ check(manifest.name === brandData.name && manifest.short_name === brandData.shor
 check(manifest.display === 'standalone', 'manifest.webmanifest: apresentação instalável deve ser standalone');
 check(manifest.background_color === brandData.palette.ink.hex && manifest.theme_color === brandData.palette.ink.hex, 'manifest.webmanifest: cores divergem da identidade');
 check(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.src === `${exportedBasePath}${brandData.assets.icon}` && icon.sizes === '512x512' && icon.type === 'image/png'), 'manifest.webmanifest: ícone 512×512 ausente ou incorreto');
+check(manifest.icons.some((icon) => icon.src === `${exportedBasePath}${brandData.assets.maskableIcon}` && icon.sizes === '512x512' && icon.type === 'image/png' && icon.purpose === 'maskable'), 'manifest.webmanifest: ícone mascarável ausente ou incorreto');
 const iconMetadata = await sharp(join(output, brandData.assets.icon.replace(/^\//, ''))).metadata();
 check(iconMetadata.width === 512 && iconMetadata.height === 512 && iconMetadata.format === 'png', 'icon.png: dimensão ou formato diverge do manifesto');
+const maskablePath = join(output, brandData.assets.maskableIcon.replace(/^\//, ''));
+const maskableMetadata = await sharp(maskablePath).metadata();
+const maskableStats = await sharp(maskablePath).stats();
+check(maskableMetadata.width === 512 && maskableMetadata.height === 512 && maskableMetadata.format === 'png' && maskableStats.isOpaque, 'ícone mascarável: dimensão, formato ou fundo opaco inválido');
+const logoGeneratorSource = readFileSync(join(root, 'scripts', 'generate-logo.mjs'), 'utf8');
+check(logoGeneratorSource.includes('const maskableIcon') && logoGeneratorSource.includes('<rect width="512" height="512" fill="#171411"/>') && logoGeneratorSource.includes("output('decima-maskable.png')"), 'ícone mascarável: fonte reproduzível ausente');
 
 const publicImages = readdirSync(join(output, 'images')).filter((file) => /\.(webp|avif|jpe?g|png)$/i.test(file));
 const publicImageBytes = publicImages.reduce((total, file) => {
@@ -415,7 +423,7 @@ check(!sitemap.includes(`${origin}/caderno/marca/`), 'Guia de Marca: rota intern
 check(brandGuide.includes('Sim. DÉCIMA Edições é uma direção forte.') && brandGuide.includes('não declara disponibilidade legal'), 'Guia de Marca: veredito ou limite jurídico ausente');
 check(brandGuide.includes('Círculo') && brandGuide.includes('numeral romano de dez') && brandGuide.includes('Ponto'), 'Guia de Marca: significado do símbolo incompleto');
 check(Object.values(brandData.assets).every((asset) => brandGuide.includes(asset)), 'Guia de Marca: ativos oficiais incompletos');
-check(brandGuide.includes('Masters vetoriais do símbolo') && brandGuide.includes('laser, CNC, gravação ou plaqueta') && (brandGuide.match(/\sdownload=""/g) ?? []).length >= 4, 'Guia de Marca: downloads ou limite de produção dos vetores incompletos');
+check(brandGuide.includes('Masters e ícone instalável') && brandGuide.includes('laser, CNC, gravação ou plaqueta') && brandGuide.includes('fundo carvão opaco e zona segura') && (brandGuide.match(/\sdownload=""/g) ?? []).length >= 5, 'Guia de Marca: downloads, ícone instalável ou limite de produção incompletos');
 check(Object.values(brandData.palette).every((color) => brandGuide.includes(color.hex)), 'Guia de Marca: paleta oficial incompleta ou divergente');
 check(brandGuide.includes('Cormorant Garamond') && brandGuide.includes('MANROPE'), 'Guia de Marca: sistema tipográfico incompleto');
 check(brandGuide.includes('Nórdica — Yggdrasil') && brandGuide.includes('Peça 01/10') && brandGuide.includes('Protótipo 00'), 'Guia de Marca: sistema de nomenclatura incompleto');

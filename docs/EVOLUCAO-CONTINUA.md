@@ -807,3 +807,27 @@ O ciclo 30 reduziu o Framer ao uso mínimo, mas sua fronteira cliente e o motor 
 ### Proteção contra regressão
 
 O orçamento da home caiu para 600 KiB. O verificador exige a fachada, o import dinâmico, proximidade, contrato de capacidades, três artigos estáticos e ausência de estado ativo no HTML. Todo chunk que contém `whileHover` precisa estar fora dos scripts iniciais, e a soma da ilha Framer fica limitada a 90 KiB.
+
+## Ciclo 35 — ícone instalável com máscara segura
+
+Data: 24 de agosto de 2026.
+
+### Aplicação incompleta
+
+O manifesto possuía apenas o ícone comum com `purpose: any`. A arte usa cantos transparentes, adequados ao favicon, mas não deve ser declarada mascarável: sistemas operacionais podem aplicar recortes e preencher áreas que precisam de fundo opaco. O cabeçalho também não publicava um `apple-touch-icon` explícito.
+
+### Intervenção
+
+- criado `public/brand/decima-maskable.png` em 512 × 512 px;
+- o fundo carvão cobre toda a área e é comprovadamente opaco;
+- círculo, diagonais e ponto permanecem dentro da zona central segura;
+- o gerador oficial passou a reproduzir o novo ativo junto das assinaturas e do favicon;
+- o contrato de marca ganhou `maskableIcon`;
+- o manifesto mantém o ícone comum como `any` e adiciona o novo como `maskable`;
+- todas as rotas publicam `apple-touch-icon` explícito com caminho correto do Pages;
+- o Guia de Marca oferece download e separa uso digital de master físico;
+- o inventário foi atualizado em `docs/ATIVOS-DA-MARCA.md`.
+
+### Proteção contra regressão
+
+O verificador exige o segundo ícone no manifesto, caminho, tipo, tamanho e finalidade. Sharp confirma PNG 512 × 512 e todos os pixels opacos. O gerador precisa manter fonte quadrada carvão e saída reproduzível; cada rota precisa carregar o ícone Apple com o `basePath` correto.

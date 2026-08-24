@@ -31,8 +31,19 @@ const icon = Buffer.from(`
   </svg>
 `);
 
+const maskableIcon = Buffer.from(`
+  <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <rect width="512" height="512" fill="#171411"/>
+    <circle cx="256" cy="256" r="190" fill="none" stroke="#eee7da" stroke-width="7"/>
+    <line x1="151" y1="151" x2="361" y2="361" stroke="#eee7da" stroke-width="7"/>
+    <line x1="361" y1="151" x2="151" y2="361" stroke="#eee7da" stroke-width="7"/>
+    <circle cx="256" cy="256" r="14" fill="#b28a53"/>
+  </svg>
+`);
+
 await Promise.all([
   sharp(lockup('#171411')).png().toFile(output('decima-logo-dark.png')),
   sharp(lockup('#eee7da')).png().toFile(output('decima-logo-light.png')),
   sharp(icon).png().toFile(fileURLToPath(new URL('../app/icon.png', import.meta.url))),
+  sharp(maskableIcon).png().toFile(output('decima-maskable.png')),
 ]);

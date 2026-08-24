@@ -14,6 +14,7 @@ O círculo representa o tampo visto de cima. O `X` é simultaneamente a estrutur
 - `public/brand/decima-logo-light.png` — aplicação sobre fundos escuros;
 - `public/brand/decima-symbol-dark.svg` e `public/brand/decima-symbol-light.svg` — masters vetoriais do símbolo;
 - `app/icon.png` — símbolo reduzido para navegador e redes.
+- `public/brand/decima-maskable.png` — símbolo com fundo opaco e zona segura para instalação.
 
 Geometria, portabilidade e limites para fabricação dos arquivos estão documentados em `docs/ATIVOS-DA-MARCA.md`.
 

@@ -58,6 +58,7 @@
   },
   "assets": {
     "icon": "/icon.png",
+    "maskableIcon": "/brand/decima-maskable.png",
     "logoDark": "/brand/decima-logo-dark.png",
     "logoLight": "/brand/decima-logo-light.png",
     "symbolDark": "/brand/decima-symbol-dark.svg",

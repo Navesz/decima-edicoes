@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { assetPath } from './lib/base-path';
 import { SmoothScroll } from './components/smooth-scroll';
 import { brand, brandTitle } from './lib/brand';
 import { edition } from './lib/project';
@@ -37,6 +38,7 @@ export const metadata: Metadata = {
   category: 'design de mobiliário',
   formatDetection: { telephone: false },
   appleWebApp: { capable: true, title: brand.shortName, statusBarStyle: 'black-translucent' },
+  icons: { apple: [{ url: assetPath(brand.assets.icon), sizes: '512x512', type: 'image/png' }] },
   keywords: ['mesas autorais', 'mobiliário brasileiro', 'edição limitada', 'madeira maciça', 'design colecionável'],
   alternates: { canonical: absoluteUrl('/') },
   openGraph: {
