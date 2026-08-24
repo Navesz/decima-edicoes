@@ -228,6 +228,97 @@ check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === projectData.pro
 const worksheetCss = readFileSync(join(root, 'app', 'caderno', 'ficha-00', 'worksheet.module.css'), 'utf8');
 check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@media print'), 'Ficha 00: configuração de impressão A4 ausente');
 
+function structuredNodes(relativePath) {
+  const html = read(relativePath);
+  const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  const nodes = [];
+  for (const [index, block] of blocks.entries()) {
+    try {
+      const value = JSON.parse(block[1]);
+      check(value['@context'] === 'https://schema.org', `${relativePath}: JSON-LD ${index + 1} sem contexto Schema.org`);
+      nodes.push(...(Array.isArray(value['@graph']) ? value['@graph'] : [value]));
+    } catch {
+      failures.push(`${relativePath}: JSON-LD ${index + 1} inválido`);
+    }
+  }
+  check(blocks.length >= 1, `${relativePath}: nenhum JSON-LD encontrado`);
+  return nodes;
+}
+
+function nodesOfType(nodes, type) {
+  return nodes.filter((node) => node['@type'] === type || (Array.isArray(node['@type']) && node['@type'].includes(type)));
+}
+
+function structuredKeys(value, keys = new Set()) {
+  if (!value || typeof value !== 'object') return keys;
+  for (const [key, child] of Object.entries(value)) {
+    keys.add(key);
+    if (Array.isArray(child)) child.forEach((item) => structuredKeys(item, keys));
+    else structuredKeys(child, keys);
+  }
+  return keys;
+}
+
+function checkBreadcrumb(nodes, expectedLength, expectedCurrentUrl, relativePath) {
+  const breadcrumbs = nodesOfType(nodes, 'BreadcrumbList');
+  check(breadcrumbs.length === 1, `${relativePath}: esperado um BreadcrumbList`);
+  if (breadcrumbs.length !== 1) return;
+  const items = breadcrumbs[0].itemListElement ?? [];
+  check(items.length === expectedLength, `${relativePath}: breadcrumb deveria ter ${expectedLength} itens`);
+  check(items.every((item, index) => item['@type'] === 'ListItem' && item.position === index + 1 && item.name && item.item), `${relativePath}: breadcrumb sem posições, nomes ou URLs válidos`);
+  check(items.at(-1)?.item === expectedCurrentUrl, `${relativePath}: breadcrumb não termina na página atual`);
+}
+
+const brandStructuredId = `${origin}/#brand`;
+const websiteStructuredId = `${origin}/#website`;
+let checkedStructuredNodes = 0;
+for (const file of listFiles(output).filter((candidate) => candidate.endsWith('.html'))) {
+  const relativePath = pathRelative(output, file).replaceAll('\\', '/');
+  const nodes = structuredNodes(relativePath);
+  checkedStructuredNodes += nodes.length;
+  const brands = nodesOfType(nodes, 'Brand');
+  const websites = nodesOfType(nodes, 'WebSite');
+  check(brands.length === 1 && brands[0]['@id'] === brandStructuredId && brands[0].logo === `${origin}/brand/decima-logo-dark.png`, `${relativePath}: nó Brand ausente ou desconectado`);
+  check(websites.length === 1 && websites[0]['@id'] === websiteStructuredId && websites[0].inLanguage === 'pt-BR' && websites[0].about?.['@id'] === brandStructuredId, `${relativePath}: nó WebSite ausente ou desconectado`);
+  const ids = nodes.map((node) => node['@id']).filter(Boolean);
+  check(ids.length === new Set(ids).size, `${relativePath}: @id duplicado no JSON-LD`);
+  if (projectData.edition.commercialStatus === 'prototyping') {
+    const keys = structuredKeys(nodes);
+    for (const forbidden of ['offers', 'price', 'priceCurrency', 'availability', 'aggregateRating', 'review', 'sku', 'gtin']) {
+      check(!keys.has(forbidden), `${relativePath}: dado comercial prematuro no JSON-LD (${forbidden})`);
+    }
+    check(nodesOfType(nodes, 'Offer').length === 0, `${relativePath}: Offer não pode existir durante a prototipagem`);
+  }
+}
+
+const collectionsStructuredNodes = structuredNodes('colecoes/index.html');
+const collectionPages = nodesOfType(collectionsStructuredNodes, 'CollectionPage');
+check(collectionPages.length === 1 && collectionPages[0].isPartOf?.['@id'] === websiteStructuredId, 'Coleções: CollectionPage ausente ou fora do WebSite');
+checkBreadcrumb(collectionsStructuredNodes, 2, `${origin}/colecoes/`, 'colecoes/index.html');
+
+const productStructuredNodes = structuredNodes(`colecoes/${projectData.collection.slug}/index.html`);
+const productModels = nodesOfType(productStructuredNodes, 'ProductModel');
+const productStructuredUrl = `${origin}${collectionPath}`;
+check(productModels.length === 1, `${projectData.collection.name}: esperado um ProductModel`);
+if (productModels.length === 1) {
+  const model = productModels[0];
+  check(model['@id'] === `${productStructuredUrl}#model` && model.url === productStructuredUrl, `${projectData.collection.name}: identidade do ProductModel incorreta`);
+  check(model.brand?.['@id'] === brandStructuredId, `${projectData.collection.name}: ProductModel não referencia a marca`);
+  check(model.mainEntityOfPage?.['@id'] === `${productStructuredUrl}#page`, `${projectData.collection.name}: ProductModel não referencia sua WebPage`);
+  check(model.width?.value === projectData.product.diameterCm && model.depth?.value === projectData.product.diameterCm && model.height?.value === projectData.product.heightCm, `${projectData.collection.name}: medidas estruturadas divergem do contrato`);
+  check([model.width, model.depth, model.height].every((measure) => measure?.['@type'] === 'QuantitativeValue' && measure.unitCode === 'CMT' && measure.unitText === 'cm'), `${projectData.collection.name}: unidades estruturadas inválidas`);
+  check(Array.isArray(model.image) && model.image.length === 4 && model.image.every((url) => url.startsWith(`${origin}/images/`)), `${projectData.collection.name}: imagens estruturadas ausentes ou externas`);
+  check(model.additionalProperty?.some((property) => property.name === 'Estado comercial' && property.value.includes('ainda não está à venda')), `${projectData.collection.name}: estado comercial transparente ausente do ProductModel`);
+}
+const productPages = nodesOfType(productStructuredNodes, 'WebPage');
+check(productPages.length === 1 && productPages[0].mainEntity?.['@id'] === `${productStructuredUrl}#model`, `${projectData.collection.name}: WebPage não aponta para o ProductModel`);
+checkBreadcrumb(productStructuredNodes, 3, productStructuredUrl, `colecoes/${projectData.collection.slug}/index.html`);
+
+const notebookStructuredNodes = structuredNodes('caderno/index.html');
+const notebookPages = nodesOfType(notebookStructuredNodes, 'WebPage');
+check(notebookPages.length === 1 && notebookPages[0].version === projectData.documents.notebookVersion && notebookPages[0].dateModified === projectData.documents.updatedAtIso, 'Caderno: versão ou data ausente do WebPage estruturado');
+checkBreadcrumb(notebookStructuredNodes, 2, `${origin}/caderno/`, 'caderno/index.html');
+
 check(projectData.edition.runSize >= 2, 'Contrato do projeto: a tiragem precisa comportar início e encerramento');
 check(projectData.edition.producedPieces >= 0 && projectData.edition.producedPieces <= projectData.edition.runSize, 'Contrato do projeto: quantidade produzida inválida');
 check(projectData.edition.commercialStatus === 'prototyping', 'Contrato do projeto: estado comercial mudou sem uma regra de publicação correspondente');
@@ -405,6 +496,7 @@ for (const file of exportedHtmlFiles) {
 check(exportedHtmlFiles.length >= routes.length + 3, `rastreador: quantidade inesperada de documentos HTML (${exportedHtmlFiles.length})`);
 check(checkedInternalReferences >= 220, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
 check(checkedSemanticElements >= 200, `acessibilidade: poucos elementos semânticos verificados (${checkedSemanticElements})`);
+check(checkedStructuredNodes >= 23, `SEO: poucos nós estruturados verificados (${checkedStructuredNodes})`);
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);
@@ -412,4 +504,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos, ${checkedInternalReferences} referências internas e ${checkedSemanticElements} elementos semânticos; metadados sociais, acessibilidade, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos, ${checkedInternalReferences} referências internas, ${checkedSemanticElements} elementos semânticos e ${checkedStructuredNodes} nós JSON-LD; metadados sociais, acessibilidade, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);

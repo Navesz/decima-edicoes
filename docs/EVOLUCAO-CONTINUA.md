@@ -402,3 +402,26 @@ Os oito documentos já possuíam `alt` em todas as imagens, nomes nos links e bo
 ### Correção de cobertura
 
 A nova auditoria também percebeu que o rastreador do ciclo 15 tratava `srcset` com caixa sensível, enquanto o export do React escreve `srcSet`. A leitura passou a ser insensível a caixa e cada candidato responsivo agora é verificado. O total subiu para 230 referências internas e 245 elementos semânticos auditados.
+
+## Ciclo 18 — grafo de dados estruturados
+
+Data: 24 de agosto de 2026.
+
+### Revisão da modelagem
+
+As definições oficiais do Schema.org confirmaram `ProductModel` para uma especificação de modelo ainda sem oferta, propriedades específicas de medida e `BreadcrumbList` ordenado por posição. O antigo JSON-LD era válido como JSON, mas a marca aparecia isolada e o modelo usava propriedades genéricas para todas as dimensões.
+
+### Intervenção
+
+- grafo global com `Brand` e `WebSite` ligados por IDs estáveis;
+- `CollectionPage` para o arquivo de coleções;
+- `WebPage` versionada para o Caderno;
+- `WebPage`, `BreadcrumbList` e `ProductModel` ligados no dossiê Yggdrasil;
+- largura e profundidade de 80 cm e altura de 38 cm em `QuantitativeValue` com unidade `CMT`;
+- marca ligada ao modelo por `@id`;
+- estado “ainda não está à venda” incluído como característica explícita;
+- ausência deliberada de `Offer`, preço, estoque, SKU, GTIN e avaliações.
+
+### Proteção contra regressão
+
+O verificador parseia cada bloco JSON-LD, exige contexto Schema.org, IDs únicos, marca e website em todos os documentos, breadcrumbs ordenados, relações entre página e modelo, medidas alinhadas ao contrato e quatro imagens internas. Enquanto o estado for `prototyping`, propriedades comerciais fazem o deploy falhar. Ao todo, 23 nós estruturados são auditados.

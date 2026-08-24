@@ -8,28 +8,51 @@ import { gallery } from '../../lib/collections';
 import { assetPath } from '../../lib/base-path';
 import { collection, edition, product, productLabels, projectLabels } from '../../lib/project';
 import { absoluteUrl, siteName } from '../../lib/site';
+import { brandId, breadcrumbSchema, webPageSchema } from '../../lib/structured-data';
+
+const productUrl = absoluteUrl(`/colecoes/${collection.slug}/`);
+const productModelId = `${productUrl}#model`;
+const productDescription = `Mesa autoral em madeira maciça e aço, concebida em uma edição limitada de ${edition.runSizeWord} peças numeradas.`;
 
 export const metadata: Metadata = {
   title: `${collection.family} — ${collection.name}`,
   description: `O conceito da edição inaugural da DÉCIMA: uma tiragem prevista de ${edition.runSizeWord} mesas numeradas em madeira maciça e aço.`,
-  alternates: { canonical: absoluteUrl(`/colecoes/${collection.slug}/`) },
-  openGraph: { type: 'website', locale: 'pt_BR', siteName, url: absoluteUrl(`/colecoes/${collection.slug}/`), title: `${collection.family} — ${collection.name} · ${siteName}`, description: `${edition.runSize} mesas numeradas. Uma arte que jamais será reimpressa.`, images: [{ url: absoluteUrl('/social/yggdrasil.jpg'), width: 1200, height: 630, alt: `Mesa ${collection.family} — ${collection.name}` }] },
+  alternates: { canonical: productUrl },
+  openGraph: { type: 'website', locale: 'pt_BR', siteName, url: productUrl, title: `${collection.family} — ${collection.name} · ${siteName}`, description: `${edition.runSize} mesas numeradas. Uma arte que jamais será reimpressa.`, images: [{ url: absoluteUrl('/social/yggdrasil.jpg'), width: 1200, height: 630, alt: `Mesa ${collection.family} — ${collection.name}` }] },
   twitter: { card: 'summary_large_image', title: `${collection.family} — ${collection.name} · ${siteName}`, description: `${edition.runSize} mesas numeradas. Uma arte que jamais será reimpressa.`, images: [absoluteUrl('/social/yggdrasil.jpg')] },
 };
 
 const productSchema = {
-  '@context': 'https://schema.org',
   '@type': 'ProductModel',
+  '@id': productModelId,
   name: `${collection.family} — ${collection.name}`,
-  description: `Mesa autoral em madeira maciça e aço, concebida em uma edição limitada de ${edition.runSizeWord} peças numeradas.`,
+  description: productDescription,
+  url: productUrl,
+  mainEntityOfPage: { '@id': `${productUrl}#page` },
   image: gallery.map((image) => absoluteUrl(image.replace(/^\/decima-edicoes/, ''))),
-  material: ['Madeira maciça', 'Aço carbono'],
-  brand: { '@type': 'Brand', name: siteName },
+  category: 'Mesa de centro autoral',
+  material: [product.top, 'Aço carbono'],
+  brand: { '@id': brandId },
+  width: { '@type': 'QuantitativeValue', value: product.diameterCm, unitCode: 'CMT', unitText: 'cm' },
+  depth: { '@type': 'QuantitativeValue', value: product.diameterCm, unitCode: 'CMT', unitText: 'cm' },
+  height: { '@type': 'QuantitativeValue', value: product.heightCm, unitCode: 'CMT', unitText: 'cm' },
   additionalProperty: [
-    { '@type': 'PropertyValue', name: 'Diâmetro de partida', value: productLabels.diameter },
-    { '@type': 'PropertyValue', name: 'Altura de partida', value: productLabels.height },
     { '@type': 'PropertyValue', name: 'Espessura do tampo', value: productLabels.topThickness },
     { '@type': 'PropertyValue', name: 'Tiragem prevista', value: edition.runSize },
+    { '@type': 'PropertyValue', name: 'Estado comercial', value: `${edition.commercialStatusLabel} · ainda não está à venda` },
+  ],
+};
+
+const productStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    webPageSchema({ url: productUrl, name: `${collection.family} — ${collection.name}`, description: productDescription, mainEntityId: productModelId }),
+    breadcrumbSchema(productUrl, [
+      { name: siteName, url: absoluteUrl('/') },
+      { name: 'Coleções', url: absoluteUrl('/colecoes/') },
+      { name: `${collection.family} — ${collection.name}`, url: productUrl },
+    ]),
+    productSchema,
   ],
 };
 
@@ -64,7 +87,7 @@ export default function YggdrasilPage() {
       </section>
       <section className="product-cta"><p>Acompanhar a edição</p><h2>Veja a peça nascer<br />antes do número.</h2><Link href="/#interesse">Conhecer o fluxo de interesse <ArrowRight /></Link></section>
       <Footer />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }} />
     </main>
   );
 }

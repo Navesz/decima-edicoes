@@ -7,27 +7,42 @@ import { SiteHeader } from '../components/site-header';
 import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
 import { collection } from '../lib/project';
-import { absoluteUrl } from '../lib/site';
+import { absoluteUrl, siteName } from '../lib/site';
+import { breadcrumbSchema, webPageSchema } from '../lib/structured-data';
+
+const collectionsUrl = absoluteUrl('/colecoes/');
+const collectionsDescription = 'Edições numeradas e estudos do arquivo DÉCIMA.';
 
 export const metadata: Metadata = {
   title: 'Coleções',
-  description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
-  alternates: { canonical: absoluteUrl('/colecoes/') },
+  description: collectionsDescription,
+  alternates: { canonical: collectionsUrl },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'DÉCIMA Edições',
-    url: absoluteUrl('/colecoes/'),
-    title: 'Coleções · DÉCIMA Edições',
-    description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
+    siteName,
+    url: collectionsUrl,
+    title: `Coleções · ${siteName}`,
+    description: collectionsDescription,
     images: [{ url: absoluteUrl('/social/collections.jpg'), width: 1200, height: 630, alt: 'Arquivo visual das coleções DÉCIMA' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Coleções · DÉCIMA Edições',
-    description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
+    title: `Coleções · ${siteName}`,
+    description: collectionsDescription,
     images: [absoluteUrl('/social/collections.jpg')],
   },
+};
+
+const collectionsStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    webPageSchema({ type: 'CollectionPage', url: collectionsUrl, name: 'Coleções', description: collectionsDescription }),
+    breadcrumbSchema(collectionsUrl, [
+      { name: siteName, url: absoluteUrl('/') },
+      { name: 'Coleções', url: collectionsUrl },
+    ]),
+  ],
 };
 
 export default function CollectionsPage() {
@@ -53,6 +68,7 @@ export default function CollectionsPage() {
       </section>
       <section className="archive-board"><ResponsiveImage src={assetPath('/images/collection-dark.webp')} alt="Mapa visual de dez estudos conceituais iniciais" sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
       <Footer />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionsStructuredData) }} />
     </main>
   );
 }

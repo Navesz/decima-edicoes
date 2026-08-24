@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { SmoothScroll } from './components/smooth-scroll';
 import { edition } from './lib/project';
 import { absoluteUrl, siteDescription, siteName, siteOrigin } from './lib/site';
+import { siteStructuredData } from './lib/structured-data';
 import './globals.css';
 
 const cormorant = localFont({
@@ -60,16 +61,6 @@ export const viewport: Viewport = {
   themeColor: '#171411',
 };
 
-const brandSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Brand',
-  name: siteName,
-  description: siteDescription,
-  url: absoluteUrl('/'),
-  logo: absoluteUrl('/brand/decima-logo-dark.png'),
-  slogan: 'Objetos que não se repetem.',
-};
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
@@ -77,7 +68,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
         <SmoothScroll />
         {children}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(brandSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteStructuredData) }} />
       </body>
     </html>
   );

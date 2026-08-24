@@ -8,27 +8,42 @@ import { SiteHeader } from '../components/site-header';
 import { buildRules } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
 import { collection, decisionLog, documents, edition, productLabels, projectLabels, proofBodies, prototypeGate } from '../lib/project';
-import { absoluteUrl } from '../lib/site';
+import { absoluteUrl, siteName } from '../lib/site';
+import { breadcrumbSchema, webPageSchema } from '../lib/structured-data';
+
+const notebookUrl = absoluteUrl('/caderno/');
+const notebookDescription = 'O caderno aberto de conceito, materiais, acabamentos e prototipagem da DÉCIMA.';
 
 export const metadata: Metadata = {
   title: 'Caderno do Atelier',
-  description: 'O caderno aberto de conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
-  alternates: { canonical: absoluteUrl('/caderno/') },
+  description: notebookDescription,
+  alternates: { canonical: notebookUrl },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'DÉCIMA Edições',
-    url: absoluteUrl('/caderno/'),
-    title: 'Caderno do Atelier · DÉCIMA Edições',
+    siteName,
+    url: notebookUrl,
+    title: `Caderno do Atelier · ${siteName}`,
     description: 'Conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
     images: [{ url: absoluteUrl('/social/caderno.jpg'), width: 1200, height: 630, alt: 'Prancha de estudos do Caderno do Atelier' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Caderno do Atelier · DÉCIMA Edições',
+    title: `Caderno do Atelier · ${siteName}`,
     description: 'Conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
     images: [absoluteUrl('/social/caderno.jpg')],
   },
+};
+
+const notebookStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    webPageSchema({ url: notebookUrl, name: 'Caderno do Atelier', description: notebookDescription, version: documents.notebookVersion, dateModified: documents.updatedAtIso }),
+    breadcrumbSchema(notebookUrl, [
+      { name: siteName, url: absoluteUrl('/') },
+      { name: 'Caderno do Atelier', url: notebookUrl },
+    ]),
+  ],
 };
 
 export default function StudioNotebookPage() {
@@ -109,6 +124,7 @@ export default function StudioNotebookPage() {
 
       <section className="notebook-next"><p>Próxima decisão do projeto</p><h2>Cotar o tampo inteiro pré-nivelado, registrar a espécie real e iniciar as {projectLabels.proofBodiesWord} placas do portão {edition.prototypeNumber}.</h2><Link href={`/colecoes/${collection.slug}`}>Rever {collection.name} <ArrowUpRight /></Link></section>
       <Footer />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(notebookStructuredData) }} />
     </main>
   );
 }
