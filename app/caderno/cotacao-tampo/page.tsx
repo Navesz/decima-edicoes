@@ -5,7 +5,7 @@ import { Footer } from '../../components/footer';
 import { PrintButton } from '../../components/print-button';
 import { SiteHeader } from '../../components/site-header';
 import { brand } from '../../lib/brand';
-import { collection, documents, productLabels } from '../../lib/project';
+import { documents, productLabels } from '../../lib/project';
 import { absoluteUrl } from '../../lib/site';
 import styles from '../ficha-00/worksheet.module.css';
 
