@@ -7,6 +7,17 @@ const output = join(root, 'out');
 const basePath = '/decima-edicoes';
 const origin = `https://navesz.github.io${basePath}`;
 const failures = [];
+const projectData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'project-data.json'), 'utf8'));
+const numberWords = ['zero', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez'];
+const pad2 = (value) => String(value).padStart(2, '0');
+const collectionPath = `/colecoes/${projectData.collection.slug}/`;
+const prototypeNumber = pad2(projectData.prototype.number);
+const firstPiece = pad2(1);
+const lastPieceFraction = `${pad2(projectData.edition.runSize)}/${projectData.edition.runSize}`;
+const proofBodiesWord = numberWords[projectData.proofBodies.length] ?? String(projectData.proofBodies.length);
+const gateItemsWord = numberWords[projectData.prototypeGate.length] ?? String(projectData.prototypeGate.length);
+const proofBodiesHeading = `${proofBodiesWord.charAt(0).toUpperCase()}${proofBodiesWord.slice(1)}`;
+const gateItemsHeading = `${gateItemsWord.charAt(0).toUpperCase()}${gateItemsWord.slice(1)}`;
 
 function check(condition, message) {
   if (!condition) failures.push(message);
@@ -18,12 +29,16 @@ function read(relativePath) {
   return existsSync(path) ? readFileSync(path, 'utf8') : '';
 }
 
+function withoutRscMarkers(html) {
+  return html.replace(/<!--[^]*?-->/g, '');
+}
+
 const routes = [
   { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750, cssBudgetKiB: 40 },
   { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
+  { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · DÉCIMA`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
-  { file: 'caderno/ficha-00/index.html', title: 'Ficha do Protótipo 00 · DÉCIMA', canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
+  { file: 'caderno/ficha-00/index.html', title: `Ficha do Protótipo ${prototypeNumber} · DÉCIMA`, canonical: `${origin}/caderno/ficha-00/`, scriptBudgetKiB: 600, cssBudgetKiB: 48, responsiveImages: false, sitemap: false },
 ];
 
 function initialScriptBytes(html) {
@@ -135,34 +150,48 @@ routes.filter((route) => route.sitemap !== false).forEach((route) => check(sitem
 const robots = read('robots.txt');
 check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap ausente ou incorreto');
 
-const home = read('index.html');
-const product = read('colecoes/nordica-yggdrasil/index.html');
-const notebook = read('caderno/index.html');
-const worksheet = read('caderno/ficha-00/index.html');
+const home = withoutRscMarkers(read('index.html'));
+const product = withoutRscMarkers(read(`colecoes/${projectData.collection.slug}/index.html`));
+const notebook = withoutRscMarkers(read('caderno/index.html'));
+const worksheet = withoutRscMarkers(read('caderno/ficha-00/index.html'));
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
-check(home.includes('protótipo 00 em desenvolvimento'), 'início: estágio conceitual não está explícito');
+check(home.includes(`protótipo ${prototypeNumber} em desenvolvimento`), 'início: estágio conceitual não está explícito');
+check(home.includes(`Estágio atual: ${numberWords[projectData.edition.producedPieces]} de ${numberWords[projectData.edition.runSize]} peças produzidas`), 'início: estágio editorial diverge do contrato do projeto');
+check(home.includes(`Protocolo ${lastPieceFraction}`), 'início: protocolo editorial diverge da tiragem declarada');
 check(home.includes('não cria reserva, cobrança ou direito'), 'início: limite do fluxo de interesse não está explícito');
 check(interestFormTag.length > 0, 'início: formulário demonstrativo não está identificado');
 check(!/\saction=/i.test(interestFormTag), 'início: demonstração não deve apontar para um destino de envio');
 check(home.includes('<fieldset disabled="">'), 'início: campos devem permanecer inativos sem JavaScript');
 check(home.includes('A simulação local requer JavaScript. Nenhum campo foi habilitado e nenhum dado será enviado.'), 'início: aviso sem JavaScript ausente');
 check(home.includes('minLength="2"') && home.includes('type="email"'), 'início: restrições de validação do formulário ausentes');
-check(product.includes('Yggdrasil ainda não está à venda'), 'Yggdrasil: indisponibilidade comercial não está explícita');
-check(product.includes('ProductModel'), 'Yggdrasil: dados estruturados devem representar um modelo, não produto disponível');
-check(notebook.includes('Versão 0.2'), 'Caderno: versão do documento vivo não foi atualizada');
-check(notebook.includes('Só existe peça 01 depois de seis aprovações documentadas'), 'Caderno: regra do Portão 00 ausente');
+check(product.includes(`${projectData.collection.name} ainda não está à venda`), `${projectData.collection.name}: indisponibilidade comercial não está explícita`);
+check(product.includes('ProductModel'), `${projectData.collection.name}: dados estruturados devem representar um modelo, não produto disponível`);
+check(product.includes(`${projectData.edition.producedPieces} produzidas`) && product.includes(`${projectData.edition.runSize} previstas`), `${projectData.collection.name}: contagem editorial diverge do contrato do projeto`);
+check(product.includes(`${projectData.product.diameterCm} cm`) && product.includes(`${projectData.product.heightCm} cm`) && product.includes(`${projectData.product.topThicknessMm.minimum}–${projectData.product.topThicknessMm.maximum} mm`), `${projectData.collection.name}: dimensões de partida divergem do contrato do projeto`);
+check(notebook.includes(`Versão ${projectData.documents.notebookVersion}`), 'Caderno: versão do documento vivo não foi atualizada');
+check(notebook.includes(`Só existe peça ${firstPiece} depois de ${gateItemsWord} aprovações documentadas`), `Caderno: regra do Portão ${prototypeNumber} ausente`);
 check(notebook.includes('tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado'), 'Caderno: especificação de partida da madeira ausente');
-check((notebook.match(/data-state=/g) ?? []).length === 6, 'Caderno: esperado estado para as seis aprovações do Portão 00');
-check(notebook.includes('<table class="gate-table">') && notebook.includes('<caption>Seis aprovações obrigatórias'), 'Caderno: matriz do Portão 00 não está semanticamente estruturada');
+check((notebook.match(/data-state=/g) ?? []).length === projectData.prototypeGate.length, `Caderno: esperado estado para as ${gateItemsWord} aprovações do Portão ${prototypeNumber}`);
+check(notebook.includes('<table class="gate-table">') && notebook.includes(`<caption>${gateItemsHeading} aprovações obrigatórias`), `Caderno: matriz do Portão ${prototypeNumber} não está semanticamente estruturada`);
 check(/href="(?:\/decima-edicoes)?\/caderno\/ficha-00\/?"/.test(notebook), 'Caderno: acesso à ficha do Protótipo 00 ausente');
 check(worksheet.includes('<meta name="robots" content="noindex, nofollow"'), 'Ficha 00: bloqueio de indexação ausente');
 check(!sitemap.includes(`${origin}/caderno/ficha-00/`), 'Ficha 00: rota interna não deve entrar no sitemap público');
 check(worksheet.includes('Imprimir ou salvar em PDF') && worksheet.includes('Ficha do'), 'Ficha 00: ação de impressão ou título ausente');
-check(worksheet.includes('Quatro corpos de prova') && worksheet.includes('Fechamento do Portão 00'), 'Ficha 00: blocos operacionais incompletos');
-check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === 6, 'Ficha 00: aprovações imprimíveis incompletas');
+check(worksheet.includes(`${proofBodiesHeading} corpos de prova`) && worksheet.includes(`Fechamento do Portão ${prototypeNumber}`), `Ficha ${prototypeNumber}: blocos operacionais incompletos`);
+check((visibleWorksheet.match(/□ aprovado/g) ?? []).length === projectData.prototypeGate.length, `Ficha ${prototypeNumber}: aprovações imprimíveis incompletas`);
 const worksheetCss = readFileSync(join(root, 'app', 'caderno', 'ficha-00', 'worksheet.module.css'), 'utf8');
 check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@media print'), 'Ficha 00: configuração de impressão A4 ausente');
+
+check(projectData.edition.runSize >= 2, 'Contrato do projeto: a tiragem precisa comportar início e encerramento');
+check(projectData.edition.producedPieces >= 0 && projectData.edition.producedPieces <= projectData.edition.runSize, 'Contrato do projeto: quantidade produzida inválida');
+check(projectData.edition.commercialStatus === 'prototyping', 'Contrato do projeto: estado comercial mudou sem uma regra de publicação correspondente');
+check(new Set(projectData.proofBodies.map((item) => item.code)).size === projectData.proofBodies.length, 'Contrato do projeto: códigos de corpos de prova repetidos');
+check(new Set(projectData.prototypeGate.map((item) => item.code)).size === projectData.prototypeGate.length, 'Contrato do projeto: códigos do Portão repetidos');
+for (const relativePath of ['app/components/home-page.tsx', 'app/colecoes/nordica-yggdrasil/page.tsx', 'app/caderno/page.tsx', 'app/caderno/ficha-00/page.tsx']) {
+  const source = readFileSync(join(root, relativePath), 'utf8');
+  check(source.includes("lib/project'"), `${relativePath}: consumidor deixou de usar a fonte única do projeto`);
+}
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);

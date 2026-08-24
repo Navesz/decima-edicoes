@@ -30,6 +30,10 @@ O círculo representa o tampo visto de cima. O `X` é simultaneamente a estrutur
 - Three.js + React Three Fiber para o laboratório de acabamento;
 - GitHub Actions e GitHub Pages para publicação em `navesz.github.io/decima-edicoes`.
 
+## Fonte única do projeto
+
+Tiragem, produção, dimensões, protótipo, versões, corpos de prova e aprovações vivem em `app/lib/project-data.json`. O site e o verificador consomem esse mesmo contrato para evitar divergência entre vitrine, produto, Caderno e ficha impressa. O procedimento de atualização está em `docs/CONTRATO-DO-PROJETO.md`.
+
 ## Rodar localmente
 
 ```bash

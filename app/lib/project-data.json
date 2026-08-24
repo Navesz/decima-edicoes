@@ -1,0 +1,104 @@
+{
+  "collection": {
+    "slug": "nordica-yggdrasil",
+    "number": 1,
+    "family": "Nórdica",
+    "name": "Yggdrasil",
+    "year": 2026
+  },
+  "edition": {
+    "runSize": 10,
+    "producedPieces": 0,
+    "reprints": 0,
+    "artworks": 1,
+    "commercialStatus": "prototyping"
+  },
+  "prototype": {
+    "number": 0,
+    "internalCode": "YGG–00"
+  },
+  "product": {
+    "diameterCm": 80,
+    "heightCm": 38,
+    "topThicknessMm": {
+      "minimum": 30,
+      "maximum": 40
+    },
+    "proofPlateCm": 30,
+    "top": "Madeira maciça",
+    "base": "Metalon reto · aço carbono",
+    "finish": "Epóxi encapsulado + PU acetinado"
+  },
+  "documents": {
+    "updatedAt": "24 ago 2026",
+    "updatedAtIso": "2026-08-24T00:00:00-03:00",
+    "notebookVersion": "0.2",
+    "worksheetVersion": "0.1"
+  },
+  "proofBodies": [
+    {
+      "code": "A",
+      "title": "Vinil integral + epóxi",
+      "detail": "Caminho rápido para validar arte e encapsulamento. Alto risco de parecer impresso se a matéria não permanecer visível."
+    },
+    {
+      "code": "B",
+      "title": "Máscara + pintura + epóxi",
+      "detail": "Mais artesanal e nobre. Usa o adesivo como ferramenta, não como superfície final."
+    },
+    {
+      "code": "C",
+      "title": "Máscara + pintura + PU",
+      "detail": "Toque mais natural e pouca espessura. Forte candidato para coleções claras e minimalistas."
+    },
+    {
+      "code": "D",
+      "title": "Vinil + epóxi + PU acetinado",
+      "detail": "Ponto de partida da edição inaugural: profundidade sob controle e reflexo difuso."
+    }
+  ],
+  "prototypeGate": [
+    {
+      "code": "M01",
+      "area": "Matéria",
+      "approval": "Escolher espécie e fornecedor de um tampo inteiro, maciço, redondo, pré-cortado e pré-nivelado.",
+      "evidence": "Nota fiscal, espécie declarada, espessura, umidade registrada e inspeção de empeno.",
+      "state": "Em aberto"
+    },
+    {
+      "code": "A02",
+      "area": "Arte",
+      "approval": "Escolher um dos quatro sistemas sem permitir que a superfície pareça apenas envelopada.",
+      "evidence": "Quatro placas comparadas depois da cura, com registro de cor, bolha, borda e aderência.",
+      "state": "Em teste"
+    },
+    {
+      "code": "F03",
+      "area": "Acabamento",
+      "approval": "Congelar um sistema completo e compatível de selagem, encapsulamento e proteção acetinada.",
+      "evidence": "Amostra aprovada sob três luzes e após água, caneca morna, limpeza e toque.",
+      "state": "Em teste"
+    },
+    {
+      "code": "E04",
+      "area": "Estrutura",
+      "approval": "Validar a base baixa em metalon reto, sem balanço, quina crítica ou deformação perceptível.",
+      "evidence": "Protótipo 00 montado, carregado, medido e inspecionado sobre piso real.",
+      "state": "Aguardando 00"
+    },
+    {
+      "code": "C05",
+      "area": "Custo",
+      "approval": "Conhecer custo, perda e horas reais antes de definir preço ou prazo.",
+      "evidence": "Ficha de custos do protótipo, três cotações críticas e sequência repetível de produção.",
+      "state": "Aguardando 00"
+    },
+    {
+      "code": "V06",
+      "area": "Venda",
+      "approval": "Definir ficha técnica, garantia, embalagem, entrega e canal de interesse com privacidade.",
+      "evidence": "Documentos publicados e fluxo real testado do contato ao pós-entrega.",
+      "state": "Não iniciado"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { BrandLogo } from './components/brand-logo';
+import { edition } from './lib/project';
 
 export default function NotFound() {
   return (
@@ -12,7 +13,7 @@ export default function NotFound() {
         <p>O endereço pode ter mudado ou a página já ter sido encerrada. O arquivo principal continua disponível.</p>
         <Link href="/"><ArrowLeft size={16} /> Voltar ao início</Link>
       </div>
-      <span>10/10</span>
+      <span>{edition.lastPieceFraction}</span>
     </main>
   );
 }

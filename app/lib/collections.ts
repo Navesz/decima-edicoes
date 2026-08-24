@@ -1,4 +1,5 @@
 import { assetPath } from './base-path';
+import { collection, edition } from './project';
 
 export type Collection = {
   slug: string;
@@ -14,14 +15,14 @@ export type Collection = {
 
 export const collections: Collection[] = [
   {
-    slug: 'nordica-yggdrasil',
-    number: '01',
-    family: 'Nórdica',
-    name: 'Yggdrasil',
-    year: '2026',
+    slug: collection.slug,
+    number: edition.collectionNumber,
+    family: collection.family,
+    name: collection.name,
+    year: String(collection.year),
     image: assetPath('/images/hero-yggdrasil.webp'),
-    status: 'Em prototipagem · tiragem prevista de 10',
-    description: 'Uma árvore, dez objetos irrepetíveis. Carvão, madeira natural e o calor contido do bronze.',
+    status: `${edition.commercialStatusLabel} · tiragem prevista de ${edition.runSize}`,
+    description: `Uma árvore, ${edition.runSizeWord} objetos irrepetíveis. Carvão, madeira natural e o calor contido do bronze.`,
     palette: ['#171411', '#9a6e3f', '#c8a875'],
   },
   {

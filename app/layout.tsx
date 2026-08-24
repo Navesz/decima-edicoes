@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { SmoothScroll } from './components/smooth-scroll';
+import { edition } from './lib/project';
 import { absoluteUrl, siteDescription, siteName, siteOrigin } from './lib/site';
 import './globals.css';
 
@@ -41,13 +42,13 @@ export const metadata: Metadata = {
     siteName,
     url: absoluteUrl('/'),
     title: 'DÉCIMA Edições — Objetos que não se repetem',
-    description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
+    description: `Mesas autorais em séries de ${edition.runSizeWord} peças. Uma edição. Nenhuma reimpressão.`,
     images: [{ url: absoluteUrl('/og.jpg'), width: 1200, height: 630, alt: 'DÉCIMA Edições — Objetos que não se repetem' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'DÉCIMA Edições — Objetos que não se repetem',
-    description: 'Mesas autorais em séries de dez peças. Uma edição. Nenhuma reimpressão.',
+    description: `Mesas autorais em séries de ${edition.runSizeWord} peças. Uma edição. Nenhuma reimpressão.`,
     images: [absoluteUrl('/og.jpg')],
   },
 };

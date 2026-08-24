@@ -5,6 +5,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
+import { collection, edition } from '../lib/project';
 import { Footer } from './footer';
 import { InterestForm } from './interest-form';
 import { ResponsiveImage } from './responsive-image';
@@ -17,7 +18,7 @@ export function HomePage() {
   return (
     <main id="conteudo">
       <section className="hero-shell">
-        <ResponsiveImage className="hero-image" src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa baixa redonda Yggdrasil em madeira e aço" priority sizes="100vw" />
+        <ResponsiveImage className="hero-image" src={assetPath('/images/hero-yggdrasil.webp')} alt={`Visualização conceitual da mesa baixa redonda ${collection.name} em madeira e aço`} priority sizes="100vw" />
         <div className="hero-wash" />
         <SiteHeader />
 
@@ -26,32 +27,32 @@ export function HomePage() {
           visible: { transition: { staggerChildren: .14, delayChildren: .25 } },
         }}>
           <motion.p className="eyebrow" variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: .7 } } }}>
-            <span /> Coleção inaugural · 2026
+            <span /> Coleção inaugural · {collection.year}
           </motion.p>
           <motion.h1 variants={{ hidden: { opacity: 0, y: 60 }, visible: { opacity: 1, y: 0, transition: { duration: 1.15, ease: [0.22, 1, 0.36, 1] } } }}>
             Objetos que<br />não se repetem.
           </motion.h1>
           <motion.div className="hero-bottom" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: .9 } } }}>
-            <p className="hero-copy">Mesas autorais em madeira e aço.<br />Dez peças previstas. Uma edição. Nenhuma reimpressão.</p>
-            <Link className="discover" href="/colecoes/nordica-yggdrasil">
-              <span>Descobrir<br />Nórdica — Yggdrasil</span>
+            <p className="hero-copy">Mesas autorais em madeira e aço.<br />{edition.runSize} peças previstas. Uma edição. Nenhuma reimpressão.</p>
+            <Link className="discover" href={`/colecoes/${collection.slug}`}>
+              <span>Descobrir<br />{collection.family} — {collection.name}</span>
               <b aria-hidden="true"><ArrowDown size={16} /></b>
             </Link>
           </motion.div>
         </motion.div>
 
-        <aside className="edition-rail" aria-label="Estágio atual: zero de dez peças produzidas"><span>ESTÁGIO</span><strong>00</strong><i>/10</i></aside>
-        <p className="image-caption">Visualização conceitual · protótipo 00 em desenvolvimento</p>
+        <aside className="edition-rail" aria-label={`Estágio atual: ${edition.producedPiecesWord} de ${edition.runSizeWord} peças produzidas`}><span>ESTÁGIO</span><strong>{edition.prototypeNumber}</strong><i>/{edition.runSize}</i></aside>
+        <p className="image-caption">Visualização conceitual · protótipo {edition.prototypeNumber} em desenvolvimento</p>
       </section>
 
       <section className="manifesto-section" id="manifesto">
         <div className="section-index gsap-reveal"><span>01</span><p>Manifesto<br />de edição</p></div>
         <div className="manifesto-copy gsap-reveal">
           <p className="micro-label">A escassez como compromisso</p>
-          <h2>Não fabricamos um catálogo infinito. Criamos uma obra, numeramos dez vezes e encerramos o desenho.</h2>
+          <h2>Não fabricamos um catálogo infinito. Criamos uma obra, numeramos {edition.runSizeWord} vezes e encerramos o desenho.</h2>
           <div className="manifesto-columns">
-            <p>Cada veio da madeira altera a arte. Cada peça recebe número próprio, plaqueta e certificado. A décima não inicia uma reposição: ela fecha um capítulo.</p>
-            <p>Quando uma linguagem retorna, volta transformada — outro nome, outra composição, outra história. O primeiro Yggdrasil jamais será repetido.</p>
+            <p>Cada veio da madeira altera a arte. Cada peça recebe número próprio, plaqueta e certificado. A peça {edition.lastPiece} não inicia uma reposição: ela fecha um capítulo.</p>
+            <p>Quando uma linguagem retorna, volta transformada — outro nome, outra composição, outra história. O primeiro {collection.name} jamais será repetido.</p>
           </div>
           <Link className="text-link" href="/caderno">Ler o protocolo de edição <ArrowRight size={15} /></Link>
         </div>
@@ -59,7 +60,7 @@ export function HomePage() {
 
       <section className="object-study">
         <div className="object-image-frame">
-          <ResponsiveImage className="parallax-media" src={assetPath('/images/yggdrasil-dark.webp')} alt="Visualização conceitual do tampo Yggdrasil em madeira escura" sizes="(max-width: 800px) 100vw, 55vw" />
+          <ResponsiveImage className="parallax-media" src={assetPath('/images/yggdrasil-dark.webp')} alt={`Visualização conceitual do tampo ${collection.name} em madeira escura`} sizes="(max-width: 800px) 100vw, 55vw" />
           <span>O tampo é a obra.</span>
         </div>
         <div className="object-copy gsap-reveal">
@@ -94,12 +95,12 @@ export function HomePage() {
       </section>
 
       <section className="edition-protocol">
-        <ResponsiveImage className="protocol-image" src={assetPath('/images/yggdrasil-ivory.webp')} alt="Visualização conceitual Yggdrasil em acabamento marfim" sizes="100vw" />
+        <ResponsiveImage className="protocol-image" src={assetPath('/images/yggdrasil-ivory.webp')} alt={`Visualização conceitual ${collection.name} em acabamento marfim`} sizes="100vw" />
         <div className="protocol-wash" />
         <div className="protocol-copy gsap-reveal">
-          <p className="micro-label">Protocolo 10/10</p>
+          <p className="micro-label">Protocolo {edition.lastPieceFraction}</p>
           <h2>O valor não está no que produzimos. Está também no que recusamos repetir.</h2>
-          <div className="protocol-numbers"><div><strong>10</strong><span>peças numeradas</span></div><div><strong>01</strong><span>arte por edição</span></div><div><strong>00</strong><span>reimpressões</span></div></div>
+          <div className="protocol-numbers"><div><strong>{edition.runSize}</strong><span>peças numeradas</span></div><div><strong>{edition.artworksLabel}</strong><span>arte por edição</span></div><div><strong>{edition.reprintsLabel}</strong><span>reimpressões</span></div></div>
         </div>
       </section>
 

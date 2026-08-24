@@ -6,6 +6,7 @@ import { ResponsiveImage } from '../components/responsive-image';
 import { SiteHeader } from '../components/site-header';
 import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
+import { collection } from '../lib/project';
 import { absoluteUrl } from '../lib/site';
 
 export const metadata: Metadata = {
@@ -34,7 +35,7 @@ export default function CollectionsPage() {
     <main className="light-page" id="conteudo">
       <SiteHeader tone="dark" />
       <header className="archive-hero">
-        <p className="micro-label">Arquivo DÉCIMA · 2026—</p>
+        <p className="micro-label">Arquivo DÉCIMA · {collection.year}—</p>
         <h1>Coleções que<br />sabem terminar.</h1>
         <p>A edição inaugural está em prototipagem e ainda não recebe reservas. Os demais objetos permanecem como estudos até que matéria, processo e narrativa estejam resolvidos.</p>
       </header>

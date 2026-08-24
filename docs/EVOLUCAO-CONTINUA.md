@@ -287,3 +287,23 @@ A ficha não possui formulário de envio nem persistência. Ela recebe `noindex,
 - cinco rotas estáticas compiladas;
 - CSS público continua abaixo de 40 KiB; somente a ficha carrega seu pacote adicional, ficando abaixo de 48 KiB no total;
 - verificador exige a rota, bloqueio de indexação, A4, quatro corpos de prova e seis aprovações imprimíveis.
+
+## Ciclo 13 — contrato único do projeto
+
+Data: 24 de agosto de 2026.
+
+### Risco encontrado
+
+Tiragem, quantidade produzida, dimensões, versões, quatro corpos de prova e seis aprovações estavam repetidos em componentes diferentes. Uma alteração futura poderia atualizar a vitrine e deixar o produto, o Caderno, a ficha ou os metadados com outra versão da verdade.
+
+### Intervenção
+
+- `app/lib/project-data.json` passou a concentrar os fatos editoriais, técnicos e operacionais da edição inaugural;
+- `app/lib/project.ts` passou a gerar rótulos como `00/10`, `01/10`, `30–40 mm` e números por extenso;
+- início, arquivo, produto, Caderno, ficha, formulário demonstrativo, rodapé, metadados, dados estruturados e sitemap passaram a consumir o contrato;
+- corpos de prova e Portão 00 deixaram de ter definições duplicadas entre Caderno e ficha;
+- `docs/CONTRATO-DO-PROJETO.md` documenta a atualização segura e a regra de estado comercial.
+
+### Proteção contra regressão
+
+O verificador lê o mesmo JSON que alimenta o site e compara o HTML exportado com tiragem, produção, dimensões, versão, testes e aprovações. Ele rejeita contagens inválidas, códigos repetidos, consumidores desconectados da fonte única e mudança isolada do estado `prototyping`.

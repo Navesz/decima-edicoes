@@ -1,5 +1,7 @@
 # Produto e prototipagem
 
+> As medidas e estados canônicos usados pelo site vivem em `app/lib/project-data.json`. Este documento explica o raciocínio; não deve ser usado como segunda fonte de dados.
+
 ## Brief de construção inicial
 
 - mesa de centro baixa e redonda;
