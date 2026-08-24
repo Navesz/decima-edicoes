@@ -94,3 +94,25 @@ As onze imagens conceituais e o card social somavam aproximadamente 27 MiB em PN
 - imagem principal: 388 KiB;
 - card social: 137 KiB;
 - redução total: 91,8%, preservando resolução e composição das fontes.
+
+## Ciclo 05 — imagens proporcionais ao dispositivo
+
+Data: 24 de agosto de 2026.
+
+### Limite encontrado
+
+Os WebPs reduziram muito o pacote público, mas cada uso ainda entregava o arquivo em resolução máxima. Assim, um celular de 480 px podia receber os mesmos 388 KiB da imagem principal destinada a uma tela grande.
+
+### Intervenção
+
+- cada imagem ganhou derivados de 480 e 800 px, além do original em alta resolução;
+- todas as rotas passaram a publicar `srcset` e `sizes`, permitindo ao navegador escolher o arquivo adequado à largura e à densidade da tela;
+- somente as imagens principais recebem prioridade; o restante mantém carregamento tardio;
+- o gerador e o verificador garantem que as 22 variantes existam e permaneçam dentro do orçamento de 200 KiB cada.
+
+### Resultado medido
+
+- imagem principal em 480 px: 66 KiB, 83% menor que o arquivo de alta resolução;
+- imagem principal em 800 px: 177 KiB, 54% menor;
+- conjunto reproduzível de derivados: 3,49 MiB, ainda 87,1% abaixo dos PNGs-fonte;
+- `lint`, compilação estática e verificação de todas as rotas aprovados.

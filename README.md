@@ -43,7 +43,7 @@ Build de produção:
 npm run build
 ```
 
-As imagens originais ficam em `assets/source-images`. Para regenerar os WebPs públicos e o card social otimizado:
+As imagens originais ficam em `assets/source-images`. Para regenerar os WebPs públicos, as variantes responsivas de 480/800 px e o card social otimizado:
 
 ```bash
 npm run images:optimize

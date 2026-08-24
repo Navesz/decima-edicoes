@@ -2,12 +2,12 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
 import { Footer } from './footer';
 import { InterestForm } from './interest-form';
+import { ResponsiveImage } from './responsive-image';
 import { ScrollEffects } from './scroll-effects';
 import { SiteHeader } from './site-header';
 
@@ -17,7 +17,7 @@ export function HomePage() {
   return (
     <main id="conteudo">
       <section className="hero-shell">
-        <Image className="hero-image" src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa baixa redonda Yggdrasil em madeira e aço" fill priority sizes="100vw" />
+        <ResponsiveImage className="hero-image" src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa baixa redonda Yggdrasil em madeira e aço" priority sizes="100vw" />
         <div className="hero-wash" />
         <SiteHeader />
 
@@ -59,7 +59,7 @@ export function HomePage() {
 
       <section className="object-study">
         <div className="object-image-frame">
-          <Image className="parallax-media" src={assetPath('/images/yggdrasil-dark.webp')} alt="Visualização conceitual do tampo Yggdrasil em madeira escura" fill sizes="(max-width: 800px) 100vw, 55vw" />
+          <ResponsiveImage className="parallax-media" src={assetPath('/images/yggdrasil-dark.webp')} alt="Visualização conceitual do tampo Yggdrasil em madeira escura" sizes="(max-width: 800px) 100vw, 55vw" />
           <span>O tampo é a obra.</span>
         </div>
         <div className="object-copy gsap-reveal">
@@ -83,7 +83,7 @@ export function HomePage() {
           {collections.map((collection, index) => (
             <motion.article className="collection-card gsap-reveal" key={collection.slug} whileHover={reduceMotion ? undefined : { y: -8 }} transition={{ duration: .35 }}>
               <Link href={index === 0 ? `/colecoes/${collection.slug}` : '/colecoes'} aria-label={`${collection.family} — ${collection.name}`}>
-                <div className="collection-media"><Image src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} fill sizes="(max-width: 800px) 100vw, 33vw" /></div>
+                <div className="collection-media"><ResponsiveImage src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} sizes="(max-width: 800px) 100vw, 33vw" /></div>
                 <div className="collection-meta"><span>{collection.number}</span><div><small>{collection.family}</small><h3>{collection.name}</h3></div><ArrowUpRight size={18} strokeWidth={1.25} /></div>
                 <p>{collection.status}</p>
               </Link>
@@ -94,7 +94,7 @@ export function HomePage() {
       </section>
 
       <section className="edition-protocol">
-        <Image className="protocol-image" src={assetPath('/images/yggdrasil-ivory.webp')} alt="Visualização conceitual Yggdrasil em acabamento marfim" fill sizes="100vw" />
+        <ResponsiveImage className="protocol-image" src={assetPath('/images/yggdrasil-ivory.webp')} alt="Visualização conceitual Yggdrasil em acabamento marfim" sizes="100vw" />
         <div className="protocol-wash" />
         <div className="protocol-copy gsap-reveal">
           <p className="micro-label">Protocolo 10/10</p>
@@ -106,7 +106,7 @@ export function HomePage() {
       <section className="studio-teaser">
         <div className="studio-intro gsap-reveal"><p className="micro-label">Área aberta do fundador</p><h2>O Caderno<br />do Atelier.</h2></div>
         <div className="studio-panel gsap-reveal">
-          <div className="studio-panel-image"><Image src={assetPath('/images/collection-board.webp')} alt="Prancha conceitual das coleções DÉCIMA" fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
+          <div className="studio-panel-image"><ResponsiveImage src={assetPath('/images/collection-board.webp')} alt="Prancha conceitual das coleções DÉCIMA" sizes="(max-width: 800px) 100vw, 50vw" /></div>
           <div><p>Um espaço para enxergar o negócio por dentro: acabamento brilhante, fosco e acetinado; construção possível com metalon brasileiro; testes de adesivo, epóxi e PU; regras da marca e decisões ainda em aberto.</p><Link href="/caderno">Entrar no Caderno <ArrowUpRight size={16} /></Link></div>
         </div>
       </section>

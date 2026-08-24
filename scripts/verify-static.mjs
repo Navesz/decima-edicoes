@@ -47,6 +47,8 @@ for (const route of routes) {
   check(h1Count === 1, `${route.file}: esperado um h1, encontrado ${h1Count}`);
   check(!visibleHtml.includes('style="opacity:0'), `${route.file}: conteúdo essencial nasce invisível`);
   check(html.includes('aria-expanded="false"'), `${route.file}: estado acessível do menu ausente`);
+  check(/\ssrcset="[^"]+-480\.webp 480w,[^"]+-800\.webp 800w/i.test(visibleHtml), `${route.file}: variantes responsivas de imagem ausentes`);
+  check(/\ssizes="[^"]+"/i.test(visibleHtml), `${route.file}: instrução de tamanho responsivo ausente`);
   const initialKiB = initialScriptBytes(html) / 1024;
   check(initialKiB <= route.scriptBudgetKiB, `${route.file}: JavaScript inicial ${initialKiB.toFixed(1)} KiB excede ${route.scriptBudgetKiB} KiB`);
 }
@@ -64,10 +66,16 @@ requiredFiles.forEach((file) => check(existsSync(join(output, file)), `Arquivo a
 const publicImages = readdirSync(join(output, 'images')).filter((file) => /\.(webp|avif|jpe?g|png)$/i.test(file));
 const publicImageBytes = publicImages.reduce((total, file) => {
   const bytes = statSync(join(output, 'images', file)).size;
-  check(bytes <= 450 * 1024, `imagem acima de 450 KiB: ${file} (${(bytes / 1024).toFixed(0)} KiB)`);
+  const budgetKiB = /-(480|800)\.webp$/i.test(file) ? 200 : 450;
+  check(bytes <= budgetKiB * 1024, `imagem acima de ${budgetKiB} KiB: ${file} (${(bytes / 1024).toFixed(0)} KiB)`);
   return total + bytes;
 }, 0);
-check(publicImageBytes <= 2.5 * 1024 * 1024, `mídia pública excede 2,5 MiB: ${(publicImageBytes / 1024 / 1024).toFixed(2)} MiB`);
+const sourceImages = publicImages.filter((file) => /\.webp$/i.test(file) && !/-\d+\.webp$/i.test(file));
+sourceImages.forEach((file) => {
+  const stem = file.replace(/\.webp$/i, '');
+  [480, 800].forEach((width) => check(publicImages.includes(`${stem}-${width}.webp`), `variante ausente: ${stem}-${width}.webp`));
+});
+check(publicImageBytes <= 4 * 1024 * 1024, `mídia pública excede 4 MiB: ${(publicImageBytes / 1024 / 1024).toFixed(2)} MiB`);
 check(statSync(join(output, 'og.jpg')).size <= 200 * 1024, 'og.jpg excede 200 KiB');
 
 const sitemap = read('sitemap.xml');
@@ -89,4 +97,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados, acessibilidade básica, SEO e orçamentos de JavaScript e mídia.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados, acessibilidade básica, SEO, mídia responsiva e orçamentos de JavaScript e mídia.`);

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { ArrowDown, ArrowRight } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Footer } from '../../components/footer';
+import { ResponsiveImage } from '../../components/responsive-image';
 import { SiteHeader } from '../../components/site-header';
 import { gallery } from '../../lib/collections';
 import { assetPath } from '../../lib/base-path';
@@ -30,7 +30,7 @@ export default function YggdrasilPage() {
   return (
     <main className="product-page" id="conteudo">
       <section className="product-hero">
-        <Image src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa Nórdica — Yggdrasil" fill priority sizes="100vw" />
+        <ResponsiveImage src={assetPath('/images/hero-yggdrasil.webp')} alt="Visualização conceitual da mesa Nórdica — Yggdrasil" priority sizes="100vw" />
         <div className="product-wash" /><SiteHeader />
         <div className="product-title"><p>Nórdica · Edição 01 · conceito</p><h1>Yggdrasil</h1><div><span>2026</span><span>0 produzidas</span><span>10 previstas</span></div></div>
         <a className="product-scroll" href="#historia">Conhecer o conceito <ArrowDown size={15} /></a>
@@ -49,7 +49,7 @@ export default function YggdrasilPage() {
         <p className="product-status-note">Manifestar interesse nesta apresentação não constitui reserva, encomenda ou pagamento.</p>
       </section>
       <section className="product-gallery">
-        {gallery.map((src, index) => <figure key={src} className={index === 0 ? 'wide' : ''}><Image src={src} alt={`Visualização conceitual Yggdrasil ${index + 1}`} fill sizes={index === 0 ? '100vw' : '(max-width: 800px) 100vw, 50vw'} /><figcaption>Visualização conceitual {String(index + 1).padStart(2, '0')} · variação de matéria e luz</figcaption></figure>)}
+        {gallery.map((src, index) => <figure key={src} className={index === 0 ? 'wide' : ''}><ResponsiveImage src={src} alt={`Visualização conceitual Yggdrasil ${index + 1}`} sizes={index === 0 ? '100vw' : '(max-width: 800px) 100vw, 50vw'} /><figcaption>Visualização conceitual {String(index + 1).padStart(2, '0')} · variação de matéria e luz</figcaption></figure>)}
       </section>
       <section className="product-specs">
         <div><p className="micro-label">Especificação de partida</p><h2>Feita para existir<br />no mundo real.</h2><p>As medidas abaixo orientam o primeiro protótipo e serão congeladas somente depois dos corpos de prova e da validação estrutural.</p></div>

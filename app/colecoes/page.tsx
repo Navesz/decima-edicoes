@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Footer } from '../components/footer';
+import { ResponsiveImage } from '../components/responsive-image';
 import { SiteHeader } from '../components/site-header';
 import { collections } from '../lib/collections';
 import { assetPath } from '../lib/base-path';
@@ -42,7 +42,7 @@ export default function CollectionsPage() {
         {collections.map((collection, index) => (
           <article className="archive-card" key={collection.slug}>
             <Link href={index === 0 ? `/colecoes/${collection.slug}` : '/caderno'}>
-              <div className="archive-image"><Image src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} fill sizes="(max-width: 800px) 100vw, 50vw" /></div>
+              <div className="archive-image"><ResponsiveImage src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} sizes="(max-width: 800px) 100vw, 50vw" /></div>
               <div className="archive-title"><span>{collection.number}</span><div><small>{collection.family} · {collection.year}</small><h2>{collection.name}</h2></div><ArrowUpRight strokeWidth={1.2} /></div>
               <p>{collection.description}</p>
               <div className="palette" aria-label="Paleta da coleção">{collection.palette.map((color) => <i key={color} style={{ background: color }} />)}</div>
@@ -50,7 +50,7 @@ export default function CollectionsPage() {
           </article>
         ))}
       </section>
-      <section className="archive-board"><Image src={assetPath('/images/collection-dark.webp')} alt="Mapa visual de dez estudos conceituais iniciais" fill sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
+      <section className="archive-board"><ResponsiveImage src={assetPath('/images/collection-dark.webp')} alt="Mapa visual de dez estudos conceituais iniciais" sizes="100vw" /><p><span>Arquivo de origem</span> Dez conceitos que definiram o primeiro vocabulário da marca.</p></section>
       <Footer />
     </main>
   );

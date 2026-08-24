@@ -5,6 +5,7 @@ import sharp from 'sharp';
 const root = process.cwd();
 const sourceDirectory = join(root, 'assets', 'source-images');
 const outputDirectory = join(root, 'public', 'images');
+const responsiveWidths = [480, 800];
 
 await mkdir(outputDirectory, { recursive: true });
 
@@ -20,15 +21,31 @@ for (const file of sourceFiles) {
   const target = join(outputDirectory, `${basename(file, '.png')}.webp`);
   const quality = file === 'hero-yggdrasil.png' ? 85 : 82;
 
-  await sharp(source)
-    .rotate()
+  const sourceImage = sharp(source).rotate();
+  const metadata = await sourceImage.metadata();
+  const renderedFiles = [];
+
+  await sourceImage
+    .clone()
     .webp({ quality, effort: 6, smartSubsample: true })
     .toFile(target);
+  renderedFiles.push(target);
 
-  const [sourceInfo, outputInfo] = await Promise.all([stat(source), stat(target)]);
+  for (const width of responsiveWidths) {
+    if (!metadata.width || metadata.width <= width) continue;
+    const responsiveTarget = join(outputDirectory, `${basename(file, '.png')}-${width}.webp`);
+    await sourceImage
+      .clone()
+      .resize({ width, withoutEnlargement: true })
+      .webp({ quality, effort: 6, smartSubsample: true })
+      .toFile(responsiveTarget);
+    renderedFiles.push(responsiveTarget);
+  }
+
+  const [sourceInfo, ...outputInfo] = await Promise.all([stat(source), ...renderedFiles.map((renderedFile) => stat(renderedFile))]);
   sourceBytes += sourceInfo.size;
-  outputBytes += outputInfo.size;
-  console.log(`${file} -> ${basename(target)} · ${(outputInfo.size / 1024).toFixed(0)} KiB`);
+  outputBytes += outputInfo.reduce((total, info) => total + info.size, 0);
+  console.log(`${file} -> ${renderedFiles.map((renderedFile, index) => `${basename(renderedFile)} ${(outputInfo[index].size / 1024).toFixed(0)} KiB`).join(' · ')}`);
 }
 
 const socialSource = join(sourceDirectory, 'og.png');
@@ -45,4 +62,4 @@ outputBytes += socialOutputInfo.size;
 
 const reduction = 100 - (outputBytes / sourceBytes * 100);
 console.log(`og.png -> og.jpg · ${(socialOutputInfo.size / 1024).toFixed(0)} KiB`);
-console.log(`Total público: ${(outputBytes / 1024 / 1024).toFixed(2)} MiB · redução de ${reduction.toFixed(1)}% sobre os PNGs-fonte.`);
+console.log(`Total público, incluindo variantes responsivas: ${(outputBytes / 1024 / 1024).toFixed(2)} MiB · ${(reduction >= 0 ? 'redução' : 'variação')} de ${Math.abs(reduction).toFixed(1)}% sobre os PNGs-fonte.`);
