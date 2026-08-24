@@ -1,10 +1,11 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative as pathRelative } from 'node:path';
 import sharp from 'sharp';
 
 const root = process.cwd();
 const output = join(root, 'out');
 const basePath = '/decima-edicoes';
+const exportedBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const origin = `https://navesz.github.io${basePath}`;
 const failures = [];
 const projectData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'project-data.json'), 'utf8'));
@@ -40,6 +41,13 @@ function read(relativePath) {
 
 function withoutRscMarkers(html) {
   return html.replace(/<!--[^]*?-->/g, '');
+}
+
+function listFiles(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    return entry.isDirectory() ? listFiles(path) : [path];
+  });
 }
 
 const routes = [
@@ -212,10 +220,98 @@ for (const relativePath of ['app/components/home-page.tsx', 'app/colecoes/nordic
   check(source.includes("lib/project'"), `${relativePath}: consumidor deixou de usar a fonte única do projeto`);
 }
 
+const exportedHtmlFiles = listFiles(output).filter((file) => file.endsWith('.html'));
+const documentCache = new Map();
+const internalOrigin = new URL(origin).origin;
+let checkedInternalReferences = 0;
+
+function exportedRelativePath(url) {
+  let pathname;
+  try {
+    pathname = decodeURIComponent(url.pathname);
+  } catch {
+    failures.push(`URL interna inválida: ${url.pathname}`);
+    return null;
+  }
+  if (pathname === basePath || pathname === `${basePath}/`) return 'index.html';
+  let relativeUrl;
+  if (pathname.startsWith(`${basePath}/`)) {
+    relativeUrl = pathname.slice(basePath.length + 1);
+  } else if (!exportedBasePath && pathname.startsWith('/')) {
+    relativeUrl = pathname.slice(1);
+  } else {
+    return null;
+  }
+  if (!relativeUrl || relativeUrl.endsWith('/')) return `${relativeUrl}index.html`;
+  if (existsSync(join(output, ...relativeUrl.split('/')))) return relativeUrl;
+  return `${relativeUrl}/index.html`;
+}
+
+function visibleDocument(relativePath) {
+  if (!documentCache.has(relativePath)) {
+    const html = readFileSync(join(output, relativePath), 'utf8');
+    const visible = withoutRscMarkers(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''));
+    const ids = [...visible.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+    documentCache.set(relativePath, { visible, ids, idSet: new Set(ids) });
+  }
+  return documentCache.get(relativePath);
+}
+
+function checkInternalReference(rawValue, sourceRelativePath) {
+  const value = rawValue.replaceAll('&amp;', '&');
+  if (/^(?:mailto:|tel:|data:|blob:)/i.test(value)) return;
+  if (/^javascript:/i.test(value)) {
+    failures.push(`${sourceRelativePath}: referência javascript: não permitida`);
+    return;
+  }
+  const sourceRoute = sourceRelativePath === 'index.html'
+    ? '/'
+    : `/${sourceRelativePath.replace(/index\.html$/, '').replaceAll('\\', '/')}`;
+  let url;
+  try {
+    url = new URL(value, `${internalOrigin}${exportedBasePath}${sourceRoute}`);
+  } catch {
+    failures.push(`${sourceRelativePath}: referência inválida ${rawValue}`);
+    return;
+  }
+  if (url.origin !== internalOrigin) return;
+  const targetRelativePath = exportedRelativePath(url);
+  if (!targetRelativePath) {
+    failures.push(`${sourceRelativePath}: referência saiu do basePath ${rawValue}`);
+    return;
+  }
+  checkedInternalReferences += 1;
+  const targetPath = join(output, ...targetRelativePath.split('/'));
+  check(existsSync(targetPath), `${sourceRelativePath}: destino interno ausente ${rawValue} → out/${targetRelativePath}`);
+  if (!existsSync(targetPath) || !url.hash || !targetRelativePath.endsWith('.html')) return;
+  const fragment = decodeURIComponent(url.hash.slice(1));
+  if (fragment) check(visibleDocument(targetRelativePath).idSet.has(fragment), `${sourceRelativePath}: fragmento ausente ${rawValue}`);
+}
+
+for (const file of exportedHtmlFiles) {
+  const sourceRelativePath = pathRelative(output, file).replaceAll('\\', '/');
+  const document = visibleDocument(sourceRelativePath);
+  check(document.ids.length === document.idSet.size, `${sourceRelativePath}: IDs duplicados no conteúdo visível`);
+  for (const match of document.visible.matchAll(/\s(?:href|src|poster)="([^"]+)"/g)) {
+    checkInternalReference(match[1], sourceRelativePath);
+  }
+  for (const match of document.visible.matchAll(/\ssrcset="([^"]+)"/g)) {
+    for (const candidate of match[1].split(',')) checkInternalReference(candidate.trim().split(/\s+/)[0], sourceRelativePath);
+  }
+  for (const relation of ['aria-controls', 'aria-describedby', 'aria-labelledby', 'for']) {
+    for (const match of document.visible.matchAll(new RegExp(`\\s${relation}="([^"]+)"`, 'g'))) {
+      for (const id of match[1].trim().split(/\s+/)) check(document.idSet.has(id), `${sourceRelativePath}: ${relation} aponta para ID ausente #${id}`);
+    }
+  }
+}
+
+check(exportedHtmlFiles.length >= routes.length + 3, `rastreador: quantidade inesperada de documentos HTML (${exportedHtmlFiles.length})`);
+check(checkedInternalReferences >= 150, `rastreador: poucas referências internas verificadas (${checkedInternalReferences})`);
+
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);
   failures.forEach((failure) => console.error(`- ${failure}`));
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados sociais, acessibilidade básica, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, ${exportedHtmlFiles.length} documentos e ${checkedInternalReferences} referências internas; metadados sociais, acessibilidade básica, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);

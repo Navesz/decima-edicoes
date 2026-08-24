@@ -47,6 +47,14 @@ Build de produção:
 npm run build
 ```
 
+Auditar o export gerado:
+
+```bash
+npm run verify
+```
+
+Além de SEO, acessibilidade básica e orçamentos de mídia, a auditoria percorre todos os documentos HTML e valida links internos, fragmentos, imagens, fontes, scripts, folhas de estilo e relações por ID.
+
 As imagens originais ficam em `assets/source-images`. Para regenerar os WebPs públicos, as variantes responsivas de 480/800 px e os cartões sociais otimizados:
 
 ```bash

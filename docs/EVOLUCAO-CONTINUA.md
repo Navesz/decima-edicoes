@@ -329,3 +329,26 @@ As decisões principais estavam explicadas em seções diferentes, mas faltava u
 ### Proteção contra regressão
 
 O verificador exige navegação e destino da seção, revisão e data, sete linhas alinhadas ao contrato, códigos únicos, estados conhecidos e ausência de marcadores não resolvidos. O CSS público permaneceu em 37,7 KiB, abaixo do teto de 40 KiB.
+
+## Ciclo 15 — rastreador de integridade interna
+
+Data: 24 de agosto de 2026.
+
+### Risco encontrado
+
+O verificador conhecia as cinco rotas principais e alguns arquivos obrigatórios, mas não percorria toda referência emitida pelo Next.js. Um link, fragmento, `srcset`, fonte ou relação ARIA poderia quebrar sem impedir a publicação.
+
+### Intervenção
+
+- todos os oito documentos HTML exportados passaram a ser descobertos recursivamente;
+- `href`, `src`, `poster` e cada candidato de `srcset` são resolvidos até o arquivo real em `out`;
+- fragmentos são comparados com os IDs do documento de destino;
+- IDs duplicados passaram a falhar;
+- `aria-controls`, `aria-describedby`, `aria-labelledby` e `for` passaram a exigir um ID existente;
+- URLs `javascript:` foram proibidas;
+- o modo local aceita a raiz `/`, enquanto o modo de publicação exige que as referências permaneçam sob `/decima-edicoes`;
+- a auditoria passou a confirmar 171 referências internas em cada build.
+
+### Validação
+
+O rastreador passou tanto no export local quanto em um segundo build com as mesmas variáveis de ambiente do GitHub Pages. A diferença de base path é tratada explicitamente, sem relaxar o deploy real.
