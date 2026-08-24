@@ -19,13 +19,13 @@ export const metadata: Metadata = {
     url: absoluteUrl('/colecoes/'),
     title: 'Coleções · DÉCIMA Edições',
     description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
-    images: [{ url: absoluteUrl('/images/collection-dark.webp'), alt: 'Arquivo visual das coleções DÉCIMA' }],
+    images: [{ url: absoluteUrl('/social/collections.jpg'), width: 1200, height: 630, alt: 'Arquivo visual das coleções DÉCIMA' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Coleções · DÉCIMA Edições',
     description: 'Edições numeradas e estudos do arquivo DÉCIMA.',
-    images: [absoluteUrl('/images/collection-dark.webp')],
+    images: [absoluteUrl('/social/collections.jpg')],
   },
 };
 

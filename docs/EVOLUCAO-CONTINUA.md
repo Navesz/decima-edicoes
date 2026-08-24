@@ -190,3 +190,27 @@ Os imports genéricos do Fontsource empacotavam, para cada peso, arquivos WOFF e
 - payload de fontes no build: 672.353 → 88.512 bytes, redução de 86,8%;
 - CSS inicial: 43.664 → 34.918 bytes, redução de 20%;
 - lint, build, tipos e verificação estática aprovados.
+
+## Ciclo 09 — compartilhamento com direção de arte
+
+Data: 24 de agosto de 2026.
+
+### Inconsistência encontrada
+
+A página inicial tinha um card social próprio em 1200 × 630, mas Coleções, Yggdrasil e Caderno apontavam diretamente para WebPs de proporções diferentes. Em compartilhamentos, isso podia produzir recortes imprevisíveis, suporte desigual e ausência da assinatura visual da marca.
+
+### Intervenção
+
+- três cartões JPEG em 1200 × 630 foram derivados das fontes originais;
+- cada composição recebeu escurecimento controlado, logo claro e linha de bronze;
+- Coleções, Yggdrasil e Caderno passaram a usar URLs próprias tanto em Open Graph quanto em Twitter Cards;
+- o gerador de mídia passou a reproduzir também esses cartões;
+- o verificador exige URL correta por rota, formato JPEG, dimensão exata e máximo de 180 KiB por arquivo.
+
+### Resultado medido
+
+- Coleções: 92 KiB;
+- Yggdrasil: 140 KiB;
+- Caderno: 94 KiB;
+- os três cartões foram inspecionados em resolução original;
+- lint, build, metadados e orçamentos aprovados.

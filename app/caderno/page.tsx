@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     url: absoluteUrl('/caderno/'),
     title: 'Caderno do Atelier · DÉCIMA Edições',
     description: 'Conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
-    images: [{ url: absoluteUrl('/images/collection-board.webp'), alt: 'Prancha de estudos do Caderno do Atelier' }],
+    images: [{ url: absoluteUrl('/social/caderno.jpg'), width: 1200, height: 630, alt: 'Prancha de estudos do Caderno do Atelier' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Caderno do Atelier · DÉCIMA Edições',
     description: 'Conceito, materiais, acabamentos e prototipagem da DÉCIMA.',
-    images: [absoluteUrl('/images/collection-board.webp')],
+    images: [absoluteUrl('/social/caderno.jpg')],
   },
 };
 

@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import sharp from 'sharp';
 
 const root = process.cwd();
 const output = join(root, 'out');
@@ -18,10 +19,10 @@ function read(relativePath) {
 }
 
 const routes = [
-  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, scriptBudgetKiB: 750 },
-  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, scriptBudgetKiB: 600 },
-  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/`, scriptBudgetKiB: 600 },
-  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, scriptBudgetKiB: 600 },
+  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750 },
+  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600 },
+  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600 },
+  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600 },
 ];
 
 function initialScriptBytes(html) {
@@ -41,6 +42,8 @@ for (const route of routes) {
   check(html.includes('<html lang="pt-BR">'), `${route.file}: idioma pt-BR ausente`);
   check(html.includes('<meta name="description"'), `${route.file}: descrição ausente`);
   check(html.includes(`<link rel="canonical" href="${route.canonical}"`), `${route.file}: canonical incorreta`);
+  check(html.includes(`<meta property="og:image" content="${route.social}"`), `${route.file}: cartão Open Graph incorreto`);
+  check(html.includes(`<meta name="twitter:image" content="${route.social}"`), `${route.file}: cartão Twitter incorreto`);
   check(html.includes(`<title>${route.title}`), `${route.file}: título incorreto`);
   check(visibleHtml.includes('class="skip-link"'), `${route.file}: atalho para conteúdo ausente`);
   check(visibleHtml.includes('id="conteudo"'), `${route.file}: destino do atalho ausente`);
@@ -92,6 +95,18 @@ check(cssBytes <= 40 * 1024, `CSS inicial excede 40 KiB: ${(cssBytes / 1024).toF
 check(fontFiles.length === 5 && fontFiles.every((file) => file.endsWith('.woff2')), `esperadas 5 fontes WOFF2, encontrados ${fontFiles.length} arquivos`);
 check(fontBytes <= 100 * 1024, `fontes excedem 100 KiB: ${(fontBytes / 1024).toFixed(1)} KiB`);
 
+const socialCards = ['collections.jpg', 'yggdrasil.jpg', 'caderno.jpg'];
+for (const file of socialCards) {
+  const path = join(output, 'social', file);
+  check(existsSync(path), `cartão social ausente: social/${file}`);
+  if (!existsSync(path)) continue;
+  const bytes = statSync(path).size;
+  const metadata = await sharp(path).metadata();
+  check(metadata.width === 1200 && metadata.height === 630, `cartão social com dimensão incorreta: ${file}`);
+  check(metadata.format === 'jpeg', `cartão social deve ser JPEG: ${file}`);
+  check(bytes <= 180 * 1024, `cartão social excede 180 KiB: ${file} (${(bytes / 1024).toFixed(0)} KiB)`);
+}
+
 const sitemap = read('sitemap.xml');
 routes.forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`), `sitemap.xml: rota ausente ${route.canonical}`));
 
@@ -117,4 +132,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados, acessibilidade básica, SEO, mídia responsiva e orçamentos de JavaScript e mídia.`);
+console.log(`Verificação estática aprovada: ${routes.length} rotas, metadados sociais, acessibilidade básica, SEO, mídia responsiva e orçamentos de JavaScript, CSS, fontes e imagens.`);

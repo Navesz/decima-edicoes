@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   title: 'Nórdica — Yggdrasil',
   description: 'O conceito da edição inaugural da DÉCIMA: uma tiragem prevista de dez mesas numeradas em madeira maciça e aço.',
   alternates: { canonical: absoluteUrl('/colecoes/nordica-yggdrasil/') },
-  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'DÉCIMA Edições', url: absoluteUrl('/colecoes/nordica-yggdrasil/'), title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [{ url: absoluteUrl('/images/hero-yggdrasil.webp'), alt: 'Mesa Nórdica — Yggdrasil' }] },
-  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [absoluteUrl('/images/hero-yggdrasil.webp')] },
+  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'DÉCIMA Edições', url: absoluteUrl('/colecoes/nordica-yggdrasil/'), title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [{ url: absoluteUrl('/social/yggdrasil.jpg'), width: 1200, height: 630, alt: 'Mesa Nórdica — Yggdrasil' }] },
+  twitter: { card: 'summary_large_image', title: 'Nórdica — Yggdrasil · DÉCIMA Edições', description: 'Dez mesas numeradas. Uma arte que jamais será reimpressa.', images: [absoluteUrl('/social/yggdrasil.jpg')] },
 };
 
 const productSchema = {
