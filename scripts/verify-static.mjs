@@ -18,11 +18,20 @@ function read(relativePath) {
 }
 
 const routes = [
-  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/` },
-  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/` },
-  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/` },
-  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/` },
+  { file: 'index.html', title: 'DÉCIMA Edições — Objetos que não se repetem', canonical: `${origin}/`, scriptBudgetKiB: 750 },
+  { file: 'colecoes/index.html', title: 'Coleções · DÉCIMA', canonical: `${origin}/colecoes/`, scriptBudgetKiB: 600 },
+  { file: 'colecoes/nordica-yggdrasil/index.html', title: 'Nórdica — Yggdrasil · DÉCIMA', canonical: `${origin}/colecoes/nordica-yggdrasil/`, scriptBudgetKiB: 600 },
+  { file: 'caderno/index.html', title: 'Caderno do Atelier · DÉCIMA', canonical: `${origin}/caderno/`, scriptBudgetKiB: 600 },
 ];
+
+function initialScriptBytes(html) {
+  const sources = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((match) => match[1]);
+  return [...new Set(sources)].reduce((total, src) => {
+    const relative = src.replace(`${basePath}/`, '');
+    const path = join(output, relative);
+    return total + (existsSync(path) ? statSync(path).size : 0);
+  }, 0);
+}
 
 for (const route of routes) {
   const html = read(route.file);
@@ -38,6 +47,8 @@ for (const route of routes) {
   check(h1Count === 1, `${route.file}: esperado um h1, encontrado ${h1Count}`);
   check(!visibleHtml.includes('style="opacity:0'), `${route.file}: conteúdo essencial nasce invisível`);
   check(html.includes('aria-expanded="false"'), `${route.file}: estado acessível do menu ausente`);
+  const initialKiB = initialScriptBytes(html) / 1024;
+  check(initialKiB <= route.scriptBudgetKiB, `${route.file}: JavaScript inicial ${initialKiB.toFixed(1)} KiB excede ${route.scriptBudgetKiB} KiB`);
 }
 
 const requiredFiles = [
@@ -55,14 +66,6 @@ routes.forEach((route) => check(sitemap.includes(`<loc>${route.canonical}</loc>`
 
 const robots = read('robots.txt');
 check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'robots.txt: sitemap ausente ou incorreto');
-
-const notebook = read('caderno/index.html');
-const initialScripts = [...notebook.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((match) => match[1]);
-for (const src of initialScripts) {
-  const relative = src.replace(`${basePath}/`, '');
-  const path = join(output, relative);
-  if (existsSync(path)) check(statSync(path).size < 600 * 1024, `caderno: JavaScript inicial excessivo em ${relative}`);
-}
 
 if (failures.length) {
   console.error(`Verificação estática falhou (${failures.length}):`);

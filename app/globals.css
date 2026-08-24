@@ -55,7 +55,12 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .header-cta { justify-self: end; display: flex; align-items: center; gap: 10px; padding-bottom: 7px; border-bottom: 1px solid currentColor; }
 .header-cta svg { color: var(--bronze); }
 .menu-button { display: none; justify-self: end; width: 44px; height: 44px; place-items: center; border: 0; background: transparent; color: inherit; cursor: pointer; }
-.mobile-menu { position: fixed; z-index: 100; inset: 0; display: flex; flex-direction: column; padding: 28px; background: var(--ink); color: var(--ivory); }
+.mobile-menu {
+  position: fixed; z-index: 100; inset: 0; display: flex; flex-direction: column; padding: 28px;
+  background: var(--ink); color: var(--ivory); opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-100%); transition: transform .55s cubic-bezier(.76,0,.24,1), opacity .4s ease, visibility 0s linear .55s;
+}
+.mobile-menu[data-open='true'] { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); transition-delay: 0s; }
 .mobile-menu > button { align-self: flex-end; display: grid; width: 44px; height: 44px; place-items: center; border: 0; background: transparent; color: var(--ivory); cursor: pointer; }
 .mobile-menu > p { margin: 28px 0 auto; font-size: 10px; letter-spacing: .22em; }
 .mobile-menu nav { display: grid; gap: 16px; }

@@ -1,6 +1,5 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -73,33 +72,28 @@ export function SiteHeader({ tone = 'light' }: Props) {
         </button>
       </header>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            ref={menuPanel}
-            id="menu-movel"
-            className="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Navegação móvel"
-            initial={{ opacity: 0, y: '-100%' }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '-100%' }}
-            transition={{ duration: .55, ease: [0.76, 0, 0.24, 1] }}
-          >
-            <button ref={closeButton} type="button" aria-label="Fechar menu" onClick={() => setOpen(false)}><X /></button>
-            <p>DÉCIMA EDIÇÕES</p>
-            <nav aria-label="Menu móvel">
-              {links.map(([href, label], index) => (
-                <Link key={href} href={href} onClick={() => setOpen(false)}>
-                  <span>0{index + 1}</span>{label}
-                </Link>
-              ))}
-            </nav>
-            <small>Objetos que não se repetem.</small>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        ref={menuPanel}
+        id="menu-movel"
+        className="mobile-menu"
+        data-open={open}
+        role="dialog"
+        aria-modal={open ? 'true' : undefined}
+        aria-hidden={!open}
+        aria-label="Navegação móvel"
+        inert={!open}
+      >
+        <button ref={closeButton} type="button" aria-label="Fechar menu" onClick={() => setOpen(false)}><X /></button>
+        <p>DÉCIMA EDIÇÕES</p>
+        <nav aria-label="Menu móvel">
+          {links.map(([href, label], index) => (
+            <Link key={href} href={href} onClick={() => setOpen(false)}>
+              <span>0{index + 1}</span>{label}
+            </Link>
+          ))}
+        </nav>
+        <small>Objetos que não se repetem.</small>
+      </div>
     </>
   );
 }

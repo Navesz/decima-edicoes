@@ -29,3 +29,27 @@ Data: 24 de agosto de 2026.
 ### Próxima frente candidata
 
 Conteúdo comercial e confiança: transformar a manifestação de interesse demonstrativa em um canal real quando o fundador definir contato, cidade, raio de entrega e política comercial.
+
+## Ciclo 02 — orçamento de JavaScript
+
+Data: 24 de agosto de 2026.
+
+### Linha de base
+
+- início: 857,2 KiB de scripts referenciados no HTML inicial;
+- Coleções e Yggdrasil: 733,7 KiB;
+- Caderno: 734,9 KiB, além do laboratório 3D já adiado no ciclo anterior.
+
+### Intervenção
+
+- o menu móvel deixou de importar Framer Motion em todas as rotas e passou a usar transição CSS com os mesmos controles de foco;
+- Lenis passou a ser carregado depois da primeira renderização;
+- GSAP e ScrollTrigger passaram a ser carregados somente no componente de efeitos da página inicial;
+- Framer Motion continua aplicado onde agrega valor na apresentação da coleção, sem onerar as páginas editoriais;
+- o verificador agora reprova qualquer aumento que ultrapasse 750 KiB na página inicial ou 600 KiB nas demais rotas.
+
+### Resultado medido
+
+- início: 719,9 KiB, redução de 137,3 KiB (16%);
+- Coleções e Yggdrasil: 580,7 KiB, redução de 153 KiB (21%);
+- Caderno: 582 KiB, redução de 152,9 KiB (21%).
