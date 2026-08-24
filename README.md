@@ -33,11 +33,13 @@ O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idi
 ## Tecnologia
 
 - Next.js com exportação estática e React;
-- Framer Motion para entrada e navegação móvel;
+- Framer Motion para interações pontuais nos cartões de coleção;
 - GSAP + ScrollTrigger para revelações e profundidade no scroll;
 - Lenis para rolagem suave;
 - Three.js + React Three Fiber para o laboratório de acabamento;
 - GitHub Actions e GitHub Pages para publicação em `navesz.github.io/decima-edicoes`.
+
+Na home, o Framer fica restrito à ilha interativa dos cartões e usa `LazyMotion` com `domAnimation` assíncrono. A página e o hero permanecem componentes de servidor; GSAP e Lenis também continuam sob importação tardia. Medição e limites estão em `docs/CARREGAMENTO-DE-MOVIMENTO.md`.
 
 O laboratório 3D é um aprimoramento progressivo: a direção acetinada, a meta de 32% e as quatro faixas comparativas já existem no HTML. WebGL só é solicitado perto da seção; economia de dados e conexões muito limitadas exigem confirmação manual, e falhas preservam a leitura. A arquitetura e os critérios estão em `docs/RESILIENCIA-DO-LABORATORIO-3D.md`.
 

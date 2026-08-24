@@ -68,7 +68,7 @@ function listFiles(directory) {
 }
 
 const routes = [
-  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 750, cssBudgetKiB: 40 },
+  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 650, cssBudgetKiB: 40 },
   { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
@@ -189,6 +189,13 @@ const responsiveImageSource = readFileSync(join(root, 'app', 'components', 'resp
 const imageOptimizerSource = readFileSync(join(root, 'scripts', 'optimize-images.mjs'), 'utf8');
 check(responsiveImageSource.includes("import imageData from '../lib/image-data.json'") && responsiveImageSource.includes('width={dimensions?.width}') && responsiveImageSource.includes('height={dimensions?.height}'), 'imagens responsivas: componente deixou de publicar dimensões do contrato');
 check(imageOptimizerSource.includes("'image-data.json'") && imageOptimizerSource.includes('JSON.stringify(imageData, null, 2)'), 'imagens responsivas: otimizador deixou de atualizar o contrato dimensional');
+
+const homePageSource = readFileSync(join(root, 'app', 'components', 'home-page.tsx'), 'utf8');
+const motionArticleSource = readFileSync(join(root, 'app', 'components', 'motion-article.tsx'), 'utf8');
+const motionFeaturesSource = readFileSync(join(root, 'app', 'components', 'motion-features.ts'), 'utf8');
+check(!homePageSource.startsWith("'use client'") && !homePageSource.includes("from 'framer-motion'") && homePageSource.includes('<MotionArticle'), 'home: página inteira voltou a depender do Framer no cliente');
+check(motionArticleSource.includes('LazyMotion') && motionArticleSource.includes("from 'framer-motion/m'") && motionArticleSource.includes("import('./motion-features')") && motionArticleSource.includes('useReducedMotion') && motionArticleSource.includes('strict'), 'home: ilha de movimento perdeu carregamento mínimo, preferência reduzida ou modo estrito');
+check(motionFeaturesSource.includes('domAnimation as default'), 'home: pacote assíncrono de recursos do Framer ausente');
 
 const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');

@@ -1,6 +1,3 @@
-'use client';
-
-import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { collections } from '../lib/collections';
@@ -8,13 +5,12 @@ import { assetPath } from '../lib/base-path';
 import { collection, edition } from '../lib/project';
 import { Footer } from './footer';
 import { InterestForm } from './interest-form';
+import { MotionArticle } from './motion-article';
 import { ResponsiveImage } from './responsive-image';
 import { ScrollEffects } from './scroll-effects';
 import { SiteHeader } from './site-header';
 
 export function HomePage() {
-  const reduceMotion = useReducedMotion();
-
   return (
     <main id="conteudo">
       <section className="hero-shell">
@@ -22,24 +18,21 @@ export function HomePage() {
         <div className="hero-wash" />
         <SiteHeader />
 
-        <motion.div className="hero-content" initial={false} animate="visible" variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: .14, delayChildren: .25 } },
-        }}>
-          <motion.p className="eyebrow" variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: .7 } } }}>
+        <div className="hero-content">
+          <p className="eyebrow">
             <span /> Coleção inaugural · {collection.year}
-          </motion.p>
-          <motion.h1 variants={{ hidden: { opacity: 0, y: 60 }, visible: { opacity: 1, y: 0, transition: { duration: 1.15, ease: [0.22, 1, 0.36, 1] } } }}>
+          </p>
+          <h1>
             Objetos que<br />não se repetem.
-          </motion.h1>
-          <motion.div className="hero-bottom" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: .9 } } }}>
+          </h1>
+          <div className="hero-bottom">
             <p className="hero-copy">Mesas autorais em madeira e aço.<br />{edition.runSize} peças previstas. Uma edição. Nenhuma reimpressão.</p>
             <Link className="discover" href={`/colecoes/${collection.slug}`}>
               <span>Descobrir<br />{collection.family} — {collection.name}</span>
               <b aria-hidden="true"><ArrowDown size={16} /></b>
             </Link>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         <aside className="edition-rail" aria-label={`Estágio atual: ${edition.producedPiecesWord} de ${edition.runSizeWord} peças produzidas`}><span>ESTÁGIO</span><strong>{edition.prototypeNumber}</strong><i>/{edition.runSize}</i></aside>
         <p className="image-caption">Visualização conceitual · protótipo {edition.prototypeNumber} em desenvolvimento</p>
@@ -82,13 +75,13 @@ export function HomePage() {
         </div>
         <div className="collection-list">
           {collections.map((collection, index) => (
-            <motion.article className="collection-card gsap-reveal" key={collection.slug} whileHover={reduceMotion ? undefined : { y: -8 }} transition={{ duration: .35 }}>
+            <MotionArticle className="collection-card gsap-reveal" key={collection.slug}>
               <Link href={index === 0 ? `/colecoes/${collection.slug}` : '/colecoes'} aria-label={`${collection.family} — ${collection.name}`}>
                 <div className="collection-media"><ResponsiveImage src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} sizes="(max-width: 800px) 100vw, 33vw" /></div>
                 <div className="collection-meta"><span>{collection.number}</span><div><small>{collection.family}</small><h3>{collection.name}</h3></div><ArrowUpRight size={18} strokeWidth={1.25} /></div>
                 <p>{collection.status}</p>
               </Link>
-            </motion.article>
+            </MotionArticle>
           ))}
         </div>
         <Link className="outline-button" href="/colecoes">Ver arquivo completo <ArrowRight size={16} /></Link>

@@ -685,3 +685,27 @@ O Next.js adicionava `noindex` automaticamente ao documento 404, mas o layout ra
 ### Proteção contra regressão
 
 O verificador rejeita uma diretiva `index` explícita no layout raiz, exige exatamente uma meta robots com `noindex` no 404, confere título, descrição, canonical, `og:url`, cartão social e ação de retorno. O sitemap falha se incluir `/404` ou `/_not-found`.
+
+## Ciclo 30 — Framer Motion em ilha mínima
+
+Data: 24 de agosto de 2026.
+
+### Custo desproporcional
+
+A home carregava 715,8 KiB de JavaScript inicial. Um pacote de 137,6 KiB continha o Framer Motion completo, embora a interação efetiva fosse a elevação de três cartões no hover. Como `HomePage` era cliente, toda a árvore também precisava atravessar a fronteira de hidratação. As animações declaradas no hero usavam `initial={false}` para preservar conteúdo e, portanto, não justificavam esse custo.
+
+### Intervenção
+
+- `HomePage` voltou a ser componente de servidor;
+- o hero virou marcação sem dependência de movimento e continua integralmente visível no HTML;
+- a interação dos cartões foi isolada em `MotionArticle`;
+- a biblioteca foi preservada com `LazyMotion` em modo `strict` e elementos mínimos de `framer-motion/m`;
+- `domAnimation` passou para um import assíncrono separado;
+- `useReducedMotion` continua removendo o deslocamento quando o usuário prefere menos movimento;
+- GSAP e Lenis permanecem dinâmicos e fora desta mudança;
+- o JavaScript inicial da home caiu de 715,8 para 623,6 KiB, redução de 92,2 KiB ou 12,9%;
+- o procedimento foi registrado em `docs/CARREGAMENTO-DE-MOVIMENTO.md`.
+
+### Proteção contra regressão
+
+O teto inicial da home caiu de 750 para 650 KiB. O verificador rejeita `HomePage` como componente cliente ou importador direto do Framer, exige a ilha `LazyMotion`, o ponto de entrada mínimo, o pacote de recursos dinâmico, modo estrito e preferência por movimento reduzido.
