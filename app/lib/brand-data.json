@@ -36,6 +36,26 @@
       "use": "Texto pequeno sobre fundos claros."
     }
   },
+  "contrast": {
+    "minimumTextRatio": 4.5,
+    "minimumNonTextRatio": 3,
+    "approvedTextPairs": [
+      { "foreground": "ink", "background": "paper", "label": "Carvão sobre papel" },
+      { "foreground": "ink", "background": "paperLight", "label": "Carvão sobre papel claro" },
+      { "foreground": "ink", "background": "ivory", "label": "Carvão sobre marfim" },
+      { "foreground": "bronzeInk", "background": "paper", "label": "Bronze-tinta sobre papel" },
+      { "foreground": "bronzeInk", "background": "paperLight", "label": "Bronze-tinta sobre papel claro" },
+      { "foreground": "ivory", "background": "ink", "label": "Marfim sobre carvão" },
+      { "foreground": "bronze", "background": "ink", "label": "Bronze sobre carvão" }
+    ],
+    "approvedNonTextPairs": [
+      { "foreground": "bronze", "background": "ink", "label": "Bronze sobre carvão" }
+    ],
+    "restrictedPairs": [
+      { "foreground": "bronze", "background": "paper", "label": "Bronze sobre papel" },
+      { "foreground": "bronze", "background": "paperLight", "label": "Bronze sobre papel claro" }
+    ]
+  },
   "assets": {
     "icon": "/icon.png",
     "logoDark": "/brand/decima-logo-dark.png",

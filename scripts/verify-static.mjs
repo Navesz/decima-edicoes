@@ -34,6 +34,21 @@ function check(condition, message) {
   if (!condition) failures.push(message);
 }
 
+function relativeLuminance(hex) {
+  const channels = hex.match(/[0-9a-f]{2}/gi)?.map((channel) => Number.parseInt(channel, 16) / 255) ?? [];
+  const linear = channels.map((channel) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+}
+
+function contrastRatio(foreground, background) {
+  const luminances = [relativeLuminance(foreground), relativeLuminance(background)].sort((a, b) => b - a);
+  return (luminances[0] + 0.05) / (luminances[1] + 0.05);
+}
+
+function formattedContrastRatio(value) {
+  return `${value.toFixed(2).replace('.', ',')}:1`;
+}
+
 function read(relativePath) {
   const path = join(output, relativePath);
   check(existsSync(path), `Arquivo ausente: out/${relativePath}`);
@@ -254,6 +269,14 @@ check(Object.values(brandData.palette).every((color) => brandGuide.includes(colo
 check(brandGuide.includes('Cormorant Garamond') && brandGuide.includes('MANROPE'), 'Guia de Marca: sistema tipográfico incompleto');
 check(brandGuide.includes('Nórdica — Yggdrasil') && brandGuide.includes('Peça 01/10') && brandGuide.includes('Protótipo 00'), 'Guia de Marca: sistema de nomenclatura incompleto');
 check(brandGuide.includes('pesquisar sinais semelhantes') && brandGuide.includes('registro no INPI'), 'Guia de Marca: portão de validação legal incompleto');
+check(brandGuide.includes('https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum'), 'Guia de Marca: referência oficial de contraste ausente');
+for (const pair of [...brandData.contrast.approvedTextPairs, ...brandData.contrast.restrictedPairs]) {
+  const foreground = brandData.palette[pair.foreground]?.hex;
+  const background = brandData.palette[pair.background]?.hex;
+  if (!foreground || !background) continue;
+  const ratio = contrastRatio(foreground, background);
+  check(brandGuide.includes(pair.label) && brandGuide.includes(formattedContrastRatio(ratio)), `Guia de Marca: contraste ${pair.label} ausente ou incorreto`);
+}
 const brandGuideCss = readFileSync(join(root, 'app', 'caderno', 'marca', 'brand-guide.module.css'), 'utf8');
 check(brandGuideCss.includes('@media (max-width: 1000px)') && brandGuideCss.includes('@media (max-width: 700px)'), 'Guia de Marca: adaptação responsiva ausente');
 for (const [token, color] of Object.entries(brandData.palette)) {
@@ -372,6 +395,30 @@ check(brandData.name.includes(brandData.shortName) && brandData.editionLabel && 
 check(new Set(Object.values(brandData.palette).map((color) => color.hex.toLowerCase())).size === Object.keys(brandData.palette).length, 'Contrato da marca: cores repetidas');
 check(Object.values(brandData.palette).every((color) => /^#[0-9A-F]{6}$/.test(color.hex) && color.name && color.use), 'Contrato da marca: cor, nome ou uso inválido');
 check(Object.values(brandData.assets).every((asset) => asset.startsWith('/') && existsSync(join(root, asset === '/icon.png' ? 'app/icon.png' : `public${asset}`))), 'Contrato da marca: ativo oficial ausente');
+const paletteKeys = new Set(Object.keys(brandData.palette));
+const allContrastPairs = [...brandData.contrast.approvedTextPairs, ...brandData.contrast.approvedNonTextPairs, ...brandData.contrast.restrictedPairs];
+check(allContrastPairs.every((pair) => paletteKeys.has(pair.foreground) && paletteKeys.has(pair.background) && pair.label), 'Contrato da marca: par de contraste referencia cor ausente');
+for (const pair of brandData.contrast.approvedTextPairs) {
+  const foreground = brandData.palette[pair.foreground]?.hex;
+  const background = brandData.palette[pair.background]?.hex;
+  if (!foreground || !background) continue;
+  const ratio = contrastRatio(foreground, background);
+  check(ratio >= brandData.contrast.minimumTextRatio, `Contraste: ${pair.label} tem ${ratio.toFixed(3)}:1, abaixo de ${brandData.contrast.minimumTextRatio}:1`);
+}
+for (const pair of brandData.contrast.approvedNonTextPairs) {
+  const foreground = brandData.palette[pair.foreground]?.hex;
+  const background = brandData.palette[pair.background]?.hex;
+  if (!foreground || !background) continue;
+  const ratio = contrastRatio(foreground, background);
+  check(ratio >= brandData.contrast.minimumNonTextRatio, `Contraste não textual: ${pair.label} tem ${ratio.toFixed(3)}:1, abaixo de ${brandData.contrast.minimumNonTextRatio}:1`);
+}
+for (const pair of brandData.contrast.restrictedPairs) {
+  const foreground = brandData.palette[pair.foreground]?.hex;
+  const background = brandData.palette[pair.background]?.hex;
+  if (!foreground || !background) continue;
+  const ratio = contrastRatio(foreground, background);
+  check(ratio < brandData.contrast.minimumTextRatio, `Contraste: ${pair.label} já atingiu texto comum e deve sair da lista restrita`);
+}
 
 const exportedHtmlFiles = listFiles(output).filter((file) => file.endsWith('.html'));
 const documentCache = new Map();

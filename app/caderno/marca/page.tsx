@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Footer } from '../../components/footer';
 import { SiteHeader } from '../../components/site-header';
 import { assetPath } from '../../lib/base-path';
-import { brand } from '../../lib/brand';
+import { brand, contrastRatio, formatContrastRatio } from '../../lib/brand';
 import { absoluteUrl } from '../../lib/site';
 import styles from './brand-guide.module.css';
 
@@ -26,6 +26,17 @@ const palette = [
   { ...brand.palette.bronze, className: styles.bronze },
   { ...brand.palette.bronzeInk, className: styles.bronzeInk },
 ];
+
+type PaletteKey = keyof typeof brand.palette;
+const contrastRows = [
+  ...brand.contrast.approvedTextPairs.map((pair) => ({ ...pair, status: 'Texto aprovado', approved: true })),
+  ...brand.contrast.restrictedPairs.map((pair) => ({ ...pair, status: 'Só decoração', approved: false })),
+].map((pair) => ({
+  ...pair,
+  foregroundColor: brand.palette[pair.foreground as PaletteKey].hex,
+  backgroundColor: brand.palette[pair.background as PaletteKey].hex,
+  ratio: contrastRatio(brand.palette[pair.foreground as PaletteKey].hex, brand.palette[pair.background as PaletteKey].hex),
+}));
 
 export default function BrandGuidePage() {
   return (
@@ -125,7 +136,14 @@ export default function BrandGuidePage() {
             </article>
           ))}
         </div>
-        <p className={styles.colorRule}>O bronze é acento, não preenchimento dominante. Sobre fundo claro, texto pequeno usa <strong>{brand.palette.bronzeInk.hex}</strong>; o bronze mais luminoso fica reservado a detalhes maiores, ícones e matéria.</p>
+        <div className={styles.contrastWrap} tabIndex={0} aria-label="Tabela de contraste da paleta; role horizontalmente para ver todas as colunas">
+          <table className={styles.contrastTable}>
+            <caption>Combinações calculadas da paleta oficial</caption>
+            <thead><tr><th scope="col">Combinação</th><th scope="col">Amostra</th><th scope="col">Contraste</th><th scope="col">Regra</th></tr></thead>
+            <tbody>{contrastRows.map((row) => <tr key={`${row.foreground}-${row.background}`}><th scope="row">{row.label}</th><td><i style={{ color: row.foregroundColor, background: row.backgroundColor }}>Aa</i></td><td><strong>{formatContrastRatio(row.ratio)}</strong></td><td><span data-approved={row.approved}>{row.status}</span></td></tr>)}</tbody>
+          </table>
+        </div>
+        <p className={styles.colorRule}>Texto comum precisa de pelo menos <strong>{brand.contrast.minimumTextRatio}:1</strong>; elementos gráficos necessários, <strong>{brand.contrast.minimumNonTextRatio}:1</strong>. Por isso, sobre fundos claros o texto bronze usa <strong>{brand.palette.bronzeInk.hex}</strong>. O bronze luminoso fica em texto sobre carvão ou em decoração dispensável sobre papel — nunca em informação necessária. <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum">Referência WCAG 2.2</a>.</p>
       </section>
 
       <section className={`${styles.section} ${styles.typeSection}`} id="tipografia">

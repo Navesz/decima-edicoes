@@ -41,6 +41,8 @@ Tiragem, produção, dimensões, protótipo, versões, corpos de prova e aprova�
 
 Nome, slogan, idioma, paleta e ativos oficiais vivem separadamente em `app/lib/brand-data.json`. Metadados, manifesto, dados estruturados, cabeçalho, rodapé e Guia de Marca consomem o mesmo contrato; o procedimento está em `docs/CONTRATO-DA-MARCA.md`.
 
+Os pares de cor aprovados e restritos também vivem nesse contrato. O Guia publica os índices calculados e o build aplica os limiares WCAG documentados em `docs/CONTRASTE-E-ACESSIBILIDADE.md`.
+
 A modelagem de SEO liga marca, website, páginas, breadcrumbs e o conceito Yggdrasil sem publicar oferta fictícia. As regras estão em `docs/SEO-E-DADOS-ESTRUTURADOS.md`.
 
 ## Rodar localmente

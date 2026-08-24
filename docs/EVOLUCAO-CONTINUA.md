@@ -494,3 +494,29 @@ O projeto dizia que o tampo inteiro, de uma única espécie e comprado já nivel
 ### Proteção contra regressão
 
 A rota declara `noindex, nofollow`, não entra no sitemap e reutiliza a folha A4 já validada da ficha do protótipo. O verificador exige o acesso pelo Caderno, dimensões vindas do contrato, prioridade sem emenda, separação da alternativa colada, evidência de umidade, três cotações, impressão e decisão M01.
+
+## Ciclo 22 — contrato matemático de contraste
+
+Data: 24 de agosto de 2026.
+
+### Risco encontrado
+
+O Guia distinguia bronze luminoso de bronze-tinta, mas a proteção era apenas textual. Uma mudança futura de hex poderia tornar uma combinação ilegível sem quebrar o build, e “premium” poderia passar a significar texto pequeno com baixo contraste.
+
+### Referência e decisão
+
+A documentação oficial da WCAG 2.2 mantém 4,5:1 para texto comum e 3:1 para texto grande; ícones necessários também pedem 3:1. A marca adota 4,5:1 para todos os pares de texto declarados, sem usar a exceção normativa de logotipo como atalho para a interface.
+
+### Intervenção
+
+- o contrato da marca passou a declarar limiares, sete pares de texto aprovados, um par não textual aprovado e dois pares restritos;
+- a luminância relativa e a razão de contraste são calculadas a partir dos hexadecimais reais;
+- o Guia ganhou tabela com amostra, índice e estado de cada combinação;
+- carvão, marfim, papéis e bronze-tinta passam de 6,54:1 nos usos declarados;
+- bronze sobre carvão atinge 5,81:1 e pode carregar texto;
+- bronze luminoso sobre papel fica em 2,36:1 ou 2,68:1 e foi limitado a decoração dispensável;
+- fontes e procedimento foram registrados em `docs/CONTRASTE-E-ACESSIBILIDADE.md`.
+
+### Proteção contra regressão
+
+O verificador recalcula os índices de forma independente, sem arredondar antes do limiar. O deploy falha se um par aponta para cor ausente, se um par aprovado cai abaixo de 4,5:1 ou 3:1, se um valor publicado diverge do cálculo ou se a referência oficial some do Guia.

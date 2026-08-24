@@ -274,8 +274,6 @@
   text-transform: uppercase;
 }
 
-.logoGrid figcaption a svg { width: 15px; }
-
 .usageRules { grid-template-columns: repeat(3, 1fr); }
 
 .usageRules article {
@@ -374,6 +372,66 @@
   padding-left: 26px;
   border-left: 1px solid var(--bronze-ink);
 }
+
+.colorRule a { text-decoration: underline; text-underline-offset: 3px; }
+
+.contrastWrap {
+  margin: 42px 0 0 76px;
+  overflow-x: auto;
+}
+
+.contrastTable {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.contrastTable caption {
+  padding: 0 0 14px;
+  text-align: left;
+  font-family: var(--serif);
+  font-size: 23px;
+}
+
+.contrastTable th,
+.contrastTable td {
+  border-top: 1px solid rgba(23, 20, 17, .25);
+  padding: 13px 16px;
+  text-align: left;
+}
+
+.contrastTable thead th {
+  color: var(--ink-muted);
+  font-size: var(--micro);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.contrastTable tbody th { font-family: var(--serif); font-size: 18px; font-weight: 500; }
+
+.contrastTable i {
+  display: grid;
+  width: 64px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(23, 20, 17, .16);
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: normal;
+}
+
+.contrastTable td > span {
+  display: inline-flex;
+  border: 1px solid #31543c;
+  padding: 5px 8px;
+  color: #31543c;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.contrastTable td > span[data-approved='false'] { border-color: #7a342e; color: #7a342e; }
 
 .typeSection { background: var(--ink); color: var(--ivory); }
 .typeSection .sectionHeading > span,
@@ -580,6 +638,7 @@
   .voiceTraits,
   .namingFormula,
   .namingExamples { margin-left: 0; }
+  .contrastWrap { margin-left: 0; }
   .nameRules,
   .logoGrid,
   .symbolMeaning,
@@ -595,8 +654,4 @@
   .namingFormula > b { font-size: 40px; }
   .checklist li { grid-template-columns: 42px 1fr; gap: 12px; }
   .backToNotebook { padding: 90px 24px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .index { scroll-behavior: auto; }
 }
