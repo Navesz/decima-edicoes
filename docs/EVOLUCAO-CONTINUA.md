@@ -543,3 +543,29 @@ A assinatura completa e o ícone existiam em PNG, suficientes para o site, mas o
 ### Proteção contra regressão
 
 O verificador exige os arquivos exportados, limita cada SVG a 2 KiB, confere nome acessível, `viewBox`, círculo, diagonais, centro, cores canônicas e ausência de dependências perigosas. O Guia precisa ligar todos os ativos, oferecer pelo menos quatro downloads e manter o alerta de produção física.
+
+## Ciclo 24 — modelo rastreável de certificado
+
+Data: 24 de agosto de 2026.
+
+### Promessa ainda sem documento
+
+O Caderno descrevia certificado, arquivo de matéria e plaqueta, mas ainda não definia como esses registros se cruzariam. Criar um certificado bonito sem rastreabilidade poderia transformar a edição limitada em narrativa; criar um número agora fingiria que uma peça inexistente já foi autenticada.
+
+### Intervenção
+
+- nova rota interna e imprimível `/caderno/certificado-modelo/`;
+- marca visível `MODELO · NÃO NUMERAR · NÃO ASSINAR` e declaração de que nenhuma peça foi produzida;
+- campos de coleção, tiragem, futuro número, código, conclusão e fabricação;
+- matéria, fornecedor, medidas reais, umidade, arte, acabamento, lotes, base e massa;
+- dimensões de referência vêm do contrato do projeto e continuam sujeitas à medição real;
+- protocolo declara máximo de dez peças e aposentadoria da matriz depois de 10/10;
+- vínculo físico cruza certificado, plaqueta, fotos do veio, lateral, face inferior e arquivo de produção;
+- QR code foi tratado como ponte, não como prova autônoma de autenticidade;
+- histórico privado contempla entrega, transferência, inspeção e restauro;
+- declaração separa autenticidade do objeto, direito autoral, garantia e tratamento de dados pessoais;
+- emissão válida só pode ocorrer depois de conclusão e inspeção, nunca no início de uma encomenda.
+
+### Proteção contra regressão
+
+A rota declara `noindex, nofollow`, fica fora do sitemap e reutiliza a folha A4 validada. O verificador proíbe pré-atribuição da peça 01/10, exige o alerta sem validade, tiragem e dimensões canônicas, encerramento 10/10, quatro linhas de histórico, impressão e limites de autenticidade, autoria e privacidade.

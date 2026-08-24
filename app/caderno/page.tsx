@@ -93,6 +93,7 @@ export default function StudioNotebookPage() {
         <div className="notebook-section-title"><span>05</span><div><p className="micro-label">Protocolo de escassez</p><h2>Uma promessa<br />verificável.</h2></div></div>
         <div className="edition-diagram"><div><span>NASCE</span><strong>{edition.firstPiece}</strong><p>Arte aprovada e primeiro objeto certificado.</p></div><ArrowUpRight /><div><span>EXISTE</span><strong>{edition.middlePieces}</strong><p>Produção sob encomenda, numeração pública.</p></div><ArrowUpRight /><div><span>ENCERRA</span><strong>{edition.lastPiece}</strong><p>Arquivo fechado. A matriz visual é aposentada.</p></div></div>
         <div className="notebook-cards"><article><ShieldCheck /><h3>Certificado</h3><p>Nome da coleção, número da peça, ano, espécie da madeira, acabamento e assinatura do atelier.</p></article><article><Layers3 /><h3>Arquivo de matéria</h3><p>Fotos do veio antes da arte, registro do processo e especificação dos insumos usados.</p></article><article><Hammer /><h3>Plaqueta discreta</h3><p>Aplicada sob o tampo, jamais na lateral protagonista: Collection · Piece · Year.</p></article></div>
+        <Link className="gate-sheet-link" href="/caderno/certificado-modelo">Abrir modelo de certificado da edição <ArrowUpRight size={17} /></Link>
       </section>
 
       <section className="notebook-section gate-section" id="portao">
