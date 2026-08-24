@@ -201,6 +201,10 @@ check(smoothScrollSource.includes("import('lenis')") && smoothScrollSource.inclu
 check(smoothScrollSource.includes('(prefers-reduced-motion: reduce)') && smoothScrollSource.includes('(prefers-reduced-data: reduce)') && smoothScrollSource.includes('(pointer: coarse)') && smoothScrollSource.includes('(hover: none)'), 'rolagem suave: preferências de movimento, dados, ponteiro ou hover ausentes');
 check(smoothScrollSource.includes('connection?.saveData') && smoothScrollSource.includes("'slow-2g'") && smoothScrollSource.includes("'2g'"), 'rolagem suave: economia de dados ou conexão limitada não preserva rolagem nativa');
 check(smoothScrollSource.includes("dataset.smoothScroll = 'active'") && smoothScrollSource.includes('delete document.documentElement.dataset.smoothScroll'), 'rolagem suave: estado observável ou limpeza ausente');
+const scrollEffectsSource = readFileSync(join(root, 'app', 'components', 'scroll-effects.tsx'), 'utf8');
+check(scrollEffectsSource.includes("import('gsap')") && scrollEffectsSource.includes("import('gsap/ScrollTrigger')") && scrollEffectsSource.includes('IntersectionObserver'), 'efeitos de rolagem: importações dinâmicas ou gatilho por proximidade ausente');
+check(scrollEffectsSource.includes('(prefers-reduced-motion: reduce)') && scrollEffectsSource.includes('(prefers-reduced-data: reduce)') && scrollEffectsSource.includes('connection?.saveData') && scrollEffectsSource.includes("'slow-2g'") && scrollEffectsSource.includes("'2g'"), 'efeitos de rolagem: preferências ou rede limitada não preservam conteúdo estático');
+check(scrollEffectsSource.includes("rootMargin: '320px 0px'") && scrollEffectsSource.includes('threshold: .01') && scrollEffectsSource.includes("dataset.scrollEffects = 'active'") && scrollEffectsSource.includes('delete document.documentElement.dataset.scrollEffects'), 'efeitos de rolagem: margem de aproximação, estado ou limpeza ausente');
 
 const staticDirectory = join(output, '_next', 'static');
 const cssDirectory = join(staticDirectory, 'chunks');
@@ -227,6 +231,18 @@ const lenisChunks = javascriptFiles.filter((file) => {
 });
 check(lenisChunks.length === 1, `rolagem suave: esperado um pacote Lenis, encontrados ${lenisChunks.length}`);
 check(lenisChunks.every((file) => !allInitialScripts.has(file)), 'rolagem suave: biblioteca Lenis voltou aos scripts iniciais');
+const gsapCoreChunks = javascriptFiles.filter((file) => {
+  const source = readFileSync(join(cssDirectory, file), 'utf8');
+  return source.includes('globalTimeline') && source.includes('registerPlugin');
+});
+const scrollTriggerChunks = javascriptFiles.filter((file) => {
+  const source = readFileSync(join(cssDirectory, file), 'utf8');
+  return source.includes('normalizeScroll') && source.includes('refreshInit');
+});
+const gsapDeferredBytes = [...gsapCoreChunks, ...scrollTriggerChunks].reduce((total, file) => total + statSync(join(cssDirectory, file)).size, 0);
+check(gsapCoreChunks.length === 1 && scrollTriggerChunks.length === 1, `efeitos de rolagem: esperados GSAP e ScrollTrigger separados, encontrados ${gsapCoreChunks.length}/${scrollTriggerChunks.length}`);
+check([...gsapCoreChunks, ...scrollTriggerChunks].every((file) => !allInitialScripts.has(file)), 'efeitos de rolagem: GSAP ou ScrollTrigger voltou aos scripts iniciais');
+check(gsapDeferredBytes <= 120 * 1024, `efeitos de rolagem: pacotes assíncronos excedem 120 KiB (${(gsapDeferredBytes / 1024).toFixed(1)} KiB)`);
 
 const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
 check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');

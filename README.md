@@ -43,6 +43,8 @@ Na home, o Framer fica restrito à ilha interativa dos cartões e usa `LazyMotio
 
 Lenis só aprimora a rolagem por roda em desktop com ponteiro preciso, rede adequada e movimento permitido. Em toque, economia de dados, 2G ou preferência reduzida, o navegador mantém a rolagem nativa e nem transfere a biblioteca. A política está em `docs/ROLAGEM-SUAVE-PROGRESSIVA.md`.
 
+GSAP e ScrollTrigger aguardam a primeira seção animável se aproximar do viewport. Em economia de dados, 2G ou movimento reduzido, o conteúdo permanece estático e visível sem baixar os 111,4 KiB dos dois pacotes. A regra está em `docs/EFEITOS-DE-ROLAGEM-PROGRESSIVOS.md`.
+
 O laboratório 3D é um aprimoramento progressivo: a direção acetinada, a meta de 32% e as quatro faixas comparativas já existem no HTML. WebGL só é solicitado perto da seção; economia de dados e conexões muito limitadas exigem confirmação manual, e falhas preservam a leitura. A arquitetura e os critérios estão em `docs/RESILIENCIA-DO-LABORATORIO-3D.md`.
 
 ## Fonte única do projeto

@@ -733,3 +733,27 @@ Lenis já usava `import()` e não fazia parte dos scripts iniciais, mas era soli
 ### Proteção contra regressão
 
 O verificador identifica o pacote compilado do Lenis por marcadores internos e rejeita sua presença nos scripts iniciais de qualquer rota. No código-fonte, exige importação dinâmica, agendamento ocioso, fallback, quatro consultas de preferência/capacidade, três sinais de rede, estado observável e limpeza.
+
+## Ciclo 32 — efeitos de rolagem carregados por proximidade
+
+Data: 24 de agosto de 2026.
+
+### Importação assíncrona ainda precoce
+
+GSAP e ScrollTrigger já estavam em chunks separados do HTML inicial, mas `ScrollEffects` os solicitava assim que a home hidratava. Os pacotes somavam 111,4 KiB sem compressão, enquanto o primeiro elemento `.gsap-reveal` só aparece depois do hero. Economia de dados e rede 2G também não impediam essa transferência.
+
+### Intervenção
+
+- o primeiro `.gsap-reveal` virou sentinela de um `IntersectionObserver`;
+- GSAP e ScrollTrigger só são importados quando a sentinela entra numa margem de 320 px do viewport;
+- o observador é desconectado antes da importação e não dispara duas vezes;
+- `prefers-reduced-motion`, `prefers-reduced-data`, `saveData`, `slow-2g` e `2g` mantêm todo o conteúdo estático e visível;
+- navegadores sem `IntersectionObserver` preservam a experiência base sem baixar as bibliotecas;
+- `data-scroll-effects="active"` sinaliza apenas uma instância realmente configurada;
+- observador, contexto GSAP e estado são limpos no desmontar;
+- os chunks de 69,0 KiB e 42,4 KiB continuam ausentes dos scripts iniciais;
+- a política foi registrada em `docs/EFEITOS-DE-ROLAGEM-PROGRESSIVOS.md`.
+
+### Proteção contra regressão
+
+O verificador identifica GSAP por `globalTimeline`/`registerPlugin` e ScrollTrigger por `normalizeScroll`/`refreshInit`, exige um chunk de cada, rejeita ambos entre os scripts iniciais e limita a soma a 120 KiB. No fonte, confere importações dinâmicas, sentinela, margem, preferências, rede, estado observável e limpeza.

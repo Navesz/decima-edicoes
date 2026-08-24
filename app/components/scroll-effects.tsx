@@ -2,10 +2,29 @@
 
 import { useEffect } from 'react';
 
+type NavigatorWithConnection = Navigator & {
+  connection?: {
+    saveData?: boolean;
+    effectiveType?: string;
+  };
+};
+
 export function ScrollEffects() {
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const connection = (navigator as NavigatorWithConnection).connection;
+    const shouldKeepStatic = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      || window.matchMedia?.('(prefers-reduced-data: reduce)').matches
+      || connection?.saveData
+      || connection?.effectiveType === 'slow-2g'
+      || connection?.effectiveType === '2g';
+
+    if (shouldKeepStatic || !('IntersectionObserver' in window)) return;
+
+    const firstReveal = document.querySelector<HTMLElement>('.gsap-reveal');
+    if (!firstReveal) return;
+
     let cancelled = false;
+    let started = false;
     let context: { revert: () => void } | undefined;
 
     const start = async () => {
@@ -36,13 +55,23 @@ export function ScrollEffects() {
           });
         });
       });
+      document.documentElement.dataset.scrollEffects = 'active';
     };
 
-    void start();
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || started) return;
+      started = true;
+      observer.disconnect();
+      void start();
+    }, { rootMargin: '320px 0px', threshold: .01 });
+
+    observer.observe(firstReveal);
 
     return () => {
       cancelled = true;
+      observer.disconnect();
       context?.revert();
+      delete document.documentElement.dataset.scrollEffects;
     };
   }, []);
 
