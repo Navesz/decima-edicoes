@@ -948,3 +948,28 @@ Os dois heros visuais já recebiam prioridade, enquanto imagens abaixo da dobra 
 ### Proteção contra regressão
 
 Cada rota ganhou contagem esperada de imagens e de prioridades. O verificador compara `eager`, `high`, `lazy` e `async` diretamente no HTML exportado e falha se uma imagem secundária competir com o conteúdo principal ou se um hero for adiado.
+
+## Ciclo 41 — prova da revisão publicada
+
+Data: 24 de agosto de 2026.
+
+### Artefato válido não garante produção atualizada
+
+Build, auditoria e verificação estática terminavam antes do deploy. A Action oficial confirmava a operação do Pages, mas o workflow não consultava a URL pública nem distinguia a revisão nova de uma resposta anterior em cache.
+
+### Intervenção
+
+- o SHA imutável do commit entra no build por variável pública;
+- as oito rotas publicam uma meta técnica `build-revision`;
+- o job de deploy usa a URL devolvida pela Action oficial;
+- a home é consultada até o SHA esperado aparecer, por no máximo 60 segundos;
+- manifesto, tipo MIME e escopo são verificados online;
+- o dossiê Yggdrasil comprova navegação profunda;
+- a variante WebP comprova mídia e tipo MIME;
+- uma URL impossível precisa retornar 404 e `noindex`;
+- o smoke usa ferramentas nativas do runner e não adiciona Action ou permissão;
+- o procedimento foi registrado em `docs/VERIFICACAO-POS-DEPLOY.md`.
+
+### Proteção contra regressão
+
+O verificador exige a meta de revisão em todas as rotas e audita variável, ordem, tentativas e quatro frentes do smoke test no YAML. O próximo deploy só fica verde depois que o commit esperado for observado na produção.

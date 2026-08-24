@@ -103,6 +103,8 @@ Somente os heros da home e do dossiê Yggdrasil recebem prioridade alta; as outr
 
 O push na branch `main` publica automaticamente no GitHub Pages.
 
+Depois da publicação, o próprio workflow espera o SHA novo aparecer na home e testa manifesto, rota profunda, WebP e resposta 404/noindex. O procedimento está em `docs/VERIFICACAO-POS-DEPLOY.md`.
+
 As cinco Actions oficiais estão fixadas em commits completos e os jobs usam permissões mínimas separadas. Pins e procedimento de atualização estão em `docs/SEGURANCA-DO-DEPLOY.md`.
 
 ## Antes do lançamento comercial

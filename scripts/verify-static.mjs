@@ -6,6 +6,7 @@ const root = process.cwd();
 const output = join(root, 'out');
 const basePath = '/decima-edicoes';
 const exportedBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+const expectedBuildRevision = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local';
 const origin = `https://navesz.github.io${basePath}`;
 const failures = [];
 const projectData = JSON.parse(readFileSync(join(root, 'app', 'lib', 'project-data.json'), 'utf8'));
@@ -113,6 +114,7 @@ for (const route of routes) {
   }
   check(html.includes(`<title>${route.title}`), `${route.file}: título incorreto`);
   check(html.includes(`<link rel="manifest" href="${exportedBasePath}/manifest.webmanifest"`), `${route.file}: manifesto da marca ausente ou fora do basePath`);
+  check(html.includes(`<meta name="build-revision" content="${expectedBuildRevision}"`), `${route.file}: revisão do build ausente ou incorreta`);
   check(html.includes(`<link rel="apple-touch-icon" href="${exportedBasePath}${brandData.assets.icon}"`), `${route.file}: ícone Apple ausente ou fora do basePath`);
   check(html.includes(`<meta name="theme-color" content="${brandData.palette.ink.hex}"`), `${route.file}: cor de navegador da marca ausente`);
   check(html.includes('<meta name="mobile-web-app-capable" content="yes"'), `${route.file}: modo instalável não declarado`);
@@ -353,6 +355,13 @@ check(!/^permissions:/m.test(workflowHeader), 'workflow: permissões globais amp
 check(/permissions:\s*\n\s+contents: read\s*\n\s+pages: read/.test(buildJob) && !/id-token:\s*write/.test(buildJob) && !/pages:\s*write/.test(buildJob), 'workflow: build precisa apenas de contents:read e pages:read');
 check(/permissions:\s*\n\s+pages: write\s*\n\s+id-token: write/.test(deployJob) && !/contents:\s*write/.test(deployJob), 'workflow: deploy precisa limitar escrita a Pages e OIDC');
 check(/needs:\s*build/.test(deployJob) && /environment:\s*\n\s+name:\s*github-pages/.test(deployJob), 'workflow: deploy precisa depender do build e usar o ambiente github-pages');
+check(/NEXT_PUBLIC_BUILD_SHA:\s*\$\{\{ github\.sha \}\}/.test(buildJob), 'workflow: build não recebe a revisão imutável do commit');
+check(/id:\s*deployment/.test(deployJob) && /name:\s*Verify published site/.test(deployJob), 'workflow: saída do deploy ou smoke test de produção ausente');
+check(deployJob.indexOf('name: Verify published site') > deployJob.indexOf('actions/deploy-pages@'), 'workflow: smoke test precisa executar depois do deploy');
+check(deployJob.includes('EXPECTED_REVISION: ${{ github.sha }}') && deployJob.includes('<meta name=\\"build-revision\\" content=\\"${EXPECTED_REVISION}\\"'), 'workflow: smoke test não comprova a revisão publicada');
+check(deployJob.includes('for attempt in {1..12}') && deployJob.includes('sleep 5') && deployJob.includes('test "$published" = true'), 'workflow: espera limitada pela propagação do Pages ausente');
+check(deployJob.includes('manifest.webmanifest?revision=') && deployJob.includes('content-type: application/manifest+json') && deployJob.includes('hero-yggdrasil-480.webp?revision='), 'workflow: manifesto ou mídia não entram no smoke test');
+check(deployJob.includes('__deploy-probe-${EXPECTED_REVISION}') && deployJob.includes('test "$missing_status" = 404') && deployJob.includes('<meta name="robots" content="noindex"'), 'workflow: resposta 404/noindex não entra no smoke test');
 
 const socialCards = ['collections.jpg', 'yggdrasil.jpg', 'caderno.jpg'];
 for (const file of socialCards) {

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { assetPath } from './lib/base-path';
+import { buildRevision } from './lib/build';
 import { SmoothScroll } from './components/smooth-scroll';
 import { brand, brandTitle } from './lib/brand';
 import { edition } from './lib/project';
@@ -40,6 +41,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: brand.shortName, statusBarStyle: 'black-translucent' },
   icons: { apple: [{ url: assetPath(brand.assets.icon), sizes: '512x512', type: 'image/png' }] },
   keywords: ['mesas autorais', 'mobiliário brasileiro', 'edição limitada', 'madeira maciça', 'design colecionável'],
+  other: { 'build-revision': buildRevision },
   alternates: { canonical: absoluteUrl('/') },
   openGraph: {
     type: 'website',

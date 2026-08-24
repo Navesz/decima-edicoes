@@ -18,6 +18,7 @@ jobs:
     env:
       NEXT_PUBLIC_BASE_PATH: /decima-edicoes
       NEXT_PUBLIC_SITE_URL: https://navesz.github.io/decima-edicoes
+      NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -56,3 +57,56 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+      - name: Verify published site
+        shell: bash
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          site_url="${PAGE_URL%/}"
+          probe_dir="${RUNNER_TEMP}/decima-smoke"
+          mkdir -p "$probe_dir"
+          published=false
+
+          for attempt in {1..12}; do
+            if curl --fail --silent --show-error --location \
+              "${site_url}/?revision=${EXPECTED_REVISION}" \
+              --output "${probe_dir}/home.html" \
+              && grep --fixed-strings --quiet \
+                "<meta name=\"build-revision\" content=\"${EXPECTED_REVISION}\"" \
+                "${probe_dir}/home.html"; then
+              published=true
+              break
+            fi
+            sleep 5
+          done
+
+          test "$published" = true
+
+          curl --fail --silent --show-error --location \
+            --dump-header "${probe_dir}/manifest.headers" \
+            "${site_url}/manifest.webmanifest?revision=${EXPECTED_REVISION}" \
+            --output "${probe_dir}/manifest.json"
+          grep --ignore-case --quiet '^content-type: application/manifest+json' \
+            "${probe_dir}/manifest.headers"
+          grep --fixed-strings --quiet '"scope":"/decima-edicoes/"' "${probe_dir}/manifest.json"
+
+          curl --fail --silent --show-error --location \
+            "${site_url}/colecoes/nordica-yggdrasil/?revision=${EXPECTED_REVISION}" \
+            --output "${probe_dir}/product.html"
+          grep --fixed-strings --quiet 'Nórdica — Yggdrasil' "${probe_dir}/product.html"
+
+          curl --fail --silent --show-error --head \
+            --dump-header "${probe_dir}/image.headers" \
+            "${site_url}/images/hero-yggdrasil-480.webp?revision=${EXPECTED_REVISION}" \
+            --output /dev/null
+          grep --ignore-case --quiet '^content-type: image/webp' \
+            "${probe_dir}/image.headers"
+
+          missing_status="$(curl --silent --show-error --location \
+            "${site_url}/__deploy-probe-${EXPECTED_REVISION}/" \
+            --output "${probe_dir}/404.html" \
+            --write-out '%{http_code}')"
+          test "$missing_status" = 404
+          grep --fixed-strings --quiet '<meta name="robots" content="noindex"' "${probe_dir}/404.html"
