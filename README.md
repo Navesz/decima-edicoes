@@ -54,6 +54,8 @@ O cabeçalho identifica semanticamente a área atual na home, em Coleções e em
 
 Ficha 00, briefing do tampo e modelo de certificado compartilham uma folha A4 com paginação segura para tabelas, checklists, títulos e assinaturas. O contrato está em `docs/IMPRESSAO-DOS-DOCUMENTOS.md`.
 
+As 13 tabelas e matrizes largas do Caderno possuem região nomeada, foco de teclado e instrução de rolagem; nos documentos, somente o bloco realmente largo recebe overflow. A regra está em `docs/ROLAGEM-HORIZONTAL-ACESSIVEL.md`.
+
 ## Fonte única do projeto
 
 Tiragem, produção, dimensões, protótipo, versões, corpos de prova e aprovações vivem em `app/lib/project-data.json`. O site e o verificador consomem esse mesmo contrato para evitar divergência entre vitrine, produto, Caderno e ficha impressa. O procedimento de atualização está em `docs/CONTRATO-DO-PROJETO.md`.

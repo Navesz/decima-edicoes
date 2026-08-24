@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ArrowLeft, CircleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { Footer } from '../../components/footer';
+import { HorizontalScrollRegion } from '../../components/horizontal-scroll-region';
 import { PrintButton } from '../../components/print-button';
 import { SiteHeader } from '../../components/site-header';
 import { brand } from '../../lib/brand';
@@ -68,7 +69,7 @@ export default function TopQuoteBriefPage() {
 
         <section className={styles.block}>
           <h2><span>02</span> Geometria e condição de fornecimento</h2>
-          <table className={styles.table}>
+          <HorizontalScrollRegion className={styles.scrollRegion} label="Tabela de geometria e fornecimento; role horizontalmente para ver todas as colunas"><table className={styles.table}>
             <caption>Requisitos de partida; o fornecedor deve declarar medidas reais e tolerâncias</caption>
             <thead><tr><th scope="col">Frente</th><th scope="col">Pedido DÉCIMA</th><th scope="col">Fornecedor declara</th><th scope="col">Evidência / observação</th></tr></thead>
             <tbody>
@@ -80,13 +81,13 @@ export default function TopQuoteBriefPage() {
               <tr><th scope="row">Umidade</th><td>Informar leituras, pontos, data, ambiente e equipamento; sem estimativa verbal</td><td><Blank /></td><td><Blank /></td></tr>
               <tr><th scope="row">Defeitos</th><td>Declarar trincas, nós, galerias, alburno, reparos e sinais de movimento</td><td><Blank /></td><td><Blank /></td></tr>
             </tbody>
-          </table>
+          </table></HorizontalScrollRegion>
           <p className={styles.fixed}>“Nivelado” precisa vir acompanhado do método de verificação e da tolerância que o fornecedor consegue cumprir. Este briefing não inventa um limite antes de medir o que o processo local e o Protótipo 00 realmente exigem.</p>
         </section>
 
         <section className={styles.block}>
           <h2><span>03</span> Evidência antes da compra</h2>
-          <div className={styles.checks}>{evidenceBeforePurchase.map((item) => <div key={item}><strong>{item}</strong><span>□ pedido</span><span>□ recebido</span><span>□ revisar</span><Blank /></div>)}</div>
+          <HorizontalScrollRegion className={styles.scrollRegion} label="Checklist de evidências antes da compra; role horizontalmente para ver todos os campos"><div className={styles.checks}>{evidenceBeforePurchase.map((item) => <div key={item}><strong>{item}</strong><span>□ pedido</span><span>□ recebido</span><span>□ revisar</span><Blank /></div>)}</div></HorizontalScrollRegion>
           <label className={styles.line}>Link ou pasta das imagens e medições <Blank wide /></label>
         </section>
 
@@ -103,13 +104,13 @@ export default function TopQuoteBriefPage() {
 
         <section className={styles.block}>
           <h2><span>05</span> Comparação de três cotações</h2>
-          <table className={styles.table}>
+          <HorizontalScrollRegion className={styles.scrollRegion} label="Tabela de comparação das cotações; role horizontalmente para ver todas as colunas"><table className={styles.table}>
             <caption>Comparação mínima para o Portão M01; preços não devem esconder construção diferente</caption>
             <thead><tr><th scope="col">Fornecedor</th><th scope="col">Construção / espécie</th><th scope="col">Medidas reais</th><th scope="col">Preço + frete</th><th scope="col">Prazo</th><th scope="col">Evidência</th></tr></thead>
             <tbody>
               {[1, 2, 3].map((number) => <tr key={number}><th scope="row">Cotação {number}</th><td><Blank /></td><td><Blank /></td><td><Blank /></td><td><Blank /></td><td>□ completa<br />□ falta prova</td></tr>)}
             </tbody>
-          </table>
+          </table></HorizontalScrollRegion>
           <div className={styles.costs}>
             <label>Cotação escolhida <Blank /></label><label>Preço do tampo <Blank /></label><label>Frete <Blank /></label><label>Prazo total <Blank /></label>
             <label className={styles.total}>Custo recebido e conferido <Blank /></label>
@@ -118,7 +119,7 @@ export default function TopQuoteBriefPage() {
 
         <section className={styles.block}>
           <h2><span>06</span> Recebimento e aceite</h2>
-          <div className={styles.checks}>{deliveryChecks.map((item) => <div key={item}><strong>{item}</strong><span>□ falhou</span><span>□ revisar</span><span>□ passou</span><Blank /></div>)}</div>
+          <HorizontalScrollRegion className={styles.scrollRegion} label="Checklist de recebimento e aceite; role horizontalmente para ver todos os campos"><div className={styles.checks}>{deliveryChecks.map((item) => <div key={item}><strong>{item}</strong><span>□ falhou</span><span>□ revisar</span><span>□ passou</span><Blank /></div>)}</div></HorizontalScrollRegion>
           <label className={styles.line}>Tempo e condição de aclimatação antes dos corpos de prova ou usinagem <Blank wide /></label>
           <div className={styles.decision}><p>Decisão M01</p><span>□ rejeitar no recebimento</span><span>□ aceitar com ressalva documentada</span><span>□ aprovar para o Protótipo 00</span></div>
         </section>

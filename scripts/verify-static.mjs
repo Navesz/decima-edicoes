@@ -393,6 +393,7 @@ const notFound = withoutRscMarkers(read('404.html'));
 const visibleProduct = product.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleNotebook = notebook.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleCertificateModel = certificateModel.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+const visibleTopQuote = topQuote.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const visibleWorksheet = worksheet.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 const interestFormTag = home.match(/<form\b[^>]*data-local-demo[^>]*>/i)?.[0] ?? '';
 const notFoundRobots = [...notFound.matchAll(/<meta name="robots" content="([^"]+)"/g)].map((match) => match[1]);
@@ -456,6 +457,7 @@ check(worksheetCss.includes('@page { size: A4;') && worksheetCss.includes('@medi
 check(worksheetCss.includes('.block { break-inside: auto;') && worksheetCss.includes('.block h2 { break-after: avoid-page;'), 'documentos imprimíveis: seções não possuem paginação progressiva');
 check(worksheetCss.includes('.table thead { display: table-header-group; }') && worksheetCss.includes('.table tr, .checks > div, .gate > div, .decision, .fixed, .line { break-inside: avoid; }'), 'documentos imprimíveis: cabeçalhos repetidos ou unidades indivisíveis ausentes');
 check(worksheetCss.includes('orphans: 3; widows: 3;') && worksheetCss.includes('print-color-adjust: exact;') && worksheetCss.includes('-webkit-print-color-adjust: exact;'), 'documentos imprimíveis: controle tipográfico ou de cor ausente');
+check(worksheetCss.includes('.scrollRegion { overflow-x: auto;') && worksheetCss.includes('.scrollRegion { overflow: visible;') && !worksheetCss.includes('.block { overflow-x: auto;'), 'documentos internos: overflow não está isolado nas regiões horizontais');
 for (const documentHtml of [visibleCertificateModel, topQuote, visibleWorksheet]) {
   check(documentHtml.includes('Imprimir ou salvar em PDF') && documentHtml.includes('<button') && documentHtml.includes('type="button"'), 'documentos imprimíveis: ação local de impressão ausente');
 }
@@ -475,6 +477,20 @@ check(!certificateModel.includes(`Peça ${firstPiece}/${projectData.edition.runS
 check(certificateModel.includes(`${projectData.product.diameterCm} cm de diâmetro`) && certificateModel.includes(`${projectData.product.heightCm} cm de altura`) && certificateModel.includes(`tampo de ${projectData.product.topThicknessMm.minimum}–${projectData.product.topThicknessMm.maximum} mm`), 'Certificado modelo: referência dimensional diverge do contrato');
 check(certificateModel.includes('QR code sozinho não prova autenticidade') && certificateModel.includes('não transfere direito autoral') && certificateModel.includes('não deve publicar dados pessoais'), 'Certificado modelo: limites de autenticidade, autoria ou privacidade incompletos');
 check(visibleCertificateModel.includes('Imprimir ou salvar em PDF') && (visibleCertificateModel.match(/□ entrega/g) ?? []).length === 4, 'Certificado modelo: impressão ou histórico de custódia incompleto');
+const scrollRegionPattern = /<div\b[^>]*role="region"[^>]*tabindex="0"[^>]*aria-label="[^"]*role horizontalmente[^"]*"[^>]*>/gi;
+const expectedScrollRegions = [
+  [visibleNotebook, 2, 'Caderno'],
+  [brandGuide.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''), 1, 'Guia de Marca'],
+  [visibleWorksheet, 4, 'Ficha 00'],
+  [visibleTopQuote, 4, 'Cotação do tampo'],
+  [visibleCertificateModel, 2, 'Certificado modelo'],
+];
+for (const [documentHtml, expectedCount, label] of expectedScrollRegions) {
+  const count = (documentHtml.match(scrollRegionPattern) ?? []).length;
+  check(count === expectedCount, `${label}: esperadas ${expectedCount} regiões horizontais nomeadas e focáveis, encontradas ${count}`);
+}
+const horizontalRegionSource = readFileSync(join(root, 'app', 'components', 'horizontal-scroll-region.tsx'), 'utf8');
+check(!horizontalRegionSource.startsWith("'use client'") && horizontalRegionSource.includes('role="region"') && horizontalRegionSource.includes('tabIndex={0}') && horizontalRegionSource.includes('aria-label={label}'), 'região horizontal: semântica, foco ou renderização no servidor ausente');
 check(brandGuide.includes('<meta name="robots" content="noindex, nofollow"'), 'Guia de Marca: bloqueio de indexação ausente');
 check(!sitemap.includes(`${origin}/caderno/marca/`), 'Guia de Marca: rota interna não deve entrar no sitemap público');
 check(brandGuide.includes('Sim. DÉCIMA Edições é uma direção forte.') && brandGuide.includes('não declara disponibilidade legal'), 'Guia de Marca: veredito ou limite jurídico ausente');

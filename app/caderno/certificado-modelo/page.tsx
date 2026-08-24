@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ArrowLeft, CircleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { Footer } from '../../components/footer';
+import { HorizontalScrollRegion } from '../../components/horizontal-scroll-region';
 import { PrintButton } from '../../components/print-button';
 import { SiteHeader } from '../../components/site-header';
 import { brand } from '../../lib/brand';
@@ -65,7 +66,7 @@ export default function CertificateModelPage() {
 
         <section className={styles.block}>
           <h2><span>03</span> Protocolo de edição</h2>
-          <table className={styles.table}>
+          <HorizontalScrollRegion className={styles.scrollRegion} label="Tabela do protocolo de edição; role horizontalmente para ver todas as colunas"><table className={styles.table}>
             <caption>Promessas que precisam ser verdadeiras antes da assinatura</caption>
             <thead><tr><th scope="col">Regra</th><th scope="col">Declaração futura</th><th scope="col">Evidência anexada</th></tr></thead>
             <tbody>
@@ -74,7 +75,7 @@ export default function CertificateModelPage() {
               <tr><th scope="row">Matéria</th><td>Espécie, medidas, acabamento e lotes correspondem ao registro técnico.</td><td><Blank /></td></tr>
               <tr><th scope="row">Encerramento</th><td>Depois da peça {edition.lastPieceFraction}, a matriz {collection.name} é aposentada e não volta como reimpressão.</td><td><Blank /></td></tr>
             </tbody>
-          </table>
+          </table></HorizontalScrollRegion>
         </section>
 
         <section className={styles.block}>
@@ -90,11 +91,11 @@ export default function CertificateModelPage() {
 
         <section className={styles.block}>
           <h2><span>05</span> Histórico de custódia e intervenção</h2>
-          <table className={styles.table}>
+          <HorizontalScrollRegion className={styles.scrollRegion} label="Tabela do histórico de custódia; role horizontalmente para ver todas as colunas"><table className={styles.table}>
             <caption>Registro privado; dados pessoais não devem entrar no arquivo público sem base e finalidade definidas</caption>
             <thead><tr><th scope="col">Data</th><th scope="col">Evento</th><th scope="col">Responsável</th><th scope="col">Evidência / observação</th></tr></thead>
             <tbody>{[1, 2, 3, 4].map((row) => <tr key={row}><td><Blank /></td><td>□ entrega<br />□ transferência<br />□ inspeção<br />□ restauro</td><td><Blank /></td><td><Blank /></td></tr>)}</tbody>
-          </table>
+          </table></HorizontalScrollRegion>
         </section>
 
         <section className={styles.block}>

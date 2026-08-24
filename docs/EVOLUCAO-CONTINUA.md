@@ -973,3 +973,28 @@ Build, auditoria e verificação estática terminavam antes do deploy. A Action 
 ### Proteção contra regressão
 
 O verificador exige a meta de revisão em todas as rotas e audita variável, ordem, tentativas e quatro frentes do smoke test no YAML. O próximo deploy só fica verde depois que o commit esperado for observado na produção.
+
+## Ciclo 42 — regiões horizontais acessíveis
+
+Data: 24 de agosto de 2026.
+
+### Overflow visual sem fronteira operacional
+
+Caderno e Guia já tornavam três tabelas focáveis, mas os contêineres não declaravam papel de região. Nos documentos A4, o CSS colocava overflow na seção inteira; tabelas, checklists e matrizes não possuíam um destino nomeado para teclado.
+
+### Intervenção
+
+- as três regiões existentes receberam `role="region"`;
+- criado `HorizontalScrollRegion`, componente de servidor sem hidratação;
+- Ficha 00 ganhou quatro regiões específicas;
+- briefing do tampo ganhou quatro regiões específicas;
+- modelo de certificado ganhou duas regiões específicas;
+- cada região possui nome e instrução de rolagem próprios;
+- o overflow genérico saiu de `.block` e ficou restrito ao conteúdo largo;
+- na impressão, o overflow é liberado para a paginação A4;
+- o total auditável passou a 13 regiões;
+- a regra foi registrada em `docs/ROLAGEM-HORIZONTAL-ACESSIVEL.md`.
+
+### Proteção contra regressão
+
+O verificador conta regiões no HTML visível de cada documento e exige `role`, `tabindex` e nome acessível. Também protege o isolamento de overflow, a liberação na impressão e a natureza server-only do componente compartilhado.

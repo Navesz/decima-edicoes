@@ -140,7 +140,7 @@ export default function BrandGuidePage() {
             </article>
           ))}
         </div>
-        <div className={styles.contrastWrap} tabIndex={0} aria-label="Tabela de contraste da paleta; role horizontalmente para ver todas as colunas">
+        <div className={styles.contrastWrap} role="region" tabIndex={0} aria-label="Tabela de contraste da paleta; role horizontalmente para ver todas as colunas">
           <table className={styles.contrastTable}>
             <caption>Combinações calculadas da paleta oficial</caption>
             <thead><tr><th scope="col">Combinação</th><th scope="col">Amostra</th><th scope="col">Contraste</th><th scope="col">Regra</th></tr></thead>

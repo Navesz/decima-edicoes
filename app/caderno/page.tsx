@@ -99,7 +99,7 @@ export default function StudioNotebookPage() {
       <section className="notebook-section gate-section" id="portao">
         <div className="notebook-section-title"><span>06</span><div><p className="micro-label">Critério de passagem</p><h2>O portão do<br />Protótipo {edition.prototypeNumber}.</h2></div></div>
         <div className="gate-intro"><p>Uma imagem bonita não autoriza uma venda. Só existe peça {edition.firstPiece} depois de {projectLabels.gateItemsWord} aprovações documentadas, cada uma apoiada por evidência do mundo real.</p><p>“Em teste” registra trabalho em curso; não significa aprovação. Uma frente só muda para aprovada quando a evidência indicada entra no arquivo da edição.</p></div>
-        <div className="gate-table-wrap" tabIndex={0} aria-label={`Tabela do Portão ${edition.prototypeNumber}; role horizontalmente para ver todas as colunas`}>
+        <div className="gate-table-wrap" role="region" tabIndex={0} aria-label={`Tabela do Portão ${edition.prototypeNumber}; role horizontalmente para ver todas as colunas`}>
           <table className="gate-table">
             <caption>{projectLabels.gateItemsHeading} aprovações obrigatórias antes da abertura comercial de {collection.name}</caption>
             <thead><tr><th scope="col">Código</th><th scope="col">Frente</th><th scope="col">Aprovação necessária</th><th scope="col">Evidência mínima</th><th scope="col">Estado</th></tr></thead>
@@ -113,7 +113,7 @@ export default function StudioNotebookPage() {
       <section className="notebook-section decision-register" id="registro">
         <div className="notebook-section-title"><span>07</span><div><p className="micro-label">Registro versionado</p><h2>Decisões que<br />não se perdem.</h2></div></div>
         <div className="gate-intro"><p>Este registro distingue regra confirmada, direção em teste e evidência ainda pendente. Uma imagem de conceito ou uma preferência estética não muda o estado de uma decisão sozinha.</p><p>Quando uma premissa mudar, ela recebe nova revisão no contrato do projeto e passa a aparecer de forma coerente na vitrine, no produto e nos documentos de oficina.</p></div>
-        <div className="gate-table-wrap" tabIndex={0} aria-label="Registro de decisões; role horizontalmente para ver todas as colunas">
+        <div className="gate-table-wrap" role="region" tabIndex={0} aria-label="Registro de decisões; role horizontalmente para ver todas as colunas">
           <table className="gate-table decision-table">
             <caption>Base da revisão {documents.notebookVersion} · <time dateTime={documents.updatedAtIso}>{documents.updatedAt}</time></caption>
             <thead><tr><th scope="col">Código</th><th scope="col">Frente</th><th scope="col">Decisão atual</th><th scope="col">Registro necessário</th><th scope="col">Estado</th></tr></thead>
