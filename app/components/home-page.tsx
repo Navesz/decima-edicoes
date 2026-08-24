@@ -5,7 +5,7 @@ import { assetPath } from '../lib/base-path';
 import { collection, edition } from '../lib/project';
 import { Footer } from './footer';
 import { InterestForm } from './interest-form';
-import { MotionArticle } from './motion-article';
+import { MotionArticleLoader } from './motion-article-loader';
 import { ResponsiveImage } from './responsive-image';
 import { ScrollEffects } from './scroll-effects';
 import { SiteHeader } from './site-header';
@@ -75,13 +75,13 @@ export function HomePage() {
         </div>
         <div className="collection-list">
           {collections.map((collection, index) => (
-            <MotionArticle className="collection-card gsap-reveal" key={collection.slug}>
+            <MotionArticleLoader className="collection-card gsap-reveal" key={collection.slug}>
               <Link href={index === 0 ? `/colecoes/${collection.slug}` : '/colecoes'} aria-label={`${collection.family} — ${collection.name}`}>
                 <div className="collection-media"><ResponsiveImage src={collection.image} alt={`Visualização conceitual ${collection.family} — ${collection.name}`} sizes="(max-width: 800px) 100vw, 33vw" /></div>
                 <div className="collection-meta"><span>{collection.number}</span><div><small>{collection.family}</small><h3>{collection.name}</h3></div><ArrowUpRight size={18} strokeWidth={1.25} /></div>
                 <p>{collection.status}</p>
               </Link>
-            </MotionArticle>
+            </MotionArticleLoader>
           ))}
         </div>
         <Link className="outline-button" href="/colecoes">Ver arquivo completo <ArrowRight size={16} /></Link>

@@ -11,7 +11,7 @@ As bibliotecas de movimento fazem parte da linguagem digital da DÉCIMA, mas nã
 
 ## Framer Motion
 
-`HomePage` é componente de servidor. `MotionArticle` é a fronteira cliente que envolve somente os três cartões interativos.
+`HomePage` é componente de servidor. `MotionArticleLoader` publica primeiro três artigos semânticos estáticos. Quando a seção chega a 320 px do viewport e o contrato permite o aprimoramento, ele importa `MotionArticle`.
 
 A ilha usa:
 
@@ -29,7 +29,8 @@ Build com o mesmo `basePath` do GitHub Pages, sem compressão de transferência:
 | Estado | JavaScript inicial da home | Diferença |
 | --- | ---: | ---: |
 | antes | 715,8 KiB | — |
-| ilha mínima | 623,6 KiB | −92,2 KiB (−12,9%) |
+| ilha mínima inicial | 623,6 KiB | −92,2 KiB (−12,9%) |
+| ilha por proximidade | 580,0 KiB | −135,8 KiB (−19,0%) |
 
 Os números somam apenas arquivos ligados por `<script src>` no HTML exportado. Não representam bytes comprimidos, tempo de execução nem uma nota de laboratório externa. O pacote de recursos assíncrono não entra nessa soma inicial.
 
@@ -38,10 +39,12 @@ Os números somam apenas arquivos ligados por `<script src>` no HTML exportado. 
 - conteúdo essencial nunca nasce com `opacity: 0`;
 - a home não recebe `'use client'`;
 - a home não importa Framer diretamente;
-- qualquer uso de Framer passa pela ilha mínima;
+- qualquer uso de Framer passa pela fachada estática e pela ilha mínima;
+- os chunks da ilha e dos recursos não entram nos scripts iniciais;
+- economia de dados, 2G, movimento reduzido e toque mantêm artigos estáticos;
 - recursos DOM ficam em importação assíncrona;
 - movimento reduzido remove a transformação de hover;
-- o HTML inicial da home não pode exceder 650 KiB de JavaScript;
+- o HTML inicial da home não pode exceder 600 KiB de JavaScript;
 - GSAP, Lenis e Three.js continuam em fronteiras próprias.
 
 ## Referências

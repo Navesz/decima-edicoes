@@ -782,3 +782,28 @@ Laboratório 3D, Lenis e GSAP já respeitavam economia de dados e rede limitada,
 ### Proteção contra regressão
 
 O verificador exige os quatro media queries, os três sinais de rede e as duas guardas de ambiente no contrato. Cada consumidor precisa chamar as funções compartilhadas adequadas; voltar a duplicar sinais dentro de um componente deixa de satisfazer a auditoria.
+
+## Ciclo 34 — Framer Motion carregado por proximidade
+
+Data: 24 de agosto de 2026.
+
+### Ilha ainda inicial
+
+O ciclo 30 reduziu o Framer ao uso mínimo, mas sua fronteira cliente e o motor base ainda apareciam nos scripts iniciais. Os cartões ficam abaixo do hero e a transformação existe apenas no hover; transferir a ilha em celular, toque, economia de dados ou antes da seção continuava desproporcional.
+
+### Intervenção
+
+- criado `MotionArticleLoader`, uma fachada cliente sem importação estática do Framer;
+- o HTML inicial contém exatamente três `<article data-motion-mode="static">` com todo o conteúdo e os links;
+- a fachada observa cada cartão com margem de 320 px e limiar de 1%;
+- `MotionArticle` só é importado depois da proximidade;
+- movimento reduzido, transferência opcional evitada ou ponteiro grosseiro mantêm os artigos estáticos;
+- ausência de `IntersectionObserver` também preserva a base sem biblioteca;
+- o artigo aprimorado declara `data-motion-mode="active"` e mantém `LazyMotion`/`domAnimation` assíncronos;
+- 83,7 KiB de ilha, base e recursos Framer ficaram fora dos scripts iniciais;
+- a home caiu de 623,6 para 580,0 KiB neste ciclo;
+- desde 715,8 KiB, a redução acumulada é 135,8 KiB ou 19,0%.
+
+### Proteção contra regressão
+
+O orçamento da home caiu para 600 KiB. O verificador exige a fachada, o import dinâmico, proximidade, contrato de capacidades, três artigos estáticos e ausência de estado ativo no HTML. Todo chunk que contém `whileHover` precisa estar fora dos scripts iniciais, e a soma da ilha Framer fica limitada a 90 KiB.

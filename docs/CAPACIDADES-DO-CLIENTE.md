@@ -29,6 +29,7 @@ Retorna verdadeiro para `pointer: coarse` ou `hover: none`. Essa decisão só é
 | --- | ---: | ---: | ---: |
 | laboratório Three.js | tratado dentro do canvas | modo manual | não bloqueia |
 | GSAP + ScrollTrigger | conteúdo estático | conteúdo estático | animação permitida |
+| Framer Motion | cartões estáticos | cartões estáticos | cartões estáticos |
 | Lenis | rolagem nativa | rolagem nativa | rolagem nativa |
 
 O laboratório mantém controle próprio de movimento depois de carregado porque o canvas pode ser solicitado manualmente mesmo com outras preferências; nesse caso, rotação automática e loop contínuo continuam desativados.

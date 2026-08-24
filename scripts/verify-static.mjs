@@ -68,7 +68,7 @@ function listFiles(directory) {
 }
 
 const routes = [
-  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 650, cssBudgetKiB: 40 },
+  { file: 'index.html', title: `${brandData.name} — ${brandData.slogan}`, canonical: `${origin}/`, social: `${origin}/og.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'colecoes/index.html', title: `Coleções · ${brandData.shortName}`, canonical: `${origin}/colecoes/`, social: `${origin}/social/collections.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: `colecoes/${projectData.collection.slug}/index.html`, title: `${projectData.collection.family} — ${projectData.collection.name} · ${brandData.shortName}`, canonical: `${origin}${collectionPath}`, social: `${origin}/social/yggdrasil.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
   { file: 'caderno/index.html', title: `Caderno do Atelier · ${brandData.shortName}`, canonical: `${origin}/caderno/`, social: `${origin}/social/caderno.jpg`, scriptBudgetKiB: 600, cssBudgetKiB: 40 },
@@ -191,12 +191,15 @@ check(responsiveImageSource.includes("import imageData from '../lib/image-data.j
 check(imageOptimizerSource.includes("'image-data.json'") && imageOptimizerSource.includes('JSON.stringify(imageData, null, 2)'), 'imagens responsivas: otimizador deixou de atualizar o contrato dimensional');
 
 const homePageSource = readFileSync(join(root, 'app', 'components', 'home-page.tsx'), 'utf8');
+const motionArticleLoaderSource = readFileSync(join(root, 'app', 'components', 'motion-article-loader.tsx'), 'utf8');
 const motionArticleSource = readFileSync(join(root, 'app', 'components', 'motion-article.tsx'), 'utf8');
 const motionFeaturesSource = readFileSync(join(root, 'app', 'components', 'motion-features.ts'), 'utf8');
 const clientCapabilitiesSource = readFileSync(join(root, 'app', 'lib', 'client-capabilities.ts'), 'utf8');
-check(!homePageSource.startsWith("'use client'") && !homePageSource.includes("from 'framer-motion'") && homePageSource.includes('<MotionArticle'), 'home: página inteira voltou a depender do Framer no cliente');
+check(!homePageSource.startsWith("'use client'") && !homePageSource.includes("from 'framer-motion'") && homePageSource.includes('<MotionArticleLoader'), 'home: página inteira voltou a depender do Framer no cliente');
+check(motionArticleLoaderSource.includes("import('./motion-article')") && motionArticleLoaderSource.includes('IntersectionObserver') && motionArticleLoaderSource.includes("rootMargin: '320px 0px'") && motionArticleLoaderSource.includes('threshold: .01'), 'home: fachada dos cartões perdeu importação dinâmica ou gatilho por proximidade');
+check(motionArticleLoaderSource.includes('prefersReducedMotion()') && motionArticleLoaderSource.includes('shouldAvoidOptionalTransfer()') && motionArticleLoaderSource.includes('usesCoarsePointer()') && motionArticleLoaderSource.includes('data-motion-mode="static"'), 'home: fachada dos cartões não preserva modo estático por capacidade');
 check(motionArticleSource.includes('LazyMotion') && motionArticleSource.includes("from 'framer-motion/m'") && motionArticleSource.includes("import('./motion-features')") && motionArticleSource.includes('useReducedMotion') && motionArticleSource.includes('strict'), 'home: ilha de movimento perdeu carregamento mínimo, preferência reduzida ou modo estrito');
-check(motionFeaturesSource.includes('domAnimation as default'), 'home: pacote assíncrono de recursos do Framer ausente');
+check(motionArticleSource.includes('data-motion-mode="active"') && motionFeaturesSource.includes('domAnimation as default'), 'home: modo ativo ou pacote assíncrono de recursos do Framer ausente');
 check(clientCapabilitiesSource.includes('(prefers-reduced-motion: reduce)') && clientCapabilitiesSource.includes('(prefers-reduced-data: reduce)') && clientCapabilitiesSource.includes('(pointer: coarse)') && clientCapabilitiesSource.includes('(hover: none)'), 'capacidades do cliente: preferências ou modos de entrada ausentes');
 check(clientCapabilitiesSource.includes('connection?.saveData === true') && clientCapabilitiesSource.includes("'slow-2g'") && clientCapabilitiesSource.includes("'2g'"), 'capacidades do cliente: economia de dados ou conexão limitada ausente');
 check(clientCapabilitiesSource.includes("typeof window !== 'undefined'") && clientCapabilitiesSource.includes("typeof navigator === 'undefined'"), 'capacidades do cliente: acesso ao navegador não está protegido');
@@ -246,6 +249,10 @@ const gsapDeferredBytes = [...gsapCoreChunks, ...scrollTriggerChunks].reduce((to
 check(gsapCoreChunks.length === 1 && scrollTriggerChunks.length === 1, `efeitos de rolagem: esperados GSAP e ScrollTrigger separados, encontrados ${gsapCoreChunks.length}/${scrollTriggerChunks.length}`);
 check([...gsapCoreChunks, ...scrollTriggerChunks].every((file) => !allInitialScripts.has(file)), 'efeitos de rolagem: GSAP ou ScrollTrigger voltou aos scripts iniciais');
 check(gsapDeferredBytes <= 120 * 1024, `efeitos de rolagem: pacotes assíncronos excedem 120 KiB (${(gsapDeferredBytes / 1024).toFixed(1)} KiB)`);
+const framerDeferredChunks = javascriptFiles.filter((file) => readFileSync(join(cssDirectory, file), 'utf8').includes('whileHover'));
+const framerDeferredBytes = framerDeferredChunks.reduce((total, file) => total + statSync(join(cssDirectory, file)).size, 0);
+check(framerDeferredChunks.length >= 3 && framerDeferredChunks.every((file) => !allInitialScripts.has(file)), 'home: ilha ou recursos do Framer voltaram aos scripts iniciais');
+check(framerDeferredBytes <= 90 * 1024, `home: pacotes assíncronos do Framer excedem 90 KiB (${(framerDeferredBytes / 1024).toFixed(1)} KiB)`);
 
 const sourceCss = readFileSync(join(root, 'app', 'globals.css'), 'utf8');
 check(sourceCss.includes('--micro: 10px;') && sourceCss.includes('--micro-quiet: 9px;'), 'tokens mínimos de microtipografia ausentes');
@@ -338,6 +345,7 @@ check(notFound.includes(`<title>Arquivo não encontrado · ${brandData.shortName
 check(notFound.includes(`<link rel="canonical" href="${origin}/404.html"`) && notFound.includes(`<meta property="og:url" content="${origin}/404.html"`), '404: canonical ou URL social herdou endereço incorreto');
 check(notFound.includes(`<meta property="og:title" content="Arquivo não encontrado · ${brandData.name}"`) && notFound.includes('<meta name="twitter:card" content="summary"'), '404: metadados de compartilhamento próprios ausentes');
 check(notFound.includes('Esta edição') && notFound.includes('Voltar ao início'), '404: experiência de recuperação incompleta');
+check((home.match(/data-motion-mode="static"/g) ?? []).length === 3 && !home.includes('data-motion-mode="active"'), 'home: cartões não nascem como três artigos estáticos antes do Framer');
 check(home.includes(`protótipo ${prototypeNumber} em desenvolvimento`), 'início: estágio conceitual não está explícito');
 check(home.includes(`Estágio atual: ${numberWords[projectData.edition.producedPieces]} de ${numberWords[projectData.edition.runSize]} peças produzidas`), 'início: estágio editorial diverge do contrato do projeto');
 check(home.includes(`Protocolo ${lastPieceFraction}`), 'início: protocolo editorial diverge da tiragem declarada');

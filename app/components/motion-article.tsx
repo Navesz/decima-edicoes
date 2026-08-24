@@ -13,6 +13,7 @@ export function MotionArticle({ children, className }: { children: ReactNode; cl
     <LazyMotion features={loadMotionFeatures} strict>
       <m.article
         className={className}
+        data-motion-mode="active"
         whileHover={reduceMotion ? undefined : { y: -8 }}
         transition={{ duration: .35 }}
       >

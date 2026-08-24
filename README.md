@@ -39,7 +39,7 @@ O mesmo símbolo de 512 × 512 px alimenta `manifest.webmanifest`, com nome, idi
 - Three.js + React Three Fiber para o laboratório de acabamento;
 - GitHub Actions e GitHub Pages para publicação em `navesz.github.io/decima-edicoes`.
 
-Na home, o Framer fica restrito à ilha interativa dos cartões e usa `LazyMotion` com `domAnimation` assíncrono. A página e o hero permanecem componentes de servidor; GSAP e Lenis também continuam sob importação tardia. Medição e limites estão em `docs/CARREGAMENTO-DE-MOVIMENTO.md`.
+Na home, o Framer fica restrito à ilha interativa dos cartões e usa `LazyMotion` com `domAnimation` assíncrono. Os cartões nascem como artigos estáticos; a ilha só é solicitada perto da seção, em dispositivo com hover e sem preferência reduzida. Página e hero permanecem componentes de servidor. Medição e limites estão em `docs/CARREGAMENTO-DE-MOVIMENTO.md`.
 
 Lenis só aprimora a rolagem por roda em desktop com ponteiro preciso, rede adequada e movimento permitido. Em toque, economia de dados, 2G ou preferência reduzida, o navegador mantém a rolagem nativa e nem transfere a biblioteca. A política está em `docs/ROLAGEM-SUAVE-PROGRESSIVA.md`.
 
