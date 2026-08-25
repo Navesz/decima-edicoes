@@ -121,3 +121,11 @@ As cinco Actions oficiais estão fixadas em commits completos e os jobs usam per
 6. fotografar o primeiro protótipo real e substituir as imagens conceituais.
 
 O site não apresenta as imagens conceituais como fotografias de produto já fabricado.
+
+## Licença
+
+O código deste repositório está sob [Apache-2.0](LICENSE).
+
+A licença cobre **apenas o código**. A marca, o logotipo e os demais ativos de
+identidade visual são de terceiros e permanecem com todos os direitos
+reservados -- veja [NOTICE](NOTICE) antes de reutilizar.
